@@ -17,7 +17,7 @@ class Main extends luxe.Game
 	private var music: AudioResource;
 	private var music_handle: luxe.Audio.AudioHandle;
 		
-	private static inline var LOG_N = 12;
+	private static inline var LOG_N = 16;
 	private static inline var SAMPLE_RATE = 44;
 	
 	private var fft_filter : FFTFilter;
@@ -25,7 +25,7 @@ class Main extends luxe.Game
 	private var final_freqs : Array<Float>;
 	
 	private static inline var NUM_BOXES = 200;
-	private static inline var BOX_WIDTH = 4;
+	private static inline var BOX_WIDTH = 1;
 	private static inline var BOX_SPACE = 1;
 	private static inline var BOX_MARGIN = 20;
 	
@@ -50,15 +50,20 @@ class Main extends luxe.Game
 		fft_filter = new FFTFilter(buffer, SAMPLE_RATE * 1000);
 		
 		var load = snow.api.Promise.all([
-            Luxe.resources.load_audio('assets/nocturne.mp3')
+            Luxe.resources.load_audio('assets/timemachine.ogg')
         ]);
 		
 		load.then(function(_) {
 
             //go away
             //box.color.tween(2, {a:0});
-			music = Luxe.resources.audio('assets/nocturne.mp3');
+			music = Luxe.resources.audio('assets/timemachine.ogg');
 			music_handle = Luxe.audio.loop(music.source);
+			
+			trace("Format: " + music.source.data.format);
+			trace("Channels: " + music.source.data.channels);
+			trace("Rate: " + music.source.data.rate);
+			trace("Length: " + music.source.data.length);
 			
 	 		//var s = "";
 			//for (i in 0...1024)
@@ -82,10 +87,10 @@ class Main extends luxe.Game
 		//box.pos = Luxe.screen.cursor.pos;
 		//trace(fft_filter.mag.length);
 		var audio_time = music.source.seconds_to_bytes(Luxe.audio.position_of(music_handle));
-		trace(audio_time);
-		for (i in 0...SAMPLE_RATE*1000)
+		//trace(audio_time);
+		for (i in 0...buffer.length)
 		{
-			var val = 1.0 * music.source.data.samples[audio_time + i];
+			var val = 1.0 * music.source.data.samples[(audio_time + i) % music.source.data.length];
 			buffer.writeValue(val);
 			//trace(val);
 		}
@@ -106,7 +111,7 @@ class Main extends luxe.Game
 		for (i in 0...NUM_BOXES)
 		{
 			box[i].resize_xy(BOX_WIDTH, 
-				1 + final_freqs[i]);
+				1 + final_freqs[i]*0.25);
 		}	
 	}
 	
