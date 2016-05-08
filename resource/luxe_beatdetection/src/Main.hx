@@ -2,8 +2,7 @@ package;
 
 import luxe.Input;
 import luxe.Screen;
-import luxe.Vector;
-
+import luxe.Vector;b
 // basic sprite
 import luxe.Sprite;
 import luxe.Color;
