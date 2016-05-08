@@ -5,6 +5,7 @@ import luxe.Input;
 import luxe.Sprite;
 import luxe.Rectangle;
 import haxe.xml.Fast;
+import luxe.tween.Actuate;
 
 class Main extends luxe.Game 
 {
@@ -12,6 +13,8 @@ class Main extends luxe.Game
 	var spritesheet_elements : Map<String, Rectangle>;
 	
 	var lanes : Array<Float>;
+	var previous_lane : Int;
+	var current_lane : Int;
 	
 	override function ready() 
 	{
@@ -34,6 +37,8 @@ class Main extends luxe.Game
 		lanes.push(3 * Luxe.screen.width / 4.0);
 		
 		player_sprite.pos.x = lanes[0];
+		previous_lane = 0;
+		current_lane = 0;
 	}
 
 	override function onkeyup(e:KeyEvent) 
@@ -46,16 +51,23 @@ class Main extends luxe.Game
 	{
 		if (Luxe.input.inputpressed('a'))
 		{
-			player_sprite.pos.x = lanes[0];
+			current_lane = 0;
 		}
 		else if (Luxe.input.inputpressed('b'))
 		{
-			player_sprite.pos.x = lanes[1];
+			current_lane = 1;
 		}
 		else if (Luxe.input.inputpressed('c'))
 		{
-			player_sprite.pos.x = lanes[2];
+			current_lane = 2;
 		}
+		
+		if (current_lane != previous_lane)
+		{
+			Actuate.tween(player_sprite.pos, 0.1, { x: lanes[current_lane] });
+		}
+		
+		previous_lane = current_lane;
 	}
 	
 	override function config(config:luxe.AppConfig) {
