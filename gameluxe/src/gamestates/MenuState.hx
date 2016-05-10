@@ -9,7 +9,8 @@ import luxe.Game;
 import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
-
+import luxe.Input;
+	
 /**
  * ...
  * @author 
@@ -40,14 +41,17 @@ class MenuState extends State
 		
 	}
 	
+	override function onkeyup(e:KeyEvent) 
+	{
+		if(e.keycode == Key.escape)
+			Luxe.shutdown();
+	}
+	
 	override function onleave<T>(_value:T)
 	{
 		trace("Exiting menu");
 		
-		credits_text.destroy();
-		scores_text.destroy();
-		play_text.destroy();
-		title_text.destroy();
+		scene.empty();
 		scene.destroy();
 		scene = null;
 		title_text = null;

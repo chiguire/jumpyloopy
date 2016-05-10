@@ -5,7 +5,7 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Scene;
 import luxe.Text;
-import luxe.Input.MouseEvent;
+import luxe.Input;
 import luxe.Vector;
 import luxe.Color;
 
@@ -33,6 +33,12 @@ class CreditsState extends State
 	override function init()
 	{
 		
+	}
+	
+	override function onkeyup(e:KeyEvent) 
+	{
+		if(e.keycode == Key.escape)
+			machine.set("MenuState");
 	}
 	
 	override function onleave<T>(_value:T)
