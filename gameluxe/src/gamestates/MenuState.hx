@@ -99,7 +99,7 @@ class MenuState extends State
 	{
 		if (play_text.point_inside(event.pos))
 		{
-			machine.set("PlayState");
+			machine.set("GameState");
 		}
 		else if (scores_text.point_inside(event.pos))
 		{
