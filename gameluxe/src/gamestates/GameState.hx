@@ -1,6 +1,8 @@
 package gamestates;
 
 import data.GameInfo;
+import entities.Avatar;
+import luxe.Input.Key;
 import luxe.options.StateOptions;
 import luxe.States.State;
 
@@ -20,7 +22,7 @@ class GameState extends State
 	
 	private var scene : Scene;
 	
-	private var player_sprite: Sprite;
+	private var player_sprite: Avatar;
 	
 	var lanes : Array<Float>;
 	var previous_lane : Int;
@@ -62,7 +64,7 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
-		player_sprite = new Sprite({
+		player_sprite = new Avatar({
 			name: 'Player',
 			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
 			uv: game_info.spritesheet_elements['bunny1_ready.png'],
@@ -80,7 +82,7 @@ class GameState extends State
 		
 		player_sprite.pos.x = lanes[0];
 		previous_lane = 0;
-		current_lane = 0;
+		current_lane = 0;		
 	}
 	
 	override function update(dt:Float) 
@@ -112,5 +114,7 @@ class GameState extends State
 		Luxe.input.bind_key('a', Key.key_q);
 		Luxe.input.bind_key('b', Key.key_w);
 		Luxe.input.bind_key('c', Key.key_e);
+		
+		Luxe.input.bind_key("jump", Key.space);
 	}
 }
