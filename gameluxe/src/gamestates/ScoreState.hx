@@ -3,6 +3,7 @@ package gamestates;
 import data.GameInfo;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import luxe.Input;
 
 /**
  * ...
@@ -21,6 +22,12 @@ class ScoreState extends State
 	override function init()
 	{
 		
+	}
+	
+	override function onkeyup(e:KeyEvent) 
+	{
+		if(e.keycode == Key.escape)
+			machine.set("MenuState");
 	}
 	
 	override function onleave<T>(_value:T)
