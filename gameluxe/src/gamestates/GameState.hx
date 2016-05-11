@@ -68,8 +68,9 @@ class GameState extends State
 			name: 'Player',
 			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
 			uv: game_info.spritesheet_elements['bunny1_ready.png'],
-			pos: new Vector(150, 100),
-			size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
+			pos: Luxe.screen.mid,
+			//size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
+			size: new Vector(24, 48),
 			scene: scene,
 		});
 		
@@ -115,6 +116,12 @@ class GameState extends State
 		Luxe.input.bind_key('b', Key.key_w);
 		Luxe.input.bind_key('c', Key.key_e);
 		
-		Luxe.input.bind_key("jump", Key.space);
+		//Luxe.input.bind_key("jump", Key.space);
+		Luxe.input.bind_mouse("jump", MouseButton.left); 
+	}
+	
+	override function onmousedown(event:MouseEvent)
+	{
+		
 	}
 }
