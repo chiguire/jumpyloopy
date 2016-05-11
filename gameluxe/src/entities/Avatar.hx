@@ -26,7 +26,9 @@ class TrajectoryMovement extends Component
 	
 	override function onmousedown(event:MouseEvent)
 	{
-		Actuate.tween(pos, 1.0, event.pos).ease(luxe.tween.easing.Bounce.easeIn);
+		Actuate.tween(pos, 1.0, {x:event.pos.x});
+		Actuate.tween(pos, 1.0, {y:event.pos.y}).ease(luxe.tween.easing.Bounce.easeIn);
+		trace(event.pos);
 	}
 }
  
