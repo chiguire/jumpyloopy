@@ -2,6 +2,7 @@ package gamestates;
 
 import data.GameInfo;
 import entities.Avatar;
+import luxe.Camera;
 import luxe.Input.Key;
 import luxe.options.StateOptions;
 import luxe.States.State;
@@ -64,13 +65,16 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
+		trace(Luxe.camera.center);
+		
 		player_sprite = new Avatar({
 			name: 'Player',
 			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
 			uv: game_info.spritesheet_elements['bunny1_ready.png'],
-			pos: new Vector(150, 100),
-			size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
-			scene: scene,
+			pos: Luxe.screen.mid,
+			//size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
+			size: new Vector(24, 48),
+			//scene: scene,
 		});
 		
 		connect_input();
@@ -80,13 +84,14 @@ class GameState extends State
 		lanes.push(2 * Luxe.screen.width / 4.0);
 		lanes.push(3 * Luxe.screen.width / 4.0);
 		
-		player_sprite.pos.x = lanes[0];
+		//player_sprite.pos.x = lanes[0];
 		previous_lane = 0;
 		current_lane = 0;		
 	}
 	
 	override function update(dt:Float) 
 	{
+		
 		if (Luxe.input.inputpressed('a'))
 		{
 			current_lane = 0;
@@ -102,7 +107,9 @@ class GameState extends State
 		
 		if (current_lane != previous_lane)
 		{
-			Actuate.tween(player_sprite.pos, 0.1, { x: lanes[current_lane] });
+			//Actuate.tween(player_sprite.pos, 0.1, { x: lanes[current_lane] });
+			trace(Luxe.camera.pos);
+			Actuate.tween(Luxe.camera.pos, 0.1, { x: lanes[current_lane] });
 		}
 		
 		previous_lane = current_lane;
@@ -115,6 +122,12 @@ class GameState extends State
 		Luxe.input.bind_key('b', Key.key_w);
 		Luxe.input.bind_key('c', Key.key_e);
 		
-		Luxe.input.bind_key("jump", Key.space);
+		//Luxe.input.bind_key("jump", Key.space);
+		Luxe.input.bind_mouse("jump", MouseButton.left); 
+	}
+	
+	override function onmousedown(event:MouseEvent)
+	{
+		
 	}
 }

@@ -21,7 +21,7 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="no-compilation&#xA;windows&#xA;arch-32&#xA;desktop&#xA;debug&#xA;hxcpp_static_std&#xA;snow_no_main&#xA;luxe_native&#xA;parcel_thread_disabled&#xA;snow_native&#xA;luxe&#xA;mint&#xA;hxcpp&#xA;snow&#xA;linc_openal&#xA;linc_timestamp&#xA;linc_stb&#xA;linc_ogg&#xA;linc_sdl&#xA;linc_opengl" />
+    <option directives="no-compilation&#xA;windows&#xA;arch-32&#xA;desktop&#xA;debug&#xA;hxcpp_static_std&#xA;snow_no_main&#xA;luxe_native&#xA;parcel_thread_disabled&#xA;snow_native&#xA;luxe&#xA;hxcpp&#xA;snow&#xA;linc_openal&#xA;linc_timestamp&#xA;linc_stb&#xA;linc_ogg&#xA;linc_sdl&#xA;linc_opengl" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="luxe.Game" />
@@ -31,7 +31,6 @@
   <!-- haxelib libraries -->
   <haxelib>
     <library name="hxcpp" />
-    <library name="mint" />
     <library name="linc_opengl" />
     <library name="linc_sdl" />
     <library name="linc_ogg" />
