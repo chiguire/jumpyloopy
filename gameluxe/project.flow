@@ -1,11 +1,11 @@
 {
   project : {
-    name : 'empty',
+    name : 'jumpyloopy',
     version : '1.0.0',
     author : 'luxeengine',
 
     app : {
-      name : 'luxe_empty',
+      name : 'jumpyloopy',
       package : 'com.luxeengine.empty',
       main : 'Main'
     },
@@ -13,6 +13,7 @@
     build : {
       dependencies : {
         luxe : '*',
+		mint : '*',
       }
     },
 

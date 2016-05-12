@@ -10,6 +10,7 @@ import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Input;
+import ui.Button;
 	
 /**
  * ...
@@ -24,6 +25,7 @@ class MenuState extends State
 	private var play_text : Text;
 	private var scores_text : Text;
 	private var credits_text : Text;
+	private var play_button : Button;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -96,6 +98,19 @@ class MenuState extends State
 			pos: new Vector(10, 135),
 			color: new Color(255, 255, 255),
 			scene: scene,
+		});
+		
+		play_button = new Button({
+			pos: new Vector(200, 200),
+			text: {
+				text: "This is the pencil",
+				point_size: 12
+			},
+		});
+		
+		play_button.events.listen('button.clicked', function (e:ButtonEvent)
+		{
+			machine.set("GameState");
 		});
 	}
 	
