@@ -60,6 +60,7 @@ class MenuState extends State
 		play_text = null;
 		scores_text = null;
 		credits_text = null;
+		play_button = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -106,6 +107,7 @@ class MenuState extends State
 				text: "This is the pencil",
 				point_size: 12
 			},
+			scene: scene,
 		});
 		
 		play_button.events.listen('button.clicked', function (e:ButtonEvent)

@@ -72,6 +72,18 @@ class Button extends Entity
 		clicked_inside = false;
 	}
 	
+	public override function ondestroy()
+	{
+		text.destroy();
+		rectangle.drop();
+		button_opts = null;
+		text = null;
+		rectangle = null;
+		_rect = null;
+		
+		super.ondestroy();
+	}
+	
 	public override function onmousemove(event:MouseEvent)
 	{
 		if (!clicked_inside)
