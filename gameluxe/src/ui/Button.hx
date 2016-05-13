@@ -74,8 +74,6 @@ class Button extends Entity
 	
 	public override function ondestroy()
 	{
-		text.destroy();
-		rectangle.drop();
 		button_opts = null;
 		text = null;
 		rectangle = null;
