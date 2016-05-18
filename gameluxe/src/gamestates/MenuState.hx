@@ -57,6 +57,7 @@ class MenuState extends State
 		scene.destroy();
 		scene = null;
 		title_text = null;
+		
 		play_button = null;
 		scores_button = null;
 		credits_button = null;

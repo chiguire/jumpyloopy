@@ -2,6 +2,7 @@ package gamestates;
 
 import data.GameInfo;
 import entities.Avatar;
+import entities.Level;
 import luxe.Camera;
 import luxe.Input.Key;
 import luxe.options.StateOptions;
@@ -20,9 +21,9 @@ import luxe.Scene;
 class GameState extends State
 {
 	private var game_info : GameInfo;
-	
 	private var scene : Scene;
 	
+	private var level: Level;
 	private var player_sprite: Avatar;
 	
 	var lanes : Array<Float>;
@@ -56,6 +57,7 @@ class GameState extends State
 		scene.empty();
 		scene.destroy();
 		player_sprite = null;
+		level = null;
 		scene = null;
 	}
 	
@@ -65,7 +67,7 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
-		trace(Luxe.camera.center);
+		level = new Level();
 		
 		player_sprite = new Avatar({
 			name: 'Player',
