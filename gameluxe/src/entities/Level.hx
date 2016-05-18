@@ -22,14 +22,14 @@ class Level extends Entity
 	override public function init() 
 	{
 		// create lanes geometry
-		var rect = Luxe.draw.rectangle({
+		/*var rect = Luxe.draw.rectangle({
             x : 10, y : 10,
             depth: -2,
             w : Luxe.screen.w - 20,
             h : Luxe.screen.h - 20,
             color : new Color(0.4,0.4,0.4)
         });
-		
+		*/
 		
 	}
 	
