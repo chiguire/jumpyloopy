@@ -53,6 +53,9 @@ class MenuState extends State
 	{
 		trace("Exiting menu");
 		
+		play_button.destroy();
+		scores_button.destroy();
+		credits_button.destroy();
 		scene.empty();
 		scene.destroy();
 		scene = null;
@@ -77,7 +80,8 @@ class MenuState extends State
 		});
 		
 		play_button = new Button({
-			pos: new Vector(10, 85),
+			name: "Play",
+			pos: new Vector(10, 110),
 			text: {
 				text: "Play",
 				point_size: 12
@@ -86,7 +90,8 @@ class MenuState extends State
 		});
 		
 		scores_button = new Button({
-			pos: new Vector(10, 110),
+			name: "Scores",
+			pos: new Vector(10, 160),
 			text: {
 				text: "Scores",
 				point_size: 12,
@@ -95,7 +100,8 @@ class MenuState extends State
 		});
 		
 		credits_button = new Button({
-			pos: new Vector(10, 135),
+			name: "Credits",
+			pos: new Vector(10, 210),
 			text: {
 				text: "Credits",
 				point_size: 12,
