@@ -59,7 +59,7 @@ class Button extends Entity
 			point_size: _options.text.point_size,
 			line_spacing: _options.text.line_spacing,
 			letter_spacing: _options.text.letter_spacing,
-			scene: _options.scene,
+			//scene: _options.scene,
 		});
 		
 		_rect = new Rectangle(_options.pos.x, _options.pos.y, button_border_x*2 + text.geom.text_width, button_border_y*2 + text.geom.text_height);
@@ -69,7 +69,7 @@ class Button extends Entity
 			depth: -1,
 			rect: _rect,
 			color: if (_options.background_out != null) _options.background_over else default_background_out,
-			scene: _options.scene,
+			//scene: _options.scene,
 		});
 		
 		clicked_inside = false;
@@ -77,13 +77,13 @@ class Button extends Entity
 	
 	public override function ondestroy()
 	{
-		_scene.empty();
-		_scene.destroy();
+		//_scene.empty();
+		//_scene.destroy();
 		button_opts = null;
 		text = null;
 		rectangle = null;
 		_rect = null;
-		_scene = null;
+		//_scene = null;
 		
 		super.ondestroy();
 	}
