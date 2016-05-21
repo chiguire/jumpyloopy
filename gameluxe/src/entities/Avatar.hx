@@ -1,5 +1,6 @@
 package entities;
 
+import entities.Level.LevelInitEvent;
 import luxe.Component;
 import luxe.Input.MouseEvent;
 import luxe.Timer;
@@ -16,14 +17,11 @@ import luxe.tween.easing.Bounce;
  */
 class TrajectoryMovement extends Component
 {
-	var timer:snow.api.Timer;
+	public var nextPos = new Vector();
 	
-	var nextPos:Vector;
 	override function init()
 	{
-		timer = Luxe.timer.schedule(2.5, doJump, true);
 		
-		nextPos = pos;
 	}
 	
 	override function update(dt:Float)
@@ -35,23 +33,23 @@ class TrajectoryMovement extends Component
 	{
 		//Actuate.tween(pos, 1.0, {x:event.pos.x});
 		//Actuate.tween(pos, 1.0, {y:event.pos.y}).ease(luxe.tween.easing.Bounce.easeIn);
-		trace(event.pos);
+		//trace(event.pos);
 		
-		nextPos = event.pos.clone();
+		//nextPos = event.pos.clone();
 	}
 	
-	function doJump()
+	public function doJump()
 	{
 		if (!nextPos.equals(pos))
 		{
 			Actuate.tween(pos, 1.25, {x:nextPos.x});
-			Actuate.tween(pos, 1.25, {y:nextPos.y}).ease(luxe.tween.easing.Bounce.easeIn);
+			Actuate.tween(pos, 1.25, { y:nextPos.y } ).ease(luxe.tween.easing.Bounce.easeIn);
 		}
 		else
 		{
 			var motionPath = new MotionPath();
 			motionPath.line(pos.x, pos.y);
-			motionPath.line(pos.x, pos.y - 50);
+			motionPath.line(pos.x, pos.y - cast(entity, Avatar).jump_height * 1.25);
 			motionPath.line(pos.x, pos.y);
 		
 			Actuate.motionPath(pos, 1.25, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Bounce.easeIn);
@@ -61,15 +59,39 @@ class TrajectoryMovement extends Component
  
 class Avatar extends Sprite
 {
+	/// components
+	var trajectory_movement : TrajectoryMovement;
+	
+	public var jump_height : Float;
+	
 	public function new(options:SpriteOptions) 
 	{		
 		super(options);
 		
-		add( new TrajectoryMovement( { name:"TrajectoryMovement" } ));
+		// components
+		trajectory_movement = new TrajectoryMovement( { name:"TrajectoryMovement" } );
+		add(trajectory_movement);
+		
+		// events
+		Luxe.events.listen("Level.Init", OnLevelInit );
+		Luxe.events.listen("player_move_event", OnPlayerMove );
 	}
 	
 	override function update(dt:Float)
 	{
 		
+	}
+	
+	function OnLevelInit( e:LevelInitEvent )
+	{
+		pos.set_xy(e.pos.x, e.pos.y - size.y / 2);
+		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
+		jump_height = e.beat_height;
+	}
+	
+	function OnPlayerMove(e)
+	{
+		trajectory_movement.nextPos.y -= jump_height;
+		trajectory_movement.doJump();
 	}
 }
