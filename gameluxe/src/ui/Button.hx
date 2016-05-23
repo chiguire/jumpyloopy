@@ -8,6 +8,7 @@ import luxe.Entity;
 import luxe.Input.MouseEvent;
 import luxe.Rectangle;
 import luxe.Text;
+import luxe.Visual;
 import luxe.options.EntityOptions;
 import options.ButtonOptions;
 import phoenix.geometry.RectangleGeometry;
@@ -22,9 +23,11 @@ typedef ButtonEvent = {
  */
 class Button extends Entity
 {	
+	private var _scene : Scene;
+	
 	private var button_opts : ButtonOptions;
 
-	private var rectangle : RectangleGeometry;
+	private var rectangle : Visual;
 	
 	private var text : Text;
 	
@@ -59,17 +62,17 @@ class Button extends Entity
 			point_size: _options.text.point_size,
 			line_spacing: _options.text.line_spacing,
 			letter_spacing: _options.text.letter_spacing,
-			//scene: _options.scene,
+			scene: _options.scene,
 		});
 		
 		_rect = new Rectangle(_options.pos.x, _options.pos.y, button_border_x*2 + text.geom.text_width, button_border_y*2 + text.geom.text_height);
 		trace(_rect);
 		
-		rectangle = Luxe.draw.rectangle({
+		rectangle = new Visual({
 			depth: -1,
-			rect: _rect,
+			scene: _options.scene,
 			color: if (_options.background_out != null) _options.background_over else default_background_out,
-			//scene: _options.scene,
+			geometry: Luxe.draw.rectangle({ rect: _rect }),
 		});
 		
 		clicked_inside = false;
@@ -77,13 +80,11 @@ class Button extends Entity
 	
 	public override function ondestroy()
 	{
-		//_scene.empty();
-		//_scene.destroy();
 		button_opts = null;
 		text = null;
 		rectangle = null;
 		_rect = null;
-		//_scene = null;
+		_scene = null;
 		
 		super.ondestroy();
 	}
@@ -96,29 +97,29 @@ class Button extends Entity
 			{
 				rectangle.color = if (button_opts.background_over != null) button_opts.background_over else default_background_over;
 				text.geom.color = if (button_opts.color_over != null) button_opts.color_over else default_color_over;
-				rectangle.set_xywh(button_opts.pos.x - (over_scale / 2) * (text.geom.text_width + button_border_x * 2), 
-								button_opts.pos.y - (over_scale / 2) * (text.geom.text_height + button_border_y * 2), 
-								(text.geom.text_width + button_border_x * 2) * (1.0 + over_scale), 
-								(text.geom.text_height + button_border_y * 2) * (1.0 + over_scale));
+				//rectangle.set_xywh(button_opts.pos.x - (over_scale / 2) * (text.geom.text_width + button_border_x * 2), 
+				//				button_opts.pos.y - (over_scale / 2) * (text.geom.text_height + button_border_y * 2), 
+				//				(text.geom.text_width + button_border_x * 2) * (1.0 + over_scale), 
+				//				(text.geom.text_height + button_border_y * 2) * (1.0 + over_scale));
 			}
 			else
 			{
 				rectangle.color = if (button_opts.background_out != null) button_opts.background_out else default_background_out;
 				text.geom.color = if (button_opts.color_out != null) button_opts.color_out else default_color_out;
-				rectangle.set_xywh(button_opts.pos.x, 
-								button_opts.pos.y, 
-								(text.geom.text_width + button_border_x * 2), 
-								(text.geom.text_height + button_border_y * 2));
+				//rectangle.set_xywh(button_opts.pos.x, 
+				//				button_opts.pos.y, 
+				//				(text.geom.text_width + button_border_x * 2), 
+				//				(text.geom.text_height + button_border_y * 2));
 			}
 		}
 	}
 	
 	public override function onmousedown(event:MouseEvent)
 	{
-		rectangle.set_xywh(button_opts.pos.x, 
-						   button_opts.pos.y, 
-						   (text.geom.text_width + button_border_x * 2), 
-						   (text.geom.text_height + button_border_y * 2));
+		//rectangle.set_xywh(button_opts.pos.x, 
+		//				   button_opts.pos.y, 
+		//				   (text.geom.text_width + button_border_x * 2), 
+		//				   (text.geom.text_height + button_border_y * 2));
 		if (_rect.point_inside(event.pos))
 		{
 			rectangle.color = if (button_opts.background_click != null) button_opts.background_click else default_background_click;
