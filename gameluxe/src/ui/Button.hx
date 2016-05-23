@@ -66,13 +66,14 @@ class Button extends Entity
 		});
 		
 		_rect = new Rectangle(_options.pos.x, _options.pos.y, button_border_x*2 + text.geom.text_width, button_border_y*2 + text.geom.text_height);
-		trace(_rect);
 		
 		rectangle = new Visual({
 			depth: -1,
 			scene: _options.scene,
 			color: if (_options.background_out != null) _options.background_over else default_background_out,
 			geometry: Luxe.draw.rectangle({ rect: _rect }),
+			origin: new Vector(_rect.w / 2.0, _rect.h / 2.0),
+			pos: new Vector(_rect.w / 2.0, _rect.h / 2.0),
 		});
 		
 		clicked_inside = false;
@@ -97,29 +98,20 @@ class Button extends Entity
 			{
 				rectangle.color = if (button_opts.background_over != null) button_opts.background_over else default_background_over;
 				text.geom.color = if (button_opts.color_over != null) button_opts.color_over else default_color_over;
-				//rectangle.set_xywh(button_opts.pos.x - (over_scale / 2) * (text.geom.text_width + button_border_x * 2), 
-				//				button_opts.pos.y - (over_scale / 2) * (text.geom.text_height + button_border_y * 2), 
-				//				(text.geom.text_width + button_border_x * 2) * (1.0 + over_scale), 
-				//				(text.geom.text_height + button_border_y * 2) * (1.0 + over_scale));
+				//rectangle.scale.set_xy(1.0 + over_scale, 1.0  + over_scale);
 			}
 			else
 			{
 				rectangle.color = if (button_opts.background_out != null) button_opts.background_out else default_background_out;
 				text.geom.color = if (button_opts.color_out != null) button_opts.color_out else default_color_out;
-				//rectangle.set_xywh(button_opts.pos.x, 
-				//				button_opts.pos.y, 
-				//				(text.geom.text_width + button_border_x * 2), 
-				//				(text.geom.text_height + button_border_y * 2));
+				//rectangle.scale.set_xy(1.0, 1.0);
 			}
 		}
 	}
 	
 	public override function onmousedown(event:MouseEvent)
 	{
-		//rectangle.set_xywh(button_opts.pos.x, 
-		//				   button_opts.pos.y, 
-		//				   (text.geom.text_width + button_border_x * 2), 
-		//				   (text.geom.text_height + button_border_y * 2));
+		//rectangle.scale.set_xy(1.0, 1.0);
 		if (_rect.point_inside(event.pos))
 		{
 			rectangle.color = if (button_opts.background_click != null) button_opts.background_click else default_background_click;
