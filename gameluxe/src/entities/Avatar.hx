@@ -1,5 +1,6 @@
 package entities;
 
+import components.GameCameraComponent;
 import entities.Level.LevelInitEvent;
 import luxe.Component;
 import luxe.Input.MouseEvent;
@@ -61,6 +62,7 @@ class Avatar extends Sprite
 {
 	/// components
 	var trajectory_movement : TrajectoryMovement;
+	var gamecamera : GameCameraComponent;
 	
 	public var jump_height : Float;
 	
@@ -69,7 +71,9 @@ class Avatar extends Sprite
 		super(options);
 		
 		// components
+		gamecamera = new GameCameraComponent({name: "GameCamera"});
 		trajectory_movement = new TrajectoryMovement( { name:"TrajectoryMovement" } );
+		add(gamecamera);
 		add(trajectory_movement);
 		
 		// events
