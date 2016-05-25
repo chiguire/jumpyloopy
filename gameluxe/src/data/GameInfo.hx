@@ -2,7 +2,15 @@ package data;
 
 import luxe.Rectangle;
 
+typedef SpritesheetElements = Map<String, Rectangle>;
+typedef ScoreList = Array<{name:String, score:Int}>;
+typedef VolumeUnit = Float;
+
 typedef GameInfo =
 {
-	spritesheet_elements : Map<String, Rectangle>,
+	spritesheet_elements : SpritesheetElements,
+	score_list : ScoreList,
+	music_volume : VolumeUnit,
+	effects_volume : VolumeUnit,
+	?current_score : Int,
 };

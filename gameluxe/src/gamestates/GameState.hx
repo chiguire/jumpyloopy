@@ -24,6 +24,7 @@ class GameState extends State
 	private var scene : Scene;
 	
 	private var level: Level;
+	private var sky_sprite : Sprite;
 	private var player_sprite: Avatar;
 	
 	var lanes : Array<Float>;
@@ -46,8 +47,8 @@ class GameState extends State
 	
 	override function onkeyup(e:KeyEvent) 
 	{
-		if(e.keycode == Key.escape)
-			machine.set("MenuState");
+		//if (e.keycode == Key.escape)
+		//	machine.set("MenuState");
 	}
 	
 	override function onleave<T>(d:T)
@@ -69,6 +70,15 @@ class GameState extends State
 		
 		level = new Level();
 		
+		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
+		
+		sky_sprite = new Sprite({
+			name: 'Sky',
+			texture: sky_texture,
+			pos: Luxe.screen.mid,
+			size: new Vector(Luxe.screen.w, Luxe.screen.h)
+		});
+		
 		player_sprite = new Avatar({
 			name: 'Player',
 			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
@@ -76,7 +86,7 @@ class GameState extends State
 			pos: Luxe.screen.mid,
 			//size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
 			size: new Vector(24, 48),
-			//scene: scene,
+			scene: scene,
 		});
 		
 		connect_input();
