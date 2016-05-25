@@ -50,14 +50,14 @@ class Main extends luxe.Game
 		fft_filter = new FFTFilter(buffer, SAMPLE_RATE * 1000);
 		
 		var load = snow.api.Promise.all([
-            Luxe.resources.load_audio('assets/timemachine.ogg')
+            Luxe.resources.load_audio("assets/317365_frankum_tecno-pop-base-and-leads.ogg")
         ]);
 		
 		load.then(function(_) {
 
             //go away
             //box.color.tween(2, {a:0});
-			music = Luxe.resources.audio('assets/timemachine.ogg');
+			music = Luxe.resources.audio("assets/317365_frankum_tecno-pop-base-and-leads.ogg");
 			music_handle = Luxe.audio.loop(music.source);
 			
 			trace("Format: " + music.source.data.format);

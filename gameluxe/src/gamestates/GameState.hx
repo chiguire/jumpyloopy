@@ -2,6 +2,7 @@ package gamestates;
 
 import data.GameInfo;
 import entities.Avatar;
+import entities.BeatManager;
 import entities.Level;
 import luxe.Camera;
 import luxe.Input.Key;
@@ -24,7 +25,11 @@ class GameState extends State
 	private var scene : Scene;
 	
 	private var level: Level;
+
 	private var sky_sprite : Sprite;
+
+	private var beat_manager: BeatManager;
+
 	private var player_sprite: Avatar;
 	
 	var lanes : Array<Float>;
@@ -69,6 +74,8 @@ class GameState extends State
 		scene = new Scene("GameScene");
 		
 		level = new Level();
+		beat_manager = new BeatManager();
+		beat_manager.load_song();
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
 		
