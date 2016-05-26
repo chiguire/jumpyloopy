@@ -6,6 +6,7 @@ import entities.BeatManager;
 import entities.Level;
 import luxe.Camera;
 import luxe.Input.Key;
+import luxe.Rectangle;
 import luxe.options.StateOptions;
 import luxe.States.State;
 
@@ -14,6 +15,7 @@ import phoenix.Vector;
 import luxe.Input;
 import luxe.Sprite;
 import luxe.Scene;
+import phoenix.Texture;
 
 /**
  * ...
@@ -35,6 +37,8 @@ class GameState extends State
 	var lanes : Array<Float>;
 	var previous_lane : Int;
 	var current_lane : Int;
+	
+	var sky_uv : Rectangle;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -78,11 +82,16 @@ class GameState extends State
 		beat_manager.load_song();
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
+		sky_texture.clamp_s = ClampType.repeat;
+		sky_texture.clamp_t = ClampType.repeat;
+		
+		sky_uv = new Rectangle(0, 0, Luxe.screen.width, Luxe.screen.height);
 		
 		sky_sprite = new Sprite({
 			name: 'Sky',
 			texture: sky_texture,
 			pos: Luxe.screen.mid,
+			uv: sky_uv,
 			size: new Vector(Luxe.screen.w, Luxe.screen.h)
 		});
 		
@@ -130,6 +139,11 @@ class GameState extends State
 			trace(Luxe.camera.pos);
 			Actuate.tween(Luxe.camera.pos, 0.1, { x: lanes[current_lane] });
 		}
+		
+		sky_uv.set((Luxe.camera.pos.x - Luxe.screen.width/2.0), (Luxe.camera.pos.y - Luxe.screen.height/2.0), sky_uv.w, sky_uv.h);
+		//trace(sky_uv);
+		sky_sprite.uv.set(sky_uv.x, sky_uv.y, sky_uv.w, sky_uv.h);
+		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
 		
 		previous_lane = current_lane;
 	}
