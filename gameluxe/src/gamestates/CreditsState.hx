@@ -8,6 +8,7 @@ import luxe.Text;
 import luxe.Input;
 import luxe.Vector;
 import luxe.Color;
+import ui.Button;
 
 /**
  * ...
@@ -21,7 +22,8 @@ class CreditsState extends State
 	private var title_text : Text;
 	private var play_text : Text;
 	private var scores_text : Text;
-	private var return_text : Text;
+	
+	private var return_button : Button;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -45,16 +47,17 @@ class CreditsState extends State
 	{
 		trace("Exiting Credits");
 		
-		return_text.destroy();
+		return_button.destroy();
 		scores_text.destroy();
 		play_text.destroy();
 		title_text.destroy();
+		scene.empty();
 		scene.destroy();
 		scene = null;
 		title_text = null;
 		play_text = null;
 		scores_text = null;
-		return_text = null;
+		return_button = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -87,20 +90,20 @@ class CreditsState extends State
 			scene: scene,
 		});
 		
-		return_text = new Text({
-			text: "Return to Menu",
-			point_size: 18,
-			pos: new Vector(10, 135),
-			color: new Color(255, 255, 255),
+		return_button = new Button({
+			name: "Return",
+			pos: new Vector(Luxe.screen.width - 110, Luxe.screen.height - 50),
+			text: {
+				text: "Return",
+				point_size: 12,
+			},
 			scene: scene,
+		});
+		
+		return_button.events.listen('button.clicked', function (e:ButtonEvent)
+		{
+			machine.set("MenuState");
 		});
 	}
 	
-	override function onmousedown(event:MouseEvent)
-	{
-		if (return_text.point_inside(event.pos))
-		{
-			machine.set("MenuState");
-		}
-	}
 }

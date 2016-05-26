@@ -118,7 +118,7 @@ class MenuState extends State
 		
 		scores_button.events.listen('button.clicked', function (e:ButtonEvent)
 		{
-			machine.set("ScoresState");
+			machine.set("ScoreState");
 		});
 		
 		credits_button.events.listen('button.clicked', function (e:ButtonEvent)
