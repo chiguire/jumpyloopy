@@ -21,7 +21,7 @@ class BeatManager extends Entity
 	var audio_data : Uint8Array;
 	
 	/// constants
-	var 
+	var instant_interval = 1024;
 	
 	public function new(?_options:EntityOptions) 
 	{
