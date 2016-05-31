@@ -13,6 +13,11 @@ import snow.api.buffers.Uint8Array;
  * ...
  * @author ...
  */
+typedef BeatEvent =
+{
+	interval : Float
+};
+ 
 class BeatManager extends Entity
 {
 	private var music: AudioResource;
@@ -48,17 +53,17 @@ class BeatManager extends Entity
 		
 	}
 	
+	var request_next_beat = false;
+	var next_beat_time = 0.0;
 	override function update(dt:Float)
 	{
 		var audio_time = Luxe.audio.position_of(music_handle);
 		// search for the closest beat
-		var curr_beat_time = 0.0;
-		var request_next_beat = false;
-		if (audio_time - curr_beat_time > 0.016)
+		
+		if (next_beat_time - audio_time < 0.016)
 		{
 			request_next_beat = true;
 		}
-		
 		
 		if (request_next_beat)
 		{
@@ -68,8 +73,15 @@ class BeatManager extends Entity
 				if (audio_time - beat_time < 0.016)
 				{
 					request_next_beat = false;
-					trace("beat " + beat_pos[i]);
-					curr_beat_time = beat_time;
+					//trace("beat " + beat_pos[i]);
+					
+					// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
+					var next_beat_pos = (i + 2) % beat_pos.length;
+					next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
+					
+					var jump_time = next_beat_time - audio_time;
+					Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+					
 					break;
 				}
 			}	

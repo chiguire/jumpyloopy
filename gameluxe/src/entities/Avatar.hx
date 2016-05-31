@@ -1,6 +1,7 @@
 package entities;
 
 import components.GameCameraComponent;
+import entities.BeatManager.BeatEvent;
 import entities.Level.LevelInitEvent;
 import luxe.Component;
 import luxe.Input.MouseEvent;
@@ -39,12 +40,14 @@ class TrajectoryMovement extends Component
 		//nextPos = event.pos.clone();
 	}
 	
-	public function doJump()
+	public function doJump(e:BeatEvent)
 	{
+		var T = e.interval;
+		
 		if (!nextPos.equals(pos))
 		{
-			Actuate.tween(pos, 1.25, {x:nextPos.x});
-			Actuate.tween(pos, 1.25, { y:nextPos.y } ).ease(luxe.tween.easing.Bounce.easeIn);
+			Actuate.tween(pos, T, {x:nextPos.x});
+			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Bounce.easeIn);
 		}
 		else
 		{
@@ -53,7 +56,7 @@ class TrajectoryMovement extends Component
 			motionPath.line(pos.x, pos.y - cast(entity, Avatar).jump_height * 1.25);
 			motionPath.line(pos.x, pos.y);
 		
-			Actuate.motionPath(pos, 1.25, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Bounce.easeIn);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Bounce.easeIn);
 		}
 	}
 }
@@ -93,9 +96,9 @@ class Avatar extends Sprite
 		jump_height = e.beat_height;
 	}
 	
-	function OnPlayerMove(e)
+	function OnPlayerMove( e:BeatEvent )
 	{
 		trajectory_movement.nextPos.y -= jump_height;
-		trajectory_movement.doJump();
+		trajectory_movement.doJump(e);
 	}
 }

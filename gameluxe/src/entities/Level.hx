@@ -78,7 +78,7 @@ class Level extends Entity
 		}, false );
 		
 		// fake beat
-		timer = Luxe.timer.schedule(2.5, send_player_move_event, true);
+		//timer = Luxe.timer.schedule(2.5, send_player_move_event, true);
 	}
 	
 	override public function update(dt:Float)
@@ -96,6 +96,6 @@ class Level extends Entity
 	
 	public function send_player_move_event()
 	{
-		Luxe.events.fire("player_move_event");
+		//Luxe.events.fire("player_move_event");
 	}
 }
