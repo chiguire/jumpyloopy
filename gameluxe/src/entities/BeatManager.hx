@@ -1,5 +1,6 @@
 package entities;
 
+import components.BeatManagerVisualizer;
 import haxe.PosInfos;
 import haxe.ds.Vector;
 import luxe.Audio.AudioHandle;
@@ -27,6 +28,8 @@ class BeatManager extends Entity
 	var audio_data_len = 0;
 	var audio_data : Uint8Array;
 	
+	public var audio_pos = 0;
+	
 	/// constants
 	var instant_interval = 1024;
 	static var energy_ratio = 1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
@@ -36,14 +39,14 @@ class BeatManager extends Entity
 	static var pulse_train_size = 108; 
 	
 	/// analysis
-	var num_instant_interval = 0;
-	var energy1024 : Array<Float>; 	// instant energy
-	var energy44100 : Array<Float>; // local energy
+	public var num_instant_interval = 0;
+	public var energy1024 : Array<Float>; 	// instant energy
+	public var energy44100 : Array<Float>; // local energy
 	var energy_peak: Array<Float>;
 	var tempo = 0;
-	var T_occ_max = 0;
-	var T_occ_avg = 0.0;
-	var beat : Vector<Float>;
+	public var T_occ_max = 0;
+	public var T_occ_avg = 0.0;
+	public var beat : Vector<Float>;
 	
 	var beat_pos(get, null) : Array<Int>;
 	
@@ -51,6 +54,7 @@ class BeatManager extends Entity
 	{
 		super(_options);
 		
+		add(new BeatManagerVisualizer());
 	}
 	
 	var request_next_beat = false;
@@ -58,6 +62,8 @@ class BeatManager extends Entity
 	override function update(dt:Float)
 	{
 		var audio_time = Luxe.audio.position_of(music_handle);
+		audio_pos = music.source.seconds_to_bytes(audio_time);
+		audio_pos = Std.int(audio_pos / instant_interval);
 		// search for the closest beat
 		
 		if (next_beat_time - audio_time < 0.016)
@@ -76,11 +82,14 @@ class BeatManager extends Entity
 					//trace("beat " + beat_pos[i]);
 					
 					// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
-					var next_beat_pos = (i + 2) % beat_pos.length;
+					var next_beat_pos = (i + 4) % beat_pos.length;
 					next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
 					
-					var jump_time = next_beat_time - audio_time;
-					Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+					if (next_beat_time - audio_time > 0)
+					{
+						var jump_time = next_beat_time - audio_time;
+						Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+					}
 					
 					break;
 				}
@@ -90,15 +99,17 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
+		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		
 		var load = snow.api.Promise.all([
-            Luxe.resources.load_audio("assets/music/317365_frankum_tecno-pop-base-and-leads.ogg")
+            Luxe.resources.load_audio(audio_name)
         ]);
 		
 		load.then(function(_) {
 
             //go away
             //box.color.tween(2, {a:0});
-			music = Luxe.resources.audio("assets/music/317365_frankum_tecno-pop-base-and-leads.ogg");
+			music = Luxe.resources.audio(audio_name);
 			music_handle = Luxe.audio.loop(music.source);
 			
 			trace("Format: " + music.source.data.format);
@@ -140,7 +151,10 @@ class BeatManager extends Entity
 		var audio_data16_left = new Array<Int>();
 		for ( i in 0...Std.int(audio_data16.length/2) )
 		{
-			audio_data16_left.push(audio_data16[i * 2]);
+			var data_left_channel = audio_data16[i * 2];
+			var data_right_channel = audio_data16[i * 2 + 1];
+			var val = (data_left_channel + data_right_channel)/2;
+			audio_data16_left.push(Std.int(val));
 		}
 		//trace(audio_data16_left);
 		
