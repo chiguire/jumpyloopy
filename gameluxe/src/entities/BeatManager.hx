@@ -28,7 +28,7 @@ class BeatManager extends Entity
 	var audio_data_len = 0;
 	var audio_data : Uint8Array;
 	
-	public var audio_pos = 0;
+	public var audio_pos = 0.0;
 	
 	/// constants
 	var instant_interval = 1024;
@@ -62,8 +62,7 @@ class BeatManager extends Entity
 	override function update(dt:Float)
 	{
 		var audio_time = Luxe.audio.position_of(music_handle);
-		audio_pos = music.source.seconds_to_bytes(audio_time);
-		audio_pos = Std.int(audio_pos / instant_interval);
+		audio_pos = audio_time / music.source.duration();
 		// search for the closest beat
 		
 		if (next_beat_time - audio_time < 0.016)

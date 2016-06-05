@@ -65,8 +65,8 @@ class BeatManagerVisualizer extends Component
 		Luxe.draw.line({
 			immediate : true,
 			depth : 2,
-            p0 : new Vector( offsetx + parent.audio_pos, offsety ),
-            p1 : new Vector( offsetx + parent.audio_pos, offsety + size.y ),
+            p0 : new Vector( offsetx + parent.audio_pos * size.x, offsety ),
+            p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
             color : new Color(0.5,0.2,0.2,1)
         });
 	}
