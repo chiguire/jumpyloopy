@@ -52,12 +52,16 @@ class BeatManager extends Entity
 	public var energy1024 : Array<Float>; 	// instant energy
 	public var energy44100 : Array<Float>; // local energy
 	public var energy_peak: Array<Float>;
-	public var conv : Vector<Float>;
+	
 	var tempo = 0;
 	public var T_occ_max = 0;
 	public var T_occ_avg = 0.0;
-	public var beat : Vector<Float>;
+	public var conv : Vector<Float>;
 	
+	// chunks 
+	var max_instant_intervals_per_chunk = 0;
+	
+	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
 	
 	/// renderer
