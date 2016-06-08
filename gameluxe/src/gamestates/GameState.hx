@@ -9,6 +9,7 @@ import luxe.Input.Key;
 import luxe.Rectangle;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import phoenix.Batcher;
 
 import luxe.tween.Actuate;
 import phoenix.Vector;
@@ -23,6 +24,11 @@ import phoenix.Texture;
  */
 class GameState extends State
 {
+	// UI View
+	var batcher_ui : Batcher;
+	var camera_ui : Camera;
+	
+	
 	private var game_info : GameInfo;
 	private var scene : Scene;
 	
@@ -77,8 +83,12 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
+		// create a view for UI rendering
+		camera_ui = new Camera({name: "camera_ui"});
+		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
+		
 		level = new Level();
-		beat_manager = new BeatManager();
+		beat_manager = new BeatManager({batcher : batcher_ui});
 		beat_manager.load_song();
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');

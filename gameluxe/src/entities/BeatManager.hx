@@ -7,6 +7,7 @@ import luxe.Audio.AudioHandle;
 import luxe.Entity;
 import luxe.options.EntityOptions;
 import luxe.resource.Resource.AudioResource;
+import phoenix.Batcher;
 import snow.api.buffers.Int16Array;
 import snow.api.buffers.Uint8Array;
 
@@ -18,9 +19,17 @@ typedef BeatEvent =
 {
 	interval : Float
 };
+
+typedef BeatManagerOptions =
+{
+	> EntityOptions,
+	var batcher : Batcher; // viewport
+};
  
 class BeatManager extends Entity
 {
+	var beatManagerVisualizer : BeatManagerVisualizer;
+	
 	private var music: AudioResource;
 	private var music_handle: luxe.Audio.AudioHandle;
 	
@@ -42,23 +51,38 @@ class BeatManager extends Entity
 	public var num_instant_interval = 0;
 	public var energy1024 : Array<Float>; 	// instant energy
 	public var energy44100 : Array<Float>; // local energy
-	var energy_peak: Array<Float>;
+	public var energy_peak: Array<Float>;
+	public var conv : Vector<Float>;
 	var tempo = 0;
 	public var T_occ_max = 0;
 	public var T_occ_avg = 0.0;
 	public var beat : Vector<Float>;
 	
-	var beat_pos(get, null) : Array<Int>;
+	public var beat_pos(default, null) : Array<Int>;
 	
-	public function new(?_options:EntityOptions) 
+	/// renderer
+	public var batcher: Batcher;
+	
+	public function new(?_options:BeatManagerOptions) 
 	{
 		super(_options);
 		
-		add(new BeatManagerVisualizer());
+		if (_options.batcher != null)
+		{
+			batcher = _options.batcher;
+		}
+		else
+		{
+			batcher = Luxe.renderer.batcher;
+		}
+		
+		beatManagerVisualizer = new BeatManagerVisualizer();
+		add(beatManagerVisualizer);
 	}
 	
 	var request_next_beat = false;
 	var next_beat_time = 0.0;
+	
 	override function update(dt:Float)
 	{
 		var audio_time = Luxe.audio.position_of(music_handle);
@@ -129,6 +153,8 @@ class BeatManager extends Entity
 			//Luxe.showConsole(true);
 			
 			process_audio();
+			
+			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});
 	}
 	
@@ -370,15 +396,16 @@ class BeatManager extends Entity
 		}
 				
 		// convolution with instant energy of the music
-		var conv = new Vector<Float>(num_instant_interval);
+		conv = new Vector<Float>(num_instant_interval);
 		var max_att = 0.0; 	// maximum attitude
 		var max_val = 0.0;
 		var max_val_idx = 0; 
-		for (i in 0...(num_instant_interval - pulse_train.length))
+		for (i in 0...(num_instant_interval))
 		{
 			// for each pulse train
 			for (j in 0...pulse_train.length)
 			{
+				var id = (i + j) % energy1024.length;
 				conv[i] = conv[i] + energy1024[i + j] * pulse_train[j];
 			}
 			
