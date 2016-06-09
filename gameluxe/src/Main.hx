@@ -40,11 +40,11 @@ class Main extends luxe.Game
 	override function config(config:luxe.GameConfig) {
 
 #if (web && sample)
-		config.window.width = 720;
-		config.window.height = 405;
+		config.window.width = 405;
+		config.window.height = 720;
 #else
-		config.window.width = 720;
-		config.window.height = 405;
+		config.window.width = 405;
+		config.window.height = 720;
 #end
 
 		config.preload.textures.push({id:'assets/image/darkPurple.png'});

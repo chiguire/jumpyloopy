@@ -41,7 +41,7 @@ class BeatManager extends Entity
 	
 	/// constants
 	var instant_interval = 1024;
-	static var energy_ratio = 1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
+	static var energy_ratio = 2.0;//1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
 	
 	// size of the pulse train for the convolution ( in a pack of 1024 ( 430 = 10sec ) )
 	// ?somehow we are using 108 which is roughly 2.5 sec here?
@@ -49,17 +49,23 @@ class BeatManager extends Entity
 	
 	/// analysis
 	public var num_instant_interval = 0;
-	public var energy1024 : Array<Float>; 	// instant energy
-	public var energy44100 : Array<Float>; // local energy
-	public var energy_peak: Array<Float>;
+	public var energy1024 : Vector<Float>; 	// instant energy
+	public var energy44100 : Vector<Float>; // local energy
+	public var energy_peak: Vector<Float>;
 	
-	var tempo = 0;
-	public var T_occ_max = 0;
-	public var T_occ_avg = 0.0;
+	
+	//public var tempo = 0;
+	//public var T_occ_max = 0;
+	//public var T_occ_avg = 0.0;
+	
 	public var conv : Vector<Float>;
 	
 	// chunks 
-	var max_instant_intervals_per_chunk = 0;
+	var max_instant_intervals_per_chunk = 43 * 15; // 15 sec per chunk
+	public var tempo_blocks : Vector<Int>;
+	public var T_occ_max_blocks : Vector<Int>;
+	public var T_occ_avg_blocks : Vector<Float>;
+	
 	
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
@@ -81,7 +87,7 @@ class BeatManager extends Entity
 		}
 		
 		beatManagerVisualizer = new BeatManagerVisualizer();
-		add(beatManagerVisualizer);
+		//add(beatManagerVisualizer);
 	}
 	
 	var request_next_beat = false;
@@ -126,7 +132,7 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";//"assets/music/260566_zagi2_pop-rock-loop-3.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
@@ -196,14 +202,14 @@ class BeatManager extends Entity
 		//trace(audio_data_query_result);
 		
 		// initialize inttermidiate buffers
-		energy1024 = new Array<Float>();
-		energy44100 = new Array<Float>();
+		energy1024 = new Vector<Float>(num_instant_interval);
+		energy44100 = new Vector<Float>(num_instant_interval);
 		
 		// calculate instant energy every 1024 samples, stored in the buffer
 		for ( i in 0...num_instant_interval)
 		{
 			var e = energy(audio_data16_left, i * instant_interval, 4096); // 4096? why not using 1024
-			energy1024.push(e);
+			energy1024[i] = e;
 		}
 		//trace(energy1024);
 		
@@ -212,11 +218,27 @@ class BeatManager extends Entity
 		// ratio energie1024 / energie44100
 		calculate_peak_energy();
 		
-		// calculate BPM
-		calculate_tempo();
+		conv = new Vector<Float>(num_instant_interval);
+		beat = new Vector<Float>(num_instant_interval);
 		
-		// calculate Beat Line
-		calculate_beat_line();
+		var num_chunks = Math.ceil(num_instant_interval / max_instant_intervals_per_chunk);
+		
+		tempo_blocks = new Vector<Int>(num_chunks);
+		T_occ_max_blocks = new Vector<Int>(num_chunks);
+		T_occ_avg_blocks = new Vector<Float>(num_chunks);
+		
+		for ( i in 0...num_chunks)
+		{
+			// calculate BPM
+			var begin = i * max_instant_intervals_per_chunk;
+			var end = Std.int(Math.min(((i + 1) * max_instant_intervals_per_chunk) - 1, num_instant_interval));
+			calculate_tempo(begin, end, i);
+			// calculate Beat Line
+			calculate_beat_line(begin, end, i);	
+		}
+		trace(tempo_blocks);
+
+		// store beat's position in a better format
 		calculate_beat_pos();
 	}
 	
@@ -244,7 +266,7 @@ class BeatManager extends Entity
 		{
 			sum += energy1024[i];
 		}
-		energy44100.push( sum / num_objects);
+		energy44100[0] = sum / num_objects;
 		
 		// optimization, here we keep the sum and shift one step at the time
 		// so we can reduce amount of unnecessary computation
@@ -260,7 +282,7 @@ class BeatManager extends Entity
 			// yielding the new sum for the next window
 			sum += energy1024[next_idx] - energy1024[prev_idx];
 			// then calculate this local average
-			energy44100.push(sum / num_objects);
+			energy44100[i] = sum / num_objects;
 		}
 		
 		//trace(energy44100);
@@ -270,7 +292,7 @@ class BeatManager extends Entity
 	{
 		// 21 came from (44100/1024)/2
 		// means, we compared where i (instant energy) is in the center pos of the window (local energy)
-		energy_peak = new Array<Float>();
+		energy_peak = new Vector<Float>(num_instant_interval);
 		var lookup_offset = 21;
 		for ( i in 0...num_instant_interval )
 		{
@@ -279,24 +301,24 @@ class BeatManager extends Entity
 			// -21 To center the energie1024 on the second energie44100
 			if ( energy1024[i] > energy_ratio * energy44100[local_avg_index] )
 			{
-				energy_peak.push(1.0);
+				energy_peak[i] = 1.0;
 			}
 			else
 			{
-				energy_peak.push(0.0);
+				energy_peak[i] = 0.0;
 			}
 		}
 		
 		//trace(energy_peak);
 	}
 	
-	function calculate_tempo()
+	function calculate_tempo(begin:Int, end:Int, chunk_id:Int)
 	{
 		// calculate time interval between peaks
 		var T = new Array<Float>();
 		var i_prev = 0;
 		
-		for ( i in 1...num_instant_interval )
+		for ( i in begin+1...end )
 		{
 			if ( energy_peak[i] == 1 && energy_peak[i - 1] == 0)
 			{
@@ -323,7 +345,7 @@ class BeatManager extends Entity
 		//trace(T_occurence);
 		
 		// finding a maximum occurance
-		T_occ_max = 0;
+		var T_occ_max = 0;
 		var occ_max = 0;
 		for (i in 0...T_occurence.length)
 		{
@@ -343,11 +365,14 @@ class BeatManager extends Entity
 		var occ_closest_neighbor = T_occurence[T_occ_closest_neighbor];
 		
 		var div = occ_max + occ_closest_neighbor;
-		T_occ_avg = (T_occ_max * occ_max + T_occ_closest_neighbor * occ_closest_neighbor) / div;
+		var T_occ_avg = (T_occ_max * occ_max + T_occ_closest_neighbor * occ_closest_neighbor) / div;
 		
 		// output the tempo
-		tempo = Std.int(60.0 / (T_occ_avg * (1024.0 / 44100.0)));
-		trace(tempo);
+		var tempo = Std.int(60.0 / (T_occ_avg * (1024.0 / 44100.0)));
+		
+		T_occ_max_blocks[chunk_id] = T_occ_max;
+		T_occ_avg_blocks[chunk_id] = T_occ_avg;
+		tempo_blocks[chunk_id] = tempo;
 	}
 	
 	function normalize(signal:Vector<Float>, max_att:Float)
@@ -379,10 +404,11 @@ class BeatManager extends Entity
 	}
 	
 	/// calculating beat line,  
-	function calculate_beat_line() 
+	function calculate_beat_line(begin:Int, end:Int, chunk_id:Int) 
 	{
 		// create pulse train
 		var pulse_train = new Vector<Float>(pulse_train_size);
+		var T_occ_avg = T_occ_avg_blocks[chunk_id];
 		var space = T_occ_avg;
 		
 		for (i in 0...pulse_train_size)
@@ -400,11 +426,10 @@ class BeatManager extends Entity
 		}
 				
 		// convolution with instant energy of the music
-		conv = new Vector<Float>(num_instant_interval);
 		var max_att = 0.0; 	// maximum attitude
 		var max_val = 0.0;
 		var max_val_idx = 0; 
-		for (i in 0...(num_instant_interval))
+		for (i in begin...end)
 		{
 			// for each pulse train
 			for (j in 0...pulse_train.length)
@@ -430,13 +455,13 @@ class BeatManager extends Entity
 		normalize(conv, max_att);
 		
         // Max ( this is mostly a beat ( not all the time ... ) )
-		beat = new Vector<Float>(num_instant_interval);
 		beat[max_val_idx] = 1.0;
 		
 		// process to the right
 		var search_radius = 2;
+		var T_occ_max = T_occ_max_blocks[chunk_id];
 		var right_idx = max_val_idx + T_occ_max;
-		while ( right_idx < num_instant_interval && conv[right_idx] > 0.0 )
+		while ( right_idx < end && conv[right_idx] > 0.0 )
 		{
 			// find local max
 			var max_conv_val_loc = search_max(conv, right_idx, search_radius);
