@@ -2,7 +2,7 @@ package entities;
 
 import components.GameCameraComponent;
 import entities.BeatManager.BeatEvent;
-import entities.Level.LevelInitEvent;
+import entities.Level.LevelStartEvent;
 import luxe.Component;
 import luxe.Input.MouseEvent;
 import luxe.Timer;
@@ -80,7 +80,7 @@ class Avatar extends Sprite
 		add(trajectory_movement);
 		
 		// events
-		Luxe.events.listen("Level.Init", OnLevelInit );
+		Luxe.events.listen("Level.Start", OnLevelStart );
 		Luxe.events.listen("player_move_event", OnPlayerMove );
 	}
 	
@@ -89,8 +89,9 @@ class Avatar extends Sprite
 		
 	}
 	
-	function OnLevelInit( e:LevelInitEvent )
+	function OnLevelStart( e:LevelStartEvent )
 	{
+		visible = true;
 		pos.set_xy(e.pos.x, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		jump_height = e.beat_height;

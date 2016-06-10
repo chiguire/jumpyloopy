@@ -1,9 +1,11 @@
 package entities;
 
 import components.BeatManagerVisualizer;
+import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
 import haxe.ds.Vector;
 import luxe.Audio.AudioHandle;
+import luxe.Audio.AudioState;
 import luxe.Entity;
 import luxe.options.EntityOptions;
 import luxe.resource.Resource.AudioResource;
@@ -89,6 +91,10 @@ class BeatManager extends Entity
 		
 		beatManagerVisualizer = new BeatManagerVisualizer();
 		add(beatManagerVisualizer);
+		
+		// events
+		Luxe.events.listen("Level.Init", OnLevelInit );
+		Luxe.events.listen("Level.Start", OnLevelStart );
 	}
 	
 	var request_next_beat = false;
@@ -96,7 +102,7 @@ class BeatManager extends Entity
 	
 	override function update(dt:Float)
 	{
-		if (music != null)
+		if (music != null && Luxe.audio.state_of(music_handle) == AudioState.as_playing)
 		{
 			var audio_time = Luxe.audio.position_of(music_handle);
 			audio_pos = audio_time / music.source.duration();
@@ -144,7 +150,17 @@ class BeatManager extends Entity
 		
 		t += Luxe.tick_delta;
 		trace("Beats Loading in progress... " + Luxe.time);
-		return Promise.resolve();
+		return Promise.reject();
+	}
+	
+	function OnLevelInit( e )
+	{
+		load_song();
+	}
+	
+	function OnLevelStart( e )
+	{
+		music_handle = Luxe.audio.loop(music.source);
 	}
 	
 	public function load_song()
@@ -161,7 +177,7 @@ class BeatManager extends Entity
             //go away
             //box.color.tween(2, {a:0});
 			music = Luxe.resources.audio(audio_name);
-			music_handle = Luxe.audio.loop(music.source);
+			music_handle = Luxe.audio.loop(music.source, 1.0, true);
 			
 			trace("Format: " + music.source.data.format);
 			trace("Channels: " + music.source.data.channels);

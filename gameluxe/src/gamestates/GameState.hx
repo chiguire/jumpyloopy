@@ -97,7 +97,7 @@ class GameState extends State
 		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
 		
 		beat_manager = new BeatManager({batcher : batcher_ui});		
-		level = new Level();
+		level = new Level({batcher_ui : batcher_ui});
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
 		sky_texture.clamp_s = ClampType.repeat;
@@ -122,20 +122,10 @@ class GameState extends State
 			size: new Vector(24, 48),
 			scene: scene,
 		});
+		player_sprite.visible = false;
 		
 		connect_input();
-		
-		// start audio analysis
-		var s = new Sprite( {
-                centered:false,
-                pos : new Vector( 0, 0 ),
-                size : new Vector( 20, Luxe.screen.h ),
-                color : new Color().rgb(0x121212),
-				batcher : batcher_ui
-            });
-		luxe.tween.Actuate.tween(s.scale, 0.4, {y:0} ).repeat().reflect();
-		
-		
+		/*
 		Luxe.timer.schedule(0.4, function()
 		{
 			var res = beat_manager.async_load();
@@ -143,9 +133,7 @@ class GameState extends State
 			{
 				trace("Beats Loading completed!");
 			});
-		});
-		
-		beat_manager.load_song();
+		}, true); */
 		
 		//lanes = new Array<Float>();
 		//lanes.push(1 * Luxe.screen.width / 4.0);

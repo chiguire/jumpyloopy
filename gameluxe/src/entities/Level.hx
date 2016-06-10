@@ -1,6 +1,9 @@
 package entities;
 
 import haxe.PosInfos;
+import luxe.Text;
+import phoenix.Batcher;
+import snow.api.Timer;
 import luxe.Color;
 import luxe.Entity;
 import luxe.Vector;
@@ -13,12 +16,17 @@ import phoenix.geometry.RectangleGeometry;
  * ...
  * @author WK
  */
-typedef LevelInitEvent = 
+typedef LevelStartEvent = 
 {
 	pos : Vector,
 	beat_height : Float
 }
 
+typedef LevelOptions = 
+{
+	> EntityOptions,
+	var batcher_ui : Batcher;
+}
  
 class Level extends Entity
 {
@@ -33,9 +41,17 @@ class Level extends Entity
 	
 	var timer:snow.api.Timer;
 	
-	public function new(?_options:EntityOptions) 
+	/// UI elements
+	var batcher_ui : Batcher;
+	var countdown_text : Text;
+	
+	public function new(?_options:LevelOptions) 
 	{
 		super(_options);
+		
+		batcher_ui = _options.batcher_ui;
+		
+		Luxe.events.listen("BeatManager.AudioLoaded", OnAudioLoad );
 	}
 	
 	override public function init() 
@@ -71,14 +87,16 @@ class Level extends Entity
 			beat_lines.push(obj);
 		}
 		
-		var player_startpos = get_player_start_pos();
-		Luxe.events.fire("Level.Init", { 
-			pos:player_startpos,
-			beat_height:beat_height 
-		}, false );
+		countdown_text = new Text({
+			text: "Jumpyloopy (please change this)",
+			point_size: 24,
+			pos: Luxe.screen.mid,
+			color: Color.random(),
+			batcher: batcher_ui
+		});
+		countdown_text.visible = false;
 		
-		// fake beat
-		//timer = Luxe.timer.schedule(2.5, send_player_move_event, true);
+		Luxe.events.fire("Level.Init", {}, false );
 	}
 	
 	override public function update(dt:Float)
@@ -97,5 +115,30 @@ class Level extends Entity
 	public function send_player_move_event()
 	{
 		//Luxe.events.fire("player_move_event");
+	}
+	
+	var countdown_timer : Timer;
+	var countdown_time = 3;
+	var countdown_counter = 0;
+	public function OnAudioLoad(e)
+	{
+		countdown_counter = countdown_time;
+		countdown_text.visible = true;
+		countdown_text.text = Std.string(countdown_counter);
+		
+		countdown_timer = Luxe.timer.schedule( 1.0, function()
+		{
+			countdown_counter--;
+			countdown_text.text = Std.string(countdown_counter);
+			if (countdown_counter == 0)
+			{
+				countdown_timer.stop();
+				var player_startpos = get_player_start_pos();
+				countdown_text.visible = false;
+				Luxe.events.fire("Level.Start", {pos:Luxe.screen.mid, beat_height:beat_height}, false );
+			}
+			//trace(countdown_counter);
+			
+		}, true);
 	}
 }

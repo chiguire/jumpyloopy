@@ -113,7 +113,10 @@ class BeatManagerVisualizer extends Component
 	{	
 		super.update(dt);
 		
-		audio_pos.p0.x = offsetx + parent.audio_pos * size.x;
-		audio_pos.p1.x = offsetx + parent.audio_pos * size.x;
+		if (audio_pos != null)
+		{
+			audio_pos.p0.x = offsetx + parent.audio_pos * size.x;
+			audio_pos.p1.x = offsetx + parent.audio_pos * size.x;
+		}
 	}
 }
