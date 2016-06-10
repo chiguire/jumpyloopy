@@ -5,8 +5,12 @@ import entities.Avatar;
 import entities.BeatManager;
 import entities.Level;
 import luxe.Camera;
+import luxe.Color;
 import luxe.Input.Key;
+import luxe.Parcel;
+import luxe.ParcelProgress;
 import luxe.Rectangle;
+import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import phoenix.Batcher;
@@ -24,7 +28,7 @@ import phoenix.Texture;
  */
 class GameState extends State
 {
-	// UI View
+	/// UI View
 	var batcher_ui : Batcher;
 	var camera_ui : Camera;
 	
@@ -45,6 +49,9 @@ class GameState extends State
 	var current_lane : Int;
 	
 	var sky_uv : Rectangle;
+	
+	/// Text
+	var processing_text : Text;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -81,15 +88,16 @@ class GameState extends State
 	{
 		trace("Entering game");
 		
-		scene = new Scene("GameScene");
+		//var parcel = new Parcel();
+		//var parcelProgress = new ParcelProgress();
 		
+		scene = new Scene("GameScene");
 		// create a view for UI rendering
 		camera_ui = new Camera({name: "camera_ui"});
 		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
 		
+		beat_manager = new BeatManager({batcher : batcher_ui});		
 		level = new Level();
-		beat_manager = new BeatManager({batcher : batcher_ui});
-		beat_manager.load_song();
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
 		sky_texture.clamp_s = ClampType.repeat;
@@ -117,14 +125,36 @@ class GameState extends State
 		
 		connect_input();
 		
-		lanes = new Array<Float>();
-		lanes.push(1 * Luxe.screen.width / 4.0);
-		lanes.push(2 * Luxe.screen.width / 4.0);
-		lanes.push(3 * Luxe.screen.width / 4.0);
+		// start audio analysis
+		var s = new Sprite( {
+                centered:false,
+                pos : new Vector( 0, 0 ),
+                size : new Vector( 20, Luxe.screen.h ),
+                color : new Color().rgb(0x121212),
+				batcher : batcher_ui
+            });
+		luxe.tween.Actuate.tween(s.scale, 0.4, {y:0} ).repeat().reflect();
+		
+		
+		Luxe.timer.schedule(0.4, function()
+		{
+			var res = beat_manager.async_load();
+			res.then(function()
+			{
+				trace("Beats Loading completed!");
+			});
+		});
+		
+		beat_manager.load_song();
+		
+		//lanes = new Array<Float>();
+		//lanes.push(1 * Luxe.screen.width / 4.0);
+		//lanes.push(2 * Luxe.screen.width / 4.0);
+		//lanes.push(3 * Luxe.screen.width / 4.0);
 		
 		//player_sprite.pos.x = lanes[0];
-		previous_lane = 0;
-		current_lane = 0;		
+		//previous_lane = 0;
+		//current_lane = 0;		
 	}
 	
 	override function update(dt:Float) 

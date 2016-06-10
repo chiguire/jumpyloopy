@@ -8,6 +8,7 @@ import luxe.Entity;
 import luxe.options.EntityOptions;
 import luxe.resource.Resource.AudioResource;
 import phoenix.Batcher;
+import snow.api.Promise;
 import snow.api.buffers.Int16Array;
 import snow.api.buffers.Uint8Array;
 
@@ -41,7 +42,7 @@ class BeatManager extends Entity
 	
 	/// constants
 	var instant_interval = 1024;
-	static var energy_ratio = 2.0;//1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
+	static var energy_ratio = 1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
 	
 	// size of the pulse train for the convolution ( in a pack of 1024 ( 430 = 10sec ) )
 	// ?somehow we are using 108 which is roughly 2.5 sec here?
@@ -61,7 +62,7 @@ class BeatManager extends Entity
 	public var conv : Vector<Float>;
 	
 	// chunks 
-	var max_instant_intervals_per_chunk = 43 * 15; // 15 sec per chunk
+	var max_instant_intervals_per_chunk = 43 * 20; // 15 sec per chunk
 	public var tempo_blocks : Vector<Int>;
 	public var T_occ_max_blocks : Vector<Int>;
 	public var T_occ_avg_blocks : Vector<Float>;
@@ -87,7 +88,7 @@ class BeatManager extends Entity
 		}
 		
 		beatManagerVisualizer = new BeatManagerVisualizer();
-		//add(beatManagerVisualizer);
+		add(beatManagerVisualizer);
 	}
 	
 	var request_next_beat = false;
@@ -95,44 +96,61 @@ class BeatManager extends Entity
 	
 	override function update(dt:Float)
 	{
-		var audio_time = Luxe.audio.position_of(music_handle);
-		audio_pos = audio_time / music.source.duration();
-		// search for the closest beat
-		
-		if (next_beat_time - audio_time < 0.016)
+		if (music != null)
 		{
-			request_next_beat = true;
-		}
-		
-		if (request_next_beat)
-		{
-			for ( i in 0...beat_pos.length )
+			var audio_time = Luxe.audio.position_of(music_handle);
+			audio_pos = audio_time / music.source.duration();
+			// search for the closest beat
+			
+			if (next_beat_time - audio_time < 0.016)
 			{
-				var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-				if (audio_time - beat_time < 0.016)
+				request_next_beat = true;
+			}
+			
+			if (request_next_beat)
+			{
+				for ( i in 0...beat_pos.length )
 				{
-					request_next_beat = false;
-					//trace("beat " + beat_pos[i]);
-					
-					// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
-					var next_beat_pos = (i + 4) % beat_pos.length;
-					next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
-					
-					if (next_beat_time - audio_time > 0)
+					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
+					if (audio_time - beat_time < 0.016)
 					{
-						var jump_time = next_beat_time - audio_time;
-						Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+						request_next_beat = false;
+						//trace("beat " + beat_pos[i]);
+						
+						// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
+						var next_beat_pos = (i + 4) % beat_pos.length;
+						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
+						
+						if (next_beat_time - audio_time > 0)
+						{
+							var jump_time = next_beat_time - audio_time;
+							Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+						}
+						
+						break;
 					}
-					
-					break;
-				}
-			}	
+				}	
+			}
 		}
+	}
+	
+	var t = 0.0;
+	public function async_load() : Promise
+	{
+		if (t > 8)
+		{
+			return Promise.resolve(true);
+		}
+		
+		t += Luxe.tick_delta;
+		trace("Beats Loading in progress... " + Luxe.time);
+		return Promise.resolve();
 	}
 	
 	public function load_song()
 	{
-		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";//"assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
