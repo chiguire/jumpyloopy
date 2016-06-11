@@ -109,7 +109,7 @@ class BeatManager extends Entity
 			audio_pos = audio_time / music.source.duration();
 			
 			// update display
-			beatManagerVisualizer.update_display(0, 430);
+			beatManagerVisualizer.update_display(audio_time);
 			
 			// search for the closest beat
 			
@@ -168,10 +168,16 @@ class BeatManager extends Entity
 		music_handle = Luxe.audio.loop(music.source);
 	}
 	
+	@:generic
+	public static function get_data<T>( container:Vector<T>, i:Int ) : T
+	{
+		return container[ i % container.length ];
+	}
+	
 	public function load_song()
 	{
-		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
-		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		//var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
@@ -300,7 +306,7 @@ class BeatManager extends Entity
 		var sum = 0.0;
 		// calculation of the first second
 		// 43 came from 44100/1024
-		var num_objects = 43; 
+		var num_objects = 43 * 5; 
 		for ( i in 0...num_objects )
 		{
 			sum += energy1024[i];
@@ -332,7 +338,7 @@ class BeatManager extends Entity
 		// 21 came from (44100/1024)/2
 		// means, we compared where i (instant energy) is in the center pos of the window (local energy)
 		energy_peak = new Vector<Float>(num_instant_interval);
-		var lookup_offset = 21;
+		var lookup_offset = 21 * 5;
 		for ( i in 0...num_instant_interval )
 		{
 			var local_avg_index = ((i - lookup_offset) + energy44100.length) % energy44100.length; // loop the lookup
