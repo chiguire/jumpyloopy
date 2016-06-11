@@ -4,59 +4,82 @@ import entities.BeatManager;
 import luxe.Color;
 import luxe.Component;
 import luxe.Entity;
-import luxe.Vector;
 import luxe.Visual;
 import luxe.options.ComponentOptions;
+import luxe.tween.easing.Quad;
 import phoenix.geometry.LineGeometry;
+import phoenix.geometry.QuadGeometry;
+
+import haxe.ds.Vector;
+import luxe.Vector;
+
+typedef HVector<T> = haxe.ds.Vector<T>;
+
 
 /**
  * ...
  * @author aik
  */
 
+typedef InitDisplayGeometry = 
+{
+	var container : HVector<QuadGeometry>;
+	var depth : Int;
+	var color : Color;
+};
  
 class BeatManagerVisualizer extends Component
 {
 	/// constants
 	var offsetx = 5;
+	var offsety = 0;
+	var display_interval = 10; // 10 sec
+	
+	/// helpers
+	var bar_size : Vector;
+	var num_bars_disp = 0;
+	
 	
 	var parent : BeatManager;
-	var size : Vector;
 	
-	var audio_pos : LineGeometry;
+	var size : Vector; 
+	
+	// display
+	var energy1024_disp	: HVector<QuadGeometry>;
+	var energy44100_disp : HVector<QuadGeometry>;
+	var energypeaks_disp : HVector<QuadGeometry>;
+	var conv_disp : HVector<QuadGeometry>;
+	var beats_disp : HVector<QuadGeometry>;
+	var audiopos_disp : LineGeometry;
 	
 	public function new(?_options:ComponentOptions) 
 	{
 		super(_options);
 	}
 	
-	override public function onadded() 
+	override public function init()
 	{
 		super.onadded();
-		Luxe.events.listen("BeatManager.AudioLoaded", OnAudioLoad );
-		
+	}
+	
+	override public function onadded() 
+	{
 		parent = cast( entity, BeatManager );
 		
+		num_bars_disp = Std.int(display_interval * BeatManager.num_samples_one_second / BeatManager.instant_interval);
 		size = new Vector( Luxe.screen.size.x - 10, 0.23 * Luxe.screen.size.y );
+		bar_size = new Vector( size.x / num_bars_disp, size.y );
+		
+		offsety = Std.int(0.75 * Luxe.screen.height);
+		
+		init_display();
 	}
 	
 	public function OnAudioLoad(e)
-	{
-		// get UI view
-		var viewport_ui = parent.batcher;
+	{	
+		/*
 		
-		var offsety = Std.int(0.75 * Luxe.screen.height);
-		var geom = Luxe.draw.rectangle({
-				batcher : viewport_ui,
-				depth : 1,
-                x : offsetx, y : offsety,
-                w : size.x,
-                h : size.y,
-				color : new Color(0.5, 0, 0, 1)
-            });
-			
 		// draw energy
-		var bar_size = new Vector( size.x / parent.num_instant_interval, size.y );
 		for(i in 0...parent.num_instant_interval)
 		Luxe.draw.box({
 				batcher : viewport_ui,
@@ -107,16 +130,86 @@ class BeatManagerVisualizer extends Component
             p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
             color : new Color(0.5,0.2,0.2,1)
         });
+		
+		*/
+	}
+			
+	public function init_display()
+	{
+		// draw into UI view
+		var viewport_ui = parent.batcher;
+		
+		// static border
+		var geom = Luxe.draw.rectangle(
+		{
+			batcher : viewport_ui,
+			depth : 1,
+			x : offsetx, y : offsety,
+			w : size.x,
+			h : size.y,
+			color : new Color(0.5, 0, 0, 1)
+		});
+				
+		function init_display_geometry(init_options : InitDisplayGeometry)
+		{
+			init_options.container = new HVector<QuadGeometry>(num_bars_disp);
+			for (i in 0...init_options.container.length)
+			{
+				init_options.container[i] = Luxe.draw.box({
+					batcher : viewport_ui,
+					depth : init_options.depth,
+					x : offsetx + i*bar_size.x, y : offsety + bar_size.y,
+					w : bar_size.x,
+					h : 0,//bar_size.y * parent.energy1024[i]/(65335*65335*2),
+					color : init_options.color
+				});
+			}
+		}
+				
+		// draw energy
+		
+		var init_options = { container: energy1024_disp, depth: 1, color : new Color(0.5, 0.5, 0, 1) };
+		init_display_geometry(init_options);
+		
+		init_options = { container: energy44100_disp, depth: 1, color : new Color(0.4, 0.4, 0, 1) };
+		init_display_geometry(init_options);
+		
+		init_options = { container: energypeaks_disp, depth: 1, color : new Color(0.75, 0.75, 0, 1) };
+		init_display_geometry(init_options);
+		
+		init_options = { container: conv_disp, depth: 1, color : new Color(0.0, 0.75, 0, 1) };
+		init_display_geometry(init_options);		
+		
+		init_options = { container: beats_disp, depth: 2, color : new Color(0.0, 0.5, 0, 1) };
+		init_display_geometry(init_options);
+				
+		// audio pos
+		audiopos_disp = Luxe.draw.line({
+			batcher : viewport_ui,
+			depth : 3,
+            p0 : new Vector( offsetx + parent.audio_pos * size.x, offsety ),
+            p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
+            color : new Color(0.5,0.2,0.2,1)
+        });
+	}
+	
+	public function update_display(beg:Int, end:Int)
+	{
+		trace(energy1024_disp);
+		for (i in 0...energy1024_disp.length)
+		{
+			energy1024_disp[i].transform.scale.y = parent.energy1024[beg + i] / (65335*65335*2);
+		}
 	}
 	
 	override public function update(dt:Float) 
 	{	
 		super.update(dt);
 		
-		if (audio_pos != null)
+		if (audiopos_disp != null)
 		{
-			audio_pos.p0.x = offsetx + parent.audio_pos * size.x;
-			audio_pos.p1.x = offsetx + parent.audio_pos * size.x;
+			audiopos_disp.p0.x = offsetx + parent.audio_pos * size.x;
+			audiopos_disp.p1.x = offsetx + parent.audio_pos * size.x;
 		}
 	}
 }

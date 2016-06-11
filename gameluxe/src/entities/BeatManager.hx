@@ -43,7 +43,8 @@ class BeatManager extends Entity
 	public var audio_pos = 0.0;
 	
 	/// constants
-	var instant_interval = 1024;
+	static public var instant_interval = 1024;
+	static public var num_samples_one_second = 44100;
 	static var energy_ratio = 1.3; // the ratio between energie1024 energie44100, for the detection of Peak Energy
 	
 	// size of the pulse train for the convolution ( in a pack of 1024 ( 430 = 10sec ) )
@@ -106,6 +107,10 @@ class BeatManager extends Entity
 		{
 			var audio_time = Luxe.audio.position_of(music_handle);
 			audio_pos = audio_time / music.source.duration();
+			
+			// update display
+			beatManagerVisualizer.update_display(0, 430);
+			
 			// search for the closest beat
 			
 			if (next_beat_time - audio_time < 0.016)
