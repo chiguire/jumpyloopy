@@ -4,6 +4,8 @@ import data.GameInfo;
 import entities.Avatar;
 import entities.BeatManager;
 import entities.Level;
+import entities.Platform;
+import entities.PlatformPeg;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Input.Key;
@@ -48,7 +50,14 @@ class GameState extends State
 	var previous_lane : Int;
 	var current_lane : Int;
 	
+	var jumping_points : Array<PlatformPeg>;
+	var jump_height : Float;
+	var lane_start : Float;
+	
 	var sky_uv : Rectangle;
+	
+	var mouse_platform : Platform;
+	var mouse_pos : Vector;
 	
 	/// Text
 	var processing_text : Text;
@@ -59,6 +68,9 @@ class GameState extends State
 		this.game_info = game_info;
 		player_sprite = null;
 		scene = null;
+		
+		Luxe.events.listen("Level.Start", OnLevelStart );
+		Luxe.events.listen("player_move_event", OnPlayerMove );
 	}
 	
 	
@@ -88,8 +100,15 @@ class GameState extends State
 	{
 		trace("Entering game");
 		
-		//var parcel = new Parcel();
-		//var parcelProgress = new ParcelProgress();
+		var lane_width = Luxe.screen.width * 1.25;
+		
+		lane_start = -0.5 * lane_width / 5.0;
+		lanes = new Array<Float>();
+		lanes.push(lane_start);
+		lanes.push( lane_start + 1 * lane_width / 5.0);
+		lanes.push( lane_start + 2 * lane_width / 5.0);
+		lanes.push( lane_start + 3 * lane_width / 5.0);
+		lanes.push( lane_start + 4 * lane_width / 5.0);
 		
 		scene = new Scene("GameScene");
 		// create a view for UI rendering
@@ -113,7 +132,16 @@ class GameState extends State
 			size: new Vector(Luxe.screen.w, Luxe.screen.h)
 		});
 		
-		player_sprite = new Avatar({
+		jumping_points = new Array<PlatformPeg>();
+		
+		for (i in 0...3 * 12)
+		{
+			var peg = new PlatformPeg(scene, game_info, i);
+			peg.visible = false;
+			jumping_points.push(peg);
+		}
+		
+		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
 			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
 			uv: game_info.spritesheet_elements['bunny1_ready.png'],
@@ -125,6 +153,11 @@ class GameState extends State
 		player_sprite.visible = false;
 		
 		connect_input();
+		
+		mouse_platform = new Platform(scene, game_info, 0, LEFT);
+		
+		mouse_pos = new Vector();
+		
 		/*
 		Luxe.timer.schedule(0.4, function()
 		{
@@ -135,10 +168,6 @@ class GameState extends State
 			});
 		}, true); */
 		
-		//lanes = new Array<Float>();
-		//lanes.push(1 * Luxe.screen.width / 4.0);
-		//lanes.push(2 * Luxe.screen.width / 4.0);
-		//lanes.push(3 * Luxe.screen.width / 4.0);
 		
 		//player_sprite.pos.x = lanes[0];
 		//previous_lane = 0;
@@ -147,25 +176,13 @@ class GameState extends State
 	
 	override function update(dt:Float) 
 	{
-		
-		if (Luxe.input.inputpressed('a'))
+		if (Luxe.input.inputpressed("put_platform"))
 		{
-			current_lane = 0;
+			trace("Putting platform!");
 		}
-		else if (Luxe.input.inputpressed('b'))
+		else if (Luxe.input.inputpressed("switch_platform"))
 		{
-			current_lane = 1;
-		}
-		else if (Luxe.input.inputpressed('c'))
-		{
-			current_lane = 2;
-		}
-		
-		if (current_lane != previous_lane)
-		{
-			//Actuate.tween(player_sprite.pos, 0.1, { x: lanes[current_lane] });
-			trace(Luxe.camera.pos);
-			Actuate.tween(Luxe.camera.pos, 0.1, { x: lanes[current_lane] });
+			trace("Switching platform!");
 		}
 		
 		sky_uv.set((Luxe.camera.pos.x - Luxe.screen.width/2.0), (Luxe.camera.pos.y - Luxe.screen.height/2.0), sky_uv.w, sky_uv.h);
@@ -174,20 +191,51 @@ class GameState extends State
 		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
 		
 		previous_lane = current_lane;
+		
+		var mouse_platform_x = lane_start + Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))) * (lanes[2] - lanes[1]);
+		var mouse_platform_y = Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height) * jump_height;
+		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
+		trace('Mouse at ($mouse_platform_x, $mouse_platform_y)');
 	}
 	
 	private function connect_input()
 	{
-		// TODO remove key bindings when leaving, not urgent right now
-		Luxe.input.bind_key('a', Key.key_q);
-		Luxe.input.bind_key('b', Key.key_w);
-		Luxe.input.bind_key('c', Key.key_e);
-		
-		//Luxe.input.bind_key("jump", Key.space);
-		Luxe.input.bind_mouse("jump", MouseButton.left); 
+		Luxe.input.bind_mouse("put_platform", MouseButton.left); 
+		Luxe.input.bind_mouse("switch_platform", MouseButton.right); 
 	}
 	
 	override function onmousedown(event:MouseEvent)
+	{
+		
+	}
+	
+	override function onmousemove(event:MouseEvent)
+	{
+		mouse_pos.set_xy(event.x, event.y);
+	}
+	
+	function OnLevelStart( e:LevelStartEvent )
+	{
+		var jump_height = e.beat_height;
+		var peg_y = e.pos.y - jump_height;
+		var j = 0;
+		for (peg in jumping_points)
+		{
+			peg.pos.set_xy(lanes[j + 1], peg_y);
+			//trace('Setting peg at (${lanes[j + 1]}, $peg_y)');
+			peg.visible = true;
+			
+			j++;
+			if (j == 3)
+			{
+				j = 0;
+				peg_y -= jump_height;
+			}
+		}
+		this.jump_height = jump_height;
+	}
+	
+	function OnPlayerMove( e:BeatEvent )
 	{
 		
 	}

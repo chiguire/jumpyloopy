@@ -11,7 +11,7 @@ import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import luxe.tween.Actuate;
 import luxe.tween.MotionPath;
-import luxe.tween.easing.Bounce;
+import luxe.tween.easing.Cubic;
 
 /**
  * ...
@@ -47,7 +47,7 @@ class TrajectoryMovement extends Component
 		if (!nextPos.equals(pos))
 		{
 			Actuate.tween(pos, T, {x:nextPos.x});
-			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Bounce.easeIn);
+			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Cubic.easeIn);
 		}
 		else
 		{
@@ -56,7 +56,7 @@ class TrajectoryMovement extends Component
 			motionPath.line(pos.x, pos.y - cast(entity, Avatar).jump_height * 1.25);
 			motionPath.line(pos.x, pos.y);
 		
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Bounce.easeIn);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeIn);
 		}
 	}
 }
@@ -67,11 +67,14 @@ class Avatar extends Sprite
 	var trajectory_movement : TrajectoryMovement;
 	var gamecamera : GameCameraComponent;
 	
+	public var starting_x : Float;
 	public var jump_height : Float;
 	
-	public function new(options:SpriteOptions) 
+	public function new(starting_x : Float, options:SpriteOptions) 
 	{		
 		super(options);
+		
+		this.starting_x = starting_x;
 		
 		// components
 		gamecamera = new GameCameraComponent({name: "GameCamera"});
@@ -92,7 +95,7 @@ class Avatar extends Sprite
 	function OnLevelStart( e:LevelStartEvent )
 	{
 		visible = true;
-		pos.set_xy(e.pos.x, e.pos.y - size.y / 2);
+		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		jump_height = e.beat_height;
 	}
