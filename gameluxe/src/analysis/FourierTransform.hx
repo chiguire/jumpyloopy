@@ -21,7 +21,7 @@ class FourierTransform
 	var sample_rate = 0;
 	var bandwidth = 0.0;
 	var which_avg = NOAVG;
-	var which_window = NONE;
+	public var which_window = NONE;
 	
 	// log avg
 	var octaves = 0;

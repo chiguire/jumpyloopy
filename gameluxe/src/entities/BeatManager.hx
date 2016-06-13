@@ -39,6 +39,7 @@ class BeatManager extends Entity
 	/// helpers
 	var audio_data_len = 0;
 	var audio_data : Uint8Array;
+	var audio_data_for_analysis : Vector<Float>;
 	
 	public var audio_pos = 0.0;
 	
@@ -223,22 +224,25 @@ class BeatManager extends Entity
 		var audio_data_query_result = new Array<Int>();
 		music_instance.data_get(audio_data, 0, l, audio_data_query_result);
 		
-		trace(audio_data);
+		//trace(audio_data);
 		
 		// the case of 16 bit per sample (the raw data is in Integer 16 bit format, be careful!)
 		var audio_data16 = Int16Array.fromBuffer(audio_data.buffer, 0, audio_data.buffer.length);
-		trace(audio_data16);
-		var audio_data16_left = new Array<Int>();
-		for ( i in 0...Std.int(audio_data16.length/2) )
+		//trace(audio_data16);
+		
+		// assuming that we are loading 2 channels audio
+		audio_data_len = Std.int(audio_data16.length / 2);
+		
+		audio_data_for_analysis = new Vector<Float>(audio_data_len);
+		for ( i in 0...audio_data_len )
 		{
 			var data_left_channel = audio_data16[i * 2];
 			var data_right_channel = audio_data16[i * 2 + 1];
 			var val = (data_left_channel + data_right_channel)/2;
-			audio_data16_left.push(Std.int(val));
+			audio_data_for_analysis[i] = val;
 		}
 		//trace(audio_data16_left);
 		
-		audio_data_len = audio_data16_left.length;
 		num_instant_interval = Std.int(audio_data_len / instant_interval);
 		
 		trace(num_instant_interval);
@@ -253,7 +257,7 @@ class BeatManager extends Entity
 		// calculate instant energy every 1024 samples, stored in the buffer
 		for ( i in 0...num_instant_interval)
 		{
-			var e = energy(audio_data16_left, i * instant_interval, 4096); // 4096? why not using 1024
+			var e = energy(audio_data_for_analysis, i * instant_interval, 4096); // 4096? why not using 1024
 			energy1024[i] = e;
 		}
 		//trace(energy1024);
@@ -289,7 +293,7 @@ class BeatManager extends Entity
 	
 	
 	/// helpers
-	function energy(data:Array<Int>, offset:UInt, window:UInt): Float
+	function energy(data:Vector<Float>, offset:UInt, window:UInt): Float
 	{
 		var res = 0.0;
 		var end = Std.int(Math.min(offset + window, audio_data_len));
@@ -544,5 +548,26 @@ class BeatManager extends Entity
 	function get_beat_pos():Array<Int> 
 	{
 		return beat_pos;
+	}
+	
+	/// analysis 2
+	public function get_samples( samples:Vector<Float>, offset:Int ) : Int
+	{
+		if ( offset + samples.length <= audio_data_for_analysis.length )
+		{
+			Vector.blit(audio_data_for_analysis, offset, samples, 0, samples.length);
+		}
+		else
+		{
+			for ( i in 0...samples.length )
+			{
+				// wrap around
+				var id = (offset + i) % audio_data_for_analysis.length;
+				samples[i] = audio_data_for_analysis[id];
+			}
+		}
+		
+		// return next_offset (wrap around)
+		return (offset + samples.length) % audio_data_for_analysis.length;
 	}
 }
