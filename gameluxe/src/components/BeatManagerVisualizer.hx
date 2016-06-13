@@ -215,13 +215,13 @@ class BeatManagerVisualizer extends Component
 		
 		for (i in 0...energypeaks_disp.length)
 		{
-			var scale = BeatManager.get_data(parent.energy_peak, curr_display_interval_beg + i) > 0.0 ? 0.1 : 0.0;
+			var scale = BeatManager.get_data(parent.energy_peak, curr_display_interval_beg + i) > 0.0 ? -0.2 : 0.0;
 			energypeaks_disp[i].transform.scale.y = scale;
 		}
 		
 		for (i in 0...conv_disp.length)
 		{
-			var scale = BeatManager.get_data(parent.conv, curr_display_interval_beg + i) > 0.0 ? 0.2 : 0.0;
+			var scale = BeatManager.get_data(parent.conv, curr_display_interval_beg + i) > 0.0 ? -0.1 : 0.0;
 			conv_disp[i].transform.scale.y = scale;
 		}
 		

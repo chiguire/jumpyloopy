@@ -306,7 +306,7 @@ class BeatManager extends Entity
 		var sum = 0.0;
 		// calculation of the first second
 		// 43 came from 44100/1024
-		var num_objects = 43 * 5; 
+		var num_objects = 43; 
 		for ( i in 0...num_objects )
 		{
 			sum += energy1024[i];
@@ -338,7 +338,7 @@ class BeatManager extends Entity
 		// 21 came from (44100/1024)/2
 		// means, we compared where i (instant energy) is in the center pos of the window (local energy)
 		energy_peak = new Vector<Float>(num_instant_interval);
-		var lookup_offset = 21 * 5;
+		var lookup_offset = 21;
 		for ( i in 0...num_instant_interval )
 		{
 			var local_avg_index = ((i - lookup_offset) + energy44100.length) % energy44100.length; // loop the lookup
@@ -394,7 +394,7 @@ class BeatManager extends Entity
 		var occ_max = 0;
 		for (i in 0...T_occurence.length)
 		{
-			if (T_occurence[i] > occ_max)
+			if (T_occurence[i] >= occ_max)
 			{
 				T_occ_max = i;
 				occ_max = T_occurence[i];
@@ -454,7 +454,7 @@ class BeatManager extends Entity
 		// create pulse train
 		var pulse_train = new Vector<Float>(pulse_train_size);
 		var T_occ_avg = T_occ_avg_blocks[chunk_id];
-		var space = T_occ_avg;
+		var space : Float = T_occ_avg;
 		
 		for (i in 0...pulse_train_size)
 		{
@@ -469,6 +469,8 @@ class BeatManager extends Entity
 			}
 			space += 1.0;
 		}
+		
+		trace(pulse_train);
 				
 		// convolution with instant energy of the music
 		var max_att = 0.0; 	// maximum attitude
@@ -536,7 +538,7 @@ class BeatManager extends Entity
 			if (beat[i] > 0.0) beat_pos.push(i);
 		}
 		
-		trace(beat_pos);
+		//trace(beat_pos);
 	}
 	
 	function get_beat_pos():Array<Int> 
