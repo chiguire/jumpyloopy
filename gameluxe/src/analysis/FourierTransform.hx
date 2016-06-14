@@ -30,7 +30,7 @@ class FourierTransform
 	var real : Vector<Float>;
 	var imag : Vector<Float>;
 	
-	var spectrum : Vector<Float>;
+	public var spectrum : Vector<Float>;
 	var averages : Vector<Float>;
 	
 	
@@ -169,5 +169,22 @@ class FourierTransform
 		var fraction = freq / sampleRate;
 		var i = Math.round(timeSize * fraction);
 		return i;
+	}
+	
+	function do_window( samples:Vector<Float> )
+	{
+		switch (which_window)
+		{
+			case HAMMING: hamming(samples);
+		}
+	}
+	
+	// windows the data in samples with a Hamming window
+	function hamming( samples:Vector<Float> )
+	{
+		for ( i in 0...samples.length )
+		{
+			samples[i] *= (0.54 - 0.46 * Math.cos(Math.PI * 2 / (samples.length - 1))); 
+		}
 	}
 }

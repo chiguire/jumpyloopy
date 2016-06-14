@@ -27,8 +27,8 @@ class SpectrumProvider
 	var next_samples : Vector<Float>;
 	var temp_samples : Vector<Float>;
 	
-	var data_offset = 0;
-	
+	var data_state : BeatManagerDataReadState = { data_offset:0, num_loops:0 };
+	var curr_sample = 0;
 	
 	/**
 	 * Constructor, sets the {@link Decoder}, the sample window size and the
@@ -57,12 +57,29 @@ class SpectrumProvider
 		
 		// read samples
 		// read next_samples
-		data_offset = data_provider.get_samples(samples, data_offset);
-		data_offset = data_provider.get_samples(next_samples, data_offset);
+		data_state = data_provider.get_samples(samples, data_state.data_offset);
+		data_state = data_provider.get_samples(next_samples, data_state.data_offset);
 	}
 	
-	public function next_spectrum()
+	public function next_spectrum() : Vector<Float>
 	{
+		if ( curr_sample >= samples.length && data_state.num_loops < 1)
+		{
+			// double buffering technique here, so we don't have allocate new Vector everytime we progressively read data
+			var tmp = next_samples;
+			next_samples = samples;
+			samples = tmp;
+			data_state = data_provider.get_samples(next_samples, data_state.data_offset);
+			
+			curr_sample -= samples.length;
+		}
 		
+		// copy into temp array for FFT processing
+		Vector.blit(samples, curr_sample, temp_samples, 0, samples.length - curr_sample);
+		Vector.blit(next_samples, 0, temp_samples, samples.length - curr_sample, curr_sample);
+		
+		fft.forward( temp_samples );
+		
+		return fft.spectrum;
 	}
 }

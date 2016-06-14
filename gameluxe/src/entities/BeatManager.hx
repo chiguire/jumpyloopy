@@ -28,6 +28,12 @@ typedef BeatManagerOptions =
 	> EntityOptions,
 	var batcher : Batcher; // viewport
 };
+
+typedef BeatManagerDataReadState =
+{
+	var data_offset : Int;
+	var num_loops : Int;
+};
  
 class BeatManager extends Entity
 {
@@ -551,7 +557,7 @@ class BeatManager extends Entity
 	}
 	
 	/// analysis 2
-	public function get_samples( samples:Vector<Float>, offset:Int ) : Int
+	public function get_samples( samples:Vector<Float>, offset:Int ) : BeatManagerDataReadState
 	{
 		if ( offset + samples.length <= audio_data_for_analysis.length )
 		{
@@ -568,6 +574,6 @@ class BeatManager extends Entity
 		}
 		
 		// return next_offset (wrap around)
-		return (offset + samples.length) % audio_data_for_analysis.length;
+		return { data_offset: (offset + samples.length) % audio_data_for_analysis.length, num_loops: Std.int((offset + samples.length) / audio_data_for_analysis.length) };
 	}
 }
