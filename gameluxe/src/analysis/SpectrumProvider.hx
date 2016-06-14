@@ -1,4 +1,5 @@
 package analysis;
+import entities.BeatManager;
 import haxe.ds.Vector;
 
 /**
@@ -16,7 +17,7 @@ import haxe.ds.Vector;
  */
 class SpectrumProvider
 {
-	var  
+	var data_provider : BeatManager; 
 	
 	var hop_size = 0;
 	var fft : FFT;
@@ -25,6 +26,9 @@ class SpectrumProvider
 	var samples : Vector<Float>;
 	var next_samples : Vector<Float>;
 	var temp_samples : Vector<Float>;
+	
+	var data_offset = 0;
+	
 	
 	/**
 	 * Constructor, sets the {@link Decoder}, the sample window size and the
@@ -38,8 +42,10 @@ class SpectrumProvider
 	 * @param hopSize The hop size.
 	 * @param useHamming Wheter to use hamming smoothing or not.
 	 */
-	public function new(sample_window_size:Int, _hop_size:Int, use_hamming:Bool)
+	public function new( _data_provider:BeatManager, sample_window_size:Int, _hop_size:Int, use_hamming:Bool)
 	{
+		data_provider = _data_provider;
+		
 		samples = new Vector<Float>(sample_window_size);
 		next_samples = new Vector<Float>(sample_window_size);
 		temp_samples = new Vector<Float>(sample_window_size);
@@ -51,7 +57,12 @@ class SpectrumProvider
 		
 		// read samples
 		// read next_samples
-		
+		data_offset = data_provider.get_samples(samples, data_offset);
+		data_offset = data_provider.get_samples(next_samples, data_offset);
 	}
 	
+	public function next_spectrum()
+	{
+		
+	}
 }

@@ -66,7 +66,7 @@ class BeatManager extends Entity
 	public var conv : Vector<Float>;
 	
 	// chunks 
-	var max_instant_intervals_per_chunk = 43 * 20; // 15 sec per chunk
+	var max_instant_intervals_per_chunk = 43 * 15; // 15 sec per chunk
 	public var tempo_blocks : Vector<Int>;
 	public var T_occ_max_blocks : Vector<Int>;
 	public var T_occ_avg_blocks : Vector<Float>;
@@ -310,7 +310,7 @@ class BeatManager extends Entity
 		var sum = 0.0;
 		// calculation of the first second
 		// 43 came from 44100/1024
-		var num_objects = 43; 
+		var num_objects = 43 * 5; 
 		for ( i in 0...num_objects )
 		{
 			sum += energy1024[i];
@@ -342,7 +342,7 @@ class BeatManager extends Entity
 		// 21 came from (44100/1024)/2
 		// means, we compared where i (instant energy) is in the center pos of the window (local energy)
 		energy_peak = new Vector<Float>(num_instant_interval);
-		var lookup_offset = 21;
+		var lookup_offset = 21 * 5;
 		for ( i in 0...num_instant_interval )
 		{
 			var local_avg_index = ((i - lookup_offset) + energy44100.length) % energy44100.length; // loop the lookup
