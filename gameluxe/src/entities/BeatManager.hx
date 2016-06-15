@@ -1,5 +1,7 @@
 package entities;
 
+import analysis.SpectrumProvider;
+import analysis.ThresholdFunction;
 import components.BeatManagerVisualizer;
 import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
@@ -77,9 +79,14 @@ class BeatManager extends Entity
 	public var T_occ_max_blocks : Vector<Int>;
 	public var T_occ_avg_blocks : Vector<Float>;
 	
-	
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
+	
+	/// fft analysis
+	public static var hop_size = 512;
+	public static var history_size = 50;
+	public static var multipliers = [ 2.0, 2.0, 2.0 ];
+	public static var bands = [ 80, 4000, 4000, 10000, 10000, 16000 ];
 	
 	/// renderer
 	public var batcher: Batcher;
@@ -183,8 +190,8 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
-		//var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
@@ -215,6 +222,7 @@ class BeatManager extends Entity
 			//Luxe.showConsole(true);
 			
 			process_audio();
+			process_audio_fft();
 			
 			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});
@@ -575,5 +583,55 @@ class BeatManager extends Entity
 		
 		// return next_offset (wrap around)
 		return { data_offset: (offset + samples.length) % audio_data_for_analysis.length, num_loops: Std.int((offset + samples.length) / audio_data_for_analysis.length) };
+	}
+	
+	public function process_audio_fft()
+	{
+		var spectrum_provider = new SpectrumProvider(this, 1024, hop_size, true);
+		var spectrum = spectrum_provider.next_spectrum();
+		var prev_spectrum = new Vector<Float>(spectrum.length);
+		
+		var spectral_flux = new Array<Array<Float>>();
+		for ( i in 0...Std.int(bands.length / 2) )
+		{
+			spectral_flux.push(new Array<Float>());
+		}
+		
+		do
+		{
+			var i = 0;
+			while ( i < bands.length )
+			{
+				var start_freq = spectrum_provider.fft.freq_to_index( bands[i] );
+				var end_freq = spectrum_provider.fft.freq_to_index( bands[i + 1] );
+				
+				var flux = 0.0;
+				for ( j in start_freq...end_freq + 1 )
+				{
+					var val = (spectrum[j] - prev_spectrum[j]);
+					val = (val + Math.abs(val)) / 2;
+					flux += val;
+				}
+				spectral_flux[Std.int(i / 2)].push(flux);
+				
+				i += 2;
+			}
+			
+			Vector.blit( spectrum, 0, prev_spectrum, 0, spectrum.length );
+			
+			spectrum = spectrum_provider.next_spectrum();
+		}
+		while (spectrum != null);
+		
+		//trace(spectral_flux);
+		
+		var thresholds = new Array<Array<Float>>();
+		for ( i in 0...Std.int( bands.length / 2))
+		{
+			var threshold = new ThresholdFunction( history_size, multipliers[i] ).calculate( spectral_flux[i] );
+			thresholds.push( threshold );
+		}
+		
+		//trace( thresholds );
 	}
 }

@@ -58,7 +58,7 @@ class FFT extends FourierTransform
 		reverse = new Vector<Int>(N);
 		
 		var limit = 1;
-		var bit : Int = N / 2;
+		var bit : Int = Std.int(N / 2);
 		while ( limit < N )
 		{
 			for (i in 0...limit)

@@ -53,7 +53,7 @@ class FourierTransform
 		allocate_arrays();
 	}
 	
-	public function allocate_arrays();
+	public function allocate_arrays() {}
 	
 	public function set_complex( r:Vector<Float>, i:Vector<Float>)
 	{
@@ -74,7 +74,7 @@ class FourierTransform
 		// average calculation
 		if (which_avg == LINAVG)
 		{
-			var avg_width = Std.int(spectrum.length / averages.length)
+			var avg_width = Std.int(spectrum.length / averages.length);
 			
 			for ( i in 0...averages.length)
 			{
@@ -164,18 +164,18 @@ class FourierTransform
 		// special case: freq is lower than the bandwidth of spectrum[0]
 		if (freq < bandwidth / 2) return 0;
 		// special case: freq is within the bandwidth of spectrum[spectrum.length - 1]
-		if (freq > sampleRate / 2 - bandwidth / 2) return spectrum.length - 1;
+		if (freq > sample_rate / 2 - bandwidth / 2) return spectrum.length - 1;
 		// all other cases
-		var fraction = freq / sampleRate;
-		var i = Math.round(timeSize * fraction);
+		var fraction = freq / sample_rate;
+		var i = Math.round(time_size * fraction);
 		return i;
 	}
 	
 	function do_window( samples:Vector<Float> )
 	{
-		switch (which_window)
+		switch which_window
 		{
-			case HAMMING: hamming(samples);
+			case FourierTransform.HAMMING : hamming(samples);
 		}
 	}
 	

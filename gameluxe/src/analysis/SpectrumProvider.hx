@@ -20,7 +20,7 @@ class SpectrumProvider
 	var data_provider : BeatManager; 
 	
 	var hop_size = 0;
-	var fft : FFT;
+	public var fft : FFT;
 	
 	// samples
 	var samples : Vector<Float>;
@@ -63,13 +63,20 @@ class SpectrumProvider
 	
 	public function next_spectrum() : Vector<Float>
 	{
-		if ( curr_sample >= samples.length && data_state.num_loops < 1)
+		if ( curr_sample >= samples.length)
 		{
+			if (data_state.num_loops > 0)
+			{
+				//trace("finish reading");
+				return null;
+			}
+			
 			// double buffering technique here, so we don't have allocate new Vector everytime we progressively read data
 			var tmp = next_samples;
 			next_samples = samples;
 			samples = tmp;
 			data_state = data_provider.get_samples(next_samples, data_state.data_offset);
+			//trace("fft out " + data_state.data_offset);
 			
 			curr_sample -= samples.length;
 		}
@@ -79,6 +86,7 @@ class SpectrumProvider
 		Vector.blit(next_samples, 0, temp_samples, samples.length - curr_sample, curr_sample);
 		
 		fft.forward( temp_samples );
+		curr_sample += hop_size;
 		
 		return fft.spectrum;
 	}
