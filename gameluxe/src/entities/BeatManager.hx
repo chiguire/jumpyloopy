@@ -1,5 +1,6 @@
 package entities;
 
+import analysis.FFT;
 import analysis.SpectrumProvider;
 import analysis.ThresholdFunction;
 import components.BeatManagerVisualizer;
@@ -83,10 +84,10 @@ class BeatManager extends Entity
 	public var beat_pos(default, null) : Array<Int>;
 	
 	/// fft analysis
-	public static var hop_size = 512;
+	public static var hop_size = 1024;// 512;
 	public static var history_size = 50;
 	public static var multipliers = [ 2.0, 2.0, 2.0 ];
-	public static var bands = [ 80, 4000, 4000, 10000, 10000, 16000 ];
+	public static var bands = [ 40, 400, 4000, 10000, 10000, 16000 ];
 	
 	/// renderer
 	public var batcher: Batcher;
@@ -190,8 +191,8 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
-		var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		//var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
@@ -302,7 +303,7 @@ class BeatManager extends Entity
 		trace(tempo_blocks);
 
 		// store beat's position in a better format
-		calculate_beat_pos();
+		//calculate_beat_pos();
 	}
 	
 	
@@ -587,6 +588,10 @@ class BeatManager extends Entity
 	
 	public function process_audio_fft()
 	{
+		FFT.test_fft();
+		
+		//return;
+		
 		var spectrum_provider = new SpectrumProvider(this, 1024, hop_size, true);
 		var spectrum = spectrum_provider.next_spectrum();
 		var prev_spectrum = new Vector<Float>(spectrum.length);
@@ -623,6 +628,11 @@ class BeatManager extends Entity
 		}
 		while (spectrum != null);
 		
+		for ( i in 0...spectral_flux.length )
+		{
+			trace(spectral_flux[i].length);
+		}
+		
 		//trace(spectral_flux);
 		
 		var thresholds = new Array<Array<Float>>();
@@ -631,7 +641,30 @@ class BeatManager extends Entity
 			var threshold = new ThresholdFunction( history_size, multipliers[i] ).calculate( spectral_flux[i] );
 			thresholds.push( threshold );
 		}
+
+		var arry_size = spectral_flux[0].length;
+		var a_spectral_flux = spectral_flux[0];
+		var threshold = thresholds[0];
+		var pruned_spectral_flux = new Vector<Float>(arry_size);
+		// onset detection
+		for( i in 0...arry_size)
+		{
+			pruned_spectral_flux[i] = 0.0;
+			if ( threshold[i] <= a_spectral_flux[i] )
+			{
+				pruned_spectral_flux[i] = a_spectral_flux[i] - threshold[i];
+			}
+		}
 		
-		//trace( thresholds );
+		for ( i in 0...beat.length )
+		{
+			beat[i] = 0.0;
+			if ( pruned_spectral_flux[i] > 0 )
+			{
+				beat[i] = 1;
+			}
+		}
+		
+		calculate_beat_pos();
 	}
 }

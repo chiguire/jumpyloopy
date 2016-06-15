@@ -167,6 +167,7 @@ class FourierTransform
 		if (freq > sample_rate / 2 - bandwidth / 2) return spectrum.length - 1;
 		// all other cases
 		var fraction = freq / sample_rate;
+		//trace(fraction);
 		var i = Math.round(time_size * fraction);
 		return i;
 	}

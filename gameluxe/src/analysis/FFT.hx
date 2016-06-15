@@ -58,7 +58,7 @@ class FFT extends FourierTransform
 		reverse = new Vector<Int>(N);
 		
 		var limit = 1;
-		var bit : Int = Std.int(N / 2);
+		var bit = Std.int(N / 2);
 		while ( limit < N )
 		{
 			for (i in 0...limit)
@@ -69,6 +69,8 @@ class FFT extends FourierTransform
 			limit <<= 1;
 			bit >>= 1;
 		}
+		
+		trace(reverse);
 	}
 	
 	// copies the values in the samples array into the real array
@@ -126,5 +128,27 @@ class FFT extends FourierTransform
 			// step
 			half_size *= 2;
 		}
+	}
+	
+	public static function test_fft()
+	{
+		// generate this known signal
+		var freq = 440; // known freq
+		var inc = Math.PI * 2 * freq / 44100;
+		var angle = 0.0;
+		var samples = new Vector<Float>(1024);
+		
+		for ( i in 0...samples.length )
+		{
+			samples[i] = Math.sin(angle);
+			angle += inc;
+		}
+		
+		//trace(samples);
+		
+		var fft = new FFT( 1024, 44100 );
+		fft.forward( samples );
+		
+		trace(fft.real);
 	}
 }

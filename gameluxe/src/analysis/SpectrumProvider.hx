@@ -67,7 +67,7 @@ class SpectrumProvider
 		{
 			if (data_state.num_loops > 0)
 			{
-				//trace("finish reading");
+				trace("finish reading");
 				return null;
 			}
 			
@@ -76,7 +76,7 @@ class SpectrumProvider
 			next_samples = samples;
 			samples = tmp;
 			data_state = data_provider.get_samples(next_samples, data_state.data_offset);
-			//trace("fft out " + data_state.data_offset);
+			trace("fft out " + data_state.data_offset);
 			
 			curr_sample -= samples.length;
 		}
