@@ -1,5 +1,6 @@
 package gamestates;
 
+import analysis.FFT;
 import data.GameInfo;
 import luxe.Input.MouseEvent;
 import luxe.Scene;
@@ -125,5 +126,7 @@ class MenuState extends State
 		{
 			machine.set("CreditsState");
 		});
+		
+		FFT.test_fft();
 	}
 }

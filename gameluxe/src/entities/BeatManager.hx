@@ -82,13 +82,7 @@ class BeatManager extends Entity
 	
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
-	
-	/// fft analysis
-	public static var hop_size = 1024;// 512;
-	public static var history_size = 50;
-	public static var multipliers = [ 2.0, 2.0, 2.0 ];
-	public static var bands = [ 40, 400, 4000, 10000, 10000, 16000 ];
-	
+		
 	/// renderer
 	public var batcher: Batcher;
 	
@@ -143,8 +137,7 @@ class BeatManager extends Entity
 						request_next_beat = false;
 						//trace("beat " + beat_pos[i]);
 						
-						// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
-						var next_beat_pos = (i + 4) % beat_pos.length;
+						var next_beat_pos = (i+1) % beat_pos.length;
 						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
 						
 						if (next_beat_time - audio_time > 0)
@@ -586,12 +579,15 @@ class BeatManager extends Entity
 		return { data_offset: (offset + samples.length) % audio_data_for_analysis.length, num_loops: Std.int((offset + samples.length) / audio_data_for_analysis.length) };
 	}
 	
+	
+	/// fft analysis
+	public static var hop_size = 1024;// 512;
+	public static var history_size = 50;
+	public static var multipliers = [ 2.5, 2.0, 2.0 ];
+	public static var bands = [ 500, 1500, 4000, 10000, 10000, 16000 ];
+	
 	public function process_audio_fft()
-	{
-		FFT.test_fft();
-		
-		//return;
-		
+	{		
 		var spectrum_provider = new SpectrumProvider(this, 1024, hop_size, true);
 		var spectrum = spectrum_provider.next_spectrum();
 		var prev_spectrum = new Vector<Float>(spectrum.length);
@@ -656,10 +652,11 @@ class BeatManager extends Entity
 			}
 		}
 		
-		for ( i in 0...beat.length )
+		for ( i in 2...beat.length  )
 		{
 			beat[i] = 0.0;
-			if ( pruned_spectral_flux[i] > 0 )
+			
+			if ( pruned_spectral_flux[i] < pruned_spectral_flux[i-1] && pruned_spectral_flux[i-2] == 0)
 			{
 				beat[i] = 1;
 			}

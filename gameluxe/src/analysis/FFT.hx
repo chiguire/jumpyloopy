@@ -70,8 +70,30 @@ class FFT extends FourierTransform
 			bit >>= 1;
 		}
 		
+		/*
 		trace(reverse);
+		
+		reverse = new Vector<Int>(N);
+		for ( i in 0...reverse.length )
+		{
+			reverse[i] = BitReverse(i, 10);
+		}
+		
+		trace(reverse);
+		*/
 	}
+	
+	function bit_reverse(x, num_bits)
+	{
+        var y:Int = 0;
+        for (i in 0...num_bits)
+		{
+            y <<= 1;
+            y |= x & 0x0001;
+            x >>= 1;
+        }
+        return y;
+    }
 	
 	// copies the values in the samples array into the real array
 	// in bit reversed order. the imag array is filled with zeros.
@@ -146,9 +168,17 @@ class FFT extends FourierTransform
 		
 		//trace(samples);
 		
-		var fft = new FFT( 1024, 44100 );
-		fft.forward( samples );
+		var dft = new DFT( 1024, 44100 );
+		var tmp1 = new Vector<Float>(1024);
+		Vector.blit(samples, 0, tmp1, 0, samples.length);
+		dft.forward( tmp1 );
 		
-		trace(fft.real);
+		var fft = new FFT( 1024, 44100 );
+		var tmp2 = new Vector<Float>(1024);
+		Vector.blit(samples, 0, tmp2, 0, samples.length);
+		fft.forward( tmp2 );
+		
+		trace(dft.spectrum);
+		trace(fft.spectrum);
 	}
 }

@@ -55,10 +55,11 @@ class DFT extends FourierTransform
 			real[f] = 0.0;
 			imag[f] = 0.0;
 			
+			var k = 2 * Math.PI / N;
 			for ( t in 0...N )
 			{
-				real[f] += samples[t] * Math.cos(t * f);
-				imag[f] += samples[t] * -Math.sin(t * f);
+				real[f] += samples[t] * Math.cos(t * f * k);
+				imag[f] += samples[t] * -Math.sin(t * f * k);
 			}
 		}
 		
