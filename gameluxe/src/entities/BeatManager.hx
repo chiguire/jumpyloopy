@@ -293,7 +293,7 @@ class BeatManager extends Entity
 			// calculate Beat Line
 			calculate_beat_line(begin, end, i);	
 		}
-		trace(tempo_blocks);
+		//trace(tempo_blocks);
 
 		// store beat's position in a better format
 		//calculate_beat_pos();
@@ -482,7 +482,7 @@ class BeatManager extends Entity
 			space += 1.0;
 		}
 		
-		trace(pulse_train);
+		//trace(pulse_train);
 				
 		// convolution with instant energy of the music
 		var max_att = 0.0; 	// maximum attitude
@@ -582,9 +582,11 @@ class BeatManager extends Entity
 	
 	/// fft analysis
 	public static var hop_size = 1024;// 512;
-	public static var history_size = 50;
-	public static var multipliers = [ 2.5, 2.0, 2.0 ];
-	public static var bands = [ 500, 1500, 4000, 10000, 10000, 16000 ];
+	public static var history_size = 50 * 15;
+	public static var multipliers = [ 4.0, 2.0, 2.0 ];
+	
+	public static var bands = [ { low:100, high:500 } ];// , 4000, 10000, 10000, 16000 ];
+	//public static var bands = [ 500, 1500, 4000, 10000, 10000, 16000 ];
 	
 	public function process_audio_fft()
 	{		
@@ -593,7 +595,7 @@ class BeatManager extends Entity
 		var prev_spectrum = new Vector<Float>(spectrum.length);
 		
 		var spectral_flux = new Array<Array<Float>>();
-		for ( i in 0...Std.int(bands.length / 2) )
+		for ( i in 0...bands.length )
 		{
 			spectral_flux.push(new Array<Float>());
 		}
@@ -603,8 +605,8 @@ class BeatManager extends Entity
 			var i = 0;
 			while ( i < bands.length )
 			{
-				var start_freq = spectrum_provider.fft.freq_to_index( bands[i] );
-				var end_freq = spectrum_provider.fft.freq_to_index( bands[i + 1] );
+				var start_freq = spectrum_provider.fft.freq_to_index( bands[i].low );
+				var end_freq = spectrum_provider.fft.freq_to_index( bands[i].high );
 				
 				var flux = 0.0;
 				for ( j in start_freq...end_freq + 1 )
@@ -613,7 +615,7 @@ class BeatManager extends Entity
 					val = (val + Math.abs(val)) / 2;
 					flux += val;
 				}
-				spectral_flux[Std.int(i / 2)].push(flux);
+				spectral_flux[i].push(flux);
 				
 				i += 2;
 			}
@@ -632,7 +634,7 @@ class BeatManager extends Entity
 		//trace(spectral_flux);
 		
 		var thresholds = new Array<Array<Float>>();
-		for ( i in 0...Std.int( bands.length / 2))
+		for ( i in 0...bands.length )
 		{
 			var threshold = new ThresholdFunction( history_size, multipliers[i] ).calculate( spectral_flux[i] );
 			thresholds.push( threshold );
