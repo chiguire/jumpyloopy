@@ -19,6 +19,6 @@ class GameCameraComponent extends Component
 	{
 		var offsetx = Luxe.screen.size.x / 2;
 		var offsety = Luxe.screen.size.y / 2;
-		Luxe.camera.pos.set_xy( 0 /* pos.x - offsetx */, pos.y - offsety );
+		Luxe.camera.pos.set_xy( pos.x - offsetx, pos.y - offsety );
 	}
 }

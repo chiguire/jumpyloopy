@@ -203,9 +203,9 @@ class GameState extends State
 		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
 		
 		mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
-		mouse_index_y = - Std.int(Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height)) + beat_start_wrap;
+		mouse_index_y = - Std.int(Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height));
 		var mouse_platform_x = lane_start + mouse_index_x * (lanes[2] - lanes[1]);
-		var mouse_platform_y = (- mouse_index_y + beat_start_wrap ) * jump_height;
+		var mouse_platform_y = (- mouse_index_y ) * jump_height;
 		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
 		
 		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.camera.pos.y + Luxe.screen.height - 100);
@@ -262,8 +262,6 @@ class GameState extends State
 	
 	function OnPlayerMove( e:BeatEvent )
 	{
-		beat_n++;
-		
 		var pl = get_platform(player_sprite.current_lane, beat_n);
 		
 		trace('player is now at ${player_sprite.current_lane}, $beat_n' );
@@ -275,15 +273,19 @@ class GameState extends State
 		}
 		else
 		{
-			player_sprite.current_lane = player_sprite.current_lane + switch (get_platform(player_sprite.current_lane, beat_n).type)
+			player_sprite.current_lane = player_sprite.current_lane + switch (pl.type)
 			{
 				case NONE: 0;
 				case CENTER: 0;
 				case LEFT: -1;
-				case RIGHT: 2;
+				case RIGHT: 1;
 			}
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			player_sprite.trajectory_movement.nextPos.y -= jump_height;
+			if (pl.type != NONE)
+			{
+				player_sprite.trajectory_movement.nextPos.y -= jump_height;
+				beat_n++;
+			}
 			
 			if (beat_n >= beat_start_wrap)
 			{
@@ -336,8 +338,8 @@ class GameState extends State
 	
 	function put_platform() : Void
 	{
-		trace('putting platform at $mouse_index_x, ${beat_n + mouse_index_y}' );
-		var pl = get_platform(mouse_index_x, beat_n + mouse_index_y);
+		trace('putting platform at $mouse_index_x, ${mouse_index_y}' );
+		var pl = get_platform(mouse_index_x, mouse_index_y);
 		
 		if (pl == null)
 		{
