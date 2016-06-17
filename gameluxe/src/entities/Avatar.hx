@@ -64,11 +64,12 @@ class TrajectoryMovement extends Component
 class Avatar extends Sprite
 {
 	/// components
-	var trajectory_movement : TrajectoryMovement;
+	public var trajectory_movement : TrajectoryMovement;
 	var gamecamera : GameCameraComponent;
 	
 	public var starting_x : Float;
 	public var jump_height : Float;
+	public var current_lane : Int;
 	
 	public function new(starting_x : Float, options:SpriteOptions) 
 	{		
@@ -102,7 +103,7 @@ class Avatar extends Sprite
 	
 	function OnPlayerMove( e:BeatEvent )
 	{
-		trajectory_movement.nextPos.y -= jump_height;
+		//trajectory_movement.nextPos.y -= jump_height;
 		trajectory_movement.doJump(e);
 	}
 }

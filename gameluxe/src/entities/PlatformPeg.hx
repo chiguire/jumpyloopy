@@ -27,7 +27,6 @@ class PlatformPeg extends Sprite
 		
 		super(options);
 		scale.set_xy(0.4, 0.4);
-		
 	}
 	
 }

@@ -5,6 +5,7 @@ package entities;
  */
 enum PlatformType 
 {
+	NONE;
 	CENTER;
 	LEFT;
 	RIGHT;

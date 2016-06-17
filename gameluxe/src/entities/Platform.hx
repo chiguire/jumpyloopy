@@ -37,10 +37,12 @@ class Platform extends Sprite
 	{
 		rotation_z = switch (t)
 		{
+			case NONE: 0;
 			case LEFT: -45;
 			case RIGHT: 45;
 			case CENTER: 0;
 		};
+		visible = (t != NONE);
 		return type = t;
 	}
 }

@@ -6,6 +6,7 @@ import entities.BeatManager;
 import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
+import entities.PlatformType;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Input.Key;
@@ -47,10 +48,9 @@ class GameState extends State
 	private var player_sprite: Avatar;
 	
 	var lanes : Array<Float>;
-	var previous_lane : Int;
-	var current_lane : Int;
 	
 	var jumping_points : Array<PlatformPeg>;
+	var platform_points : Array<Platform>;
 	var jump_height : Float;
 	var lane_start : Float;
 	
@@ -64,7 +64,13 @@ class GameState extends State
 	var beat_start_wrap : Int;
 	var platform_list : Array<Platform>;
 	var mouse_platform : Platform;
+	var next_platform : Platform;
 	var mouse_pos : Vector;
+	var mouse_index_x : Int;
+	var mouse_index_y : Int;
+	
+	var current_platform_type : PlatformType;
+	var next_platform_type : PlatformType;
 	
 	/// Text
 	var processing_text : Text;
@@ -144,12 +150,17 @@ class GameState extends State
 		});
 		
 		jumping_points = new Array<PlatformPeg>();
+		platform_points = new Array<Platform>();
 		
 		for (i in 0...num_internal_lanes * num_peg_levels)
 		{
 			var peg = new PlatformPeg(scene, game_info, i);
 			peg.visible = false;
 			jumping_points.push(peg);
+			
+			var platform = new Platform(scene, game_info, i, NONE);
+			platform.visible = false;
+			platform_points.push(platform);
 		}
 		
 		player_sprite = new Avatar(lanes[2], {
@@ -161,28 +172,16 @@ class GameState extends State
 			size: new Vector(24, 48),
 			scene: scene,
 		});
+		player_sprite.current_lane = 2;
 		player_sprite.visible = false;
 		
 		connect_input();
 		
-		mouse_platform = new Platform(scene, game_info, 0, CENTER);
+		mouse_platform = new Platform(scene, game_info, num_internal_lanes * num_peg_levels + 1, NONE);
+		next_platform = new Platform(scene, game_info, num_internal_lanes * num_peg_levels + 2, NONE);
+		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.screen.height - 100);
 		
 		mouse_pos = new Vector();
-		
-		/*
-		Luxe.timer.schedule(0.4, function()
-		{
-			var res = beat_manager.async_load();
-			res.then(function()
-			{
-				trace("Beats Loading completed!");
-			});
-		}, true); */
-		
-		
-		//player_sprite.pos.x = lanes[0];
-		//previous_lane = 0;
-		//current_lane = 0;		
 	}
 	
 	override function update(dt:Float) 
@@ -190,10 +189,12 @@ class GameState extends State
 		if (Luxe.input.inputpressed("put_platform"))
 		{
 			trace("Putting platform!");
+			put_platform();
 		}
 		else if (Luxe.input.inputpressed("switch_platform"))
 		{
 			trace("Switching platform!");
+			switch_platform();
 		}
 		
 		sky_uv.set((Luxe.camera.pos.x - Luxe.screen.width/2.0), (Luxe.camera.pos.y - Luxe.screen.height/2.0), sky_uv.w, sky_uv.h);
@@ -201,11 +202,13 @@ class GameState extends State
 		sky_sprite.uv.set(sky_uv.x, sky_uv.y, sky_uv.w, sky_uv.h);
 		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
 		
-		previous_lane = current_lane;
-		
-		var mouse_platform_x = lane_start + Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))) * (lanes[2] - lanes[1]);
-		var mouse_platform_y = Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height) * jump_height;
+		mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
+		mouse_index_y = - Std.int(Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height)) + beat_start_wrap;
+		var mouse_platform_x = lane_start + mouse_index_x * (lanes[2] - lanes[1]);
+		var mouse_platform_y = (- mouse_index_y + beat_start_wrap ) * jump_height;
 		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
+		
+		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.camera.pos.y + Luxe.screen.height - 100);
 	}
 	
 	private function connect_input()
@@ -229,11 +232,16 @@ class GameState extends State
 		var jump_height = e.beat_height;
 		var peg_y = e.pos.y - jump_height;
 		var j = 0;
-		for (peg in jumping_points)
+		for (i in 0...jumping_points.length)
 		{
+			var peg = jumping_points[i];
+			var platform = platform_points[i];
+			
 			peg.pos.set_xy(lanes[j + 1], peg_y);
+			platform.pos.set_xy(lanes[j + 1], peg_y);
 			//trace('Setting peg at (${lanes[j + 1]}, $peg_y)');
 			peg.visible = true;
+			platform.visible = platform.type != NONE;
 			
 			j++;
 			if (j == 3)
@@ -245,36 +253,122 @@ class GameState extends State
 		this.jump_height = jump_height;
 		beat_n = 0;
 		beat_start_wrap = 7;
+		
+		current_platform_type = get_next_platform_type();
+		next_platform_type = get_next_platform_type();
+		
+		mouse_platform.type = current_platform_type;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
 	{
 		beat_n++;
 		
-		if (beat_n >= beat_start_wrap)
+		var pl = get_platform(player_sprite.current_lane, beat_n);
+		
+		trace('player is now at ${player_sprite.current_lane}, $beat_n' );
+		trace('cursor is now at ${mouse_index_x}, $mouse_index_y' );
+		
+		if (pl == null)
 		{
-			var n = beat_n - beat_start_wrap;
-			var l = jumping_points.length;
-			
-			var prev_0_n = ( l + ( (n - 1) * num_internal_lanes + 0 ) ) % l;
-			var prev_1_n = ( l + ( (n - 1) * num_internal_lanes + 1 ) ) % l;
-			var prev_2_n = ( l + ( (n - 1) * num_internal_lanes + 2 ) ) % l;
-			var current_0_n = (n * num_internal_lanes + 0) % l;
-			var current_1_n = (n * num_internal_lanes + 1) % l;
-			var current_2_n = (n * num_internal_lanes + 2) % l;
-			
-			trace('n is $n, prev is ($prev_0_n, $prev_1_n, $prev_2_n), current is ($current_0_n, $current_1_n, $current_2_n)');
-			
-			var prev_0 = jumping_points[prev_0_n];
-			var prev_1 = jumping_points[prev_1_n];
-			var prev_2 = jumping_points[prev_2_n];
-			var current_0 = jumping_points[current_0_n];
-			var current_1 = jumping_points[current_1_n];
-			var current_2 = jumping_points[current_2_n];
-			
-			current_0.pos.y = prev_0.pos.y - jump_height;
-			current_1.pos.y = prev_1.pos.y - jump_height;
-			current_2.pos.y = prev_2.pos.y - jump_height;
+			trace('player is standing outside lanes. Game over');
 		}
+		else
+		{
+			player_sprite.current_lane = player_sprite.current_lane + switch (get_platform(player_sprite.current_lane, beat_n).type)
+			{
+				case NONE: 0;
+				case CENTER: 0;
+				case LEFT: -1;
+				case RIGHT: 2;
+			}
+			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
+			player_sprite.trajectory_movement.nextPos.y -= jump_height;
+			
+			if (beat_n >= beat_start_wrap)
+			{
+				var n = beat_n - beat_start_wrap;
+				var l = jumping_points.length;
+				
+				var prev_0_n = ( l + ( (n - 1) * num_internal_lanes + 0 ) ) % l;
+				var prev_1_n = ( l + ( (n - 1) * num_internal_lanes + 1 ) ) % l;
+				var prev_2_n = ( l + ( (n - 1) * num_internal_lanes + 2 ) ) % l;
+				var current_0_n = (n * num_internal_lanes + 0) % l;
+				var current_1_n = (n * num_internal_lanes + 1) % l;
+				var current_2_n = (n * num_internal_lanes + 2) % l;
+				
+				var peg_prev_0 = jumping_points[prev_0_n];
+				var peg_prev_1 = jumping_points[prev_1_n];
+				var peg_prev_2 = jumping_points[prev_2_n];
+				var peg_current_0 = jumping_points[current_0_n];
+				var peg_current_1 = jumping_points[current_1_n];
+				var peg_current_2 = jumping_points[current_2_n];
+				
+				peg_current_0.pos.y = peg_prev_0.pos.y - jump_height;
+				peg_current_1.pos.y = peg_prev_1.pos.y - jump_height;
+				peg_current_2.pos.y = peg_prev_2.pos.y - jump_height;
+				
+				var platform_prev_0 = platform_points[prev_0_n];
+				var platform_prev_1 = platform_points[prev_1_n];
+				var platform_prev_2 = platform_points[prev_2_n];
+				var platform_current_0 = platform_points[current_0_n];
+				var platform_current_1 = platform_points[current_1_n];
+				var platform_current_2 = platform_points[current_2_n];
+				
+				platform_current_0.type = NONE;
+				platform_current_1.type = NONE;
+				platform_current_2.type = NONE;
+				
+				platform_current_0.pos.y = platform_prev_0.pos.y - jump_height;
+				platform_current_1.pos.y = platform_prev_1.pos.y - jump_height;
+				platform_current_2.pos.y = platform_prev_2.pos.y - jump_height;
+			}
+		}
+	}
+	
+	function get_platform(x:Int, y:Int) : Platform
+	{
+		if (x < 1 || x > 3) return null;
+		if (y < 0) return null;
+		var current = (platform_points.length + (y * num_internal_lanes + (x - 1))) % platform_points.length;
+		return platform_points[current];
+	}
+	
+	function put_platform() : Void
+	{
+		trace('putting platform at $mouse_index_x, ${beat_n + mouse_index_y}' );
+		var pl = get_platform(mouse_index_x, beat_n + mouse_index_y);
+		
+		if (pl == null)
+		{
+			trace('null platform');
+			return;
+		}
+		
+		if (pl.type == NONE)
+		{
+			pl.type = current_platform_type;
+		}
+		
+		current_platform_type = next_platform_type;
+		next_platform_type = get_next_platform_type();
+		
+		mouse_platform.type = current_platform_type;
+		next_platform.type = next_platform_type;
+	}
+	
+	function switch_platform()
+	{
+		var t = current_platform_type;
+		current_platform_type = next_platform_type;
+		next_platform_type = t;
+		
+		mouse_platform.type = current_platform_type;
+		next_platform.type = next_platform_type;
+	}
+	
+	function get_next_platform_type() : PlatformType
+	{
+		return Type.createEnumIndex(PlatformType, Luxe.utils.random.int(1, Type.getEnumConstructs(PlatformType).length));
 	}
 }
