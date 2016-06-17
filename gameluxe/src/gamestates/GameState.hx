@@ -339,7 +339,7 @@ class GameState extends State
 	function put_platform() : Void
 	{
 		trace('putting platform at $mouse_index_x, ${mouse_index_y}' );
-		var pl = get_platform(mouse_index_x, mouse_index_y);
+		var pl = get_platform(mouse_index_x, mouse_index_y + beat_start_wrap);
 		
 		if (pl == null)
 		{
