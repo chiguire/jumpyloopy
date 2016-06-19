@@ -68,6 +68,7 @@ class GameState extends State
 	var mouse_pos : Vector;
 	var mouse_index_x : Int;
 	var mouse_index_y : Int;
+	var max_tile : Int;
 	
 	var current_platform_type : PlatformType;
 	var next_platform_type : PlatformType;
@@ -213,7 +214,7 @@ class GameState extends State
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
-		var max_tile = Math.round( -Luxe.camera.pos.y / jump_height);
+		max_tile = Math.round( (Luxe.screen.height/2.0 - Luxe.camera.pos.y) / jump_height);
 		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance*0.5) / lanes_distance))));
 		mouse_index_y = Math.round (mouse_pos.y / jump_height);
 		var mouse_platform_x = lane_start + mouse_index_x * lanes_distance;
@@ -223,7 +224,7 @@ class GameState extends State
 		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.camera.pos.y + Luxe.screen.height - 100);
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
-		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y)\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y})';
+		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y)\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile';
 	}
 	
 	private function connect_input()
@@ -296,11 +297,11 @@ class GameState extends State
 				case RIGHT: 1;
 			}
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			//if (pl.type != NONE)
-			//{
+			if (pl.type != NONE)
+			{
 				player_sprite.trajectory_movement.nextPos.y -= jump_height;
 				beat_n++;
-			//}
+			}
 			
 			if (beat_n >= beat_start_wrap)
 			{
@@ -353,9 +354,8 @@ class GameState extends State
 	
 	function put_platform() : Void
 	{
-		//trace('putting platform at $mouse_index_x, ${mouse_index_y}' );
-		var max_tile = Math.round( -Luxe.camera.pos.y / jump_height);
-		var pl = get_platform(mouse_index_x, max_tile + mouse_index_y);
+		trace('putting platform at $mouse_index_x, ${max_tile - mouse_index_y}' );
+		var pl = get_platform(mouse_index_x, max_tile - mouse_index_y);
 		
 		if (pl == null)
 		{
