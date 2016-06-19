@@ -47,8 +47,7 @@ class TrajectoryMovement extends Component
 		if (!nextPos.equals(pos))
 		{
 			Actuate.tween(pos, T, {x:nextPos.x});
-			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Cubic.easeIn);
-		}
+			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Cubic.easeIn);		}
 		else
 		{
 			var motionPath = new MotionPath();
@@ -56,8 +55,7 @@ class TrajectoryMovement extends Component
 			motionPath.line(pos.x, pos.y - cast(entity, Avatar).jump_height * 1.25);
 			motionPath.line(pos.x, pos.y);
 		
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeIn);
-		}
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeIn);		}
 	}
 }
  

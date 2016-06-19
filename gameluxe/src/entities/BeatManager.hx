@@ -1,5 +1,8 @@
 package entities;
 
+import analysis.FFT;
+import analysis.SpectrumProvider;
+import analysis.ThresholdFunction;
 import components.BeatManagerVisualizer;
 import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
@@ -27,6 +30,12 @@ typedef BeatManagerOptions =
 {
 	> EntityOptions,
 	var batcher : Batcher; // viewport
+};
+
+typedef BeatManagerDataReadState =
+{
+	var data_offset : Int;
+	var num_loops : Int;
 };
  
 class BeatManager extends Entity
@@ -66,15 +75,14 @@ class BeatManager extends Entity
 	public var conv : Vector<Float>;
 	
 	// chunks 
-	var max_instant_intervals_per_chunk = 43 * 20; // 15 sec per chunk
+	var max_instant_intervals_per_chunk = 43 * 15; // 15 sec per chunk
 	public var tempo_blocks : Vector<Int>;
 	public var T_occ_max_blocks : Vector<Int>;
 	public var T_occ_avg_blocks : Vector<Float>;
 	
-	
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
-	
+		
 	/// renderer
 	public var batcher: Batcher;
 	
@@ -129,8 +137,7 @@ class BeatManager extends Entity
 						request_next_beat = false;
 						//trace("beat " + beat_pos[i]);
 						
-						// jump every 2 beats for now ( I wonder if there is a better way to play around with this, but it looks pretty accurate from what I can see)
-						var next_beat_pos = (i + 4) % beat_pos.length;
+						var next_beat_pos = (i+1) % beat_pos.length;
 						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
 						
 						if (next_beat_time - audio_time > 0)
@@ -209,6 +216,7 @@ class BeatManager extends Entity
 			//Luxe.showConsole(true);
 			
 			process_audio();
+			process_audio_fft();
 			
 			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});
@@ -285,10 +293,10 @@ class BeatManager extends Entity
 			// calculate Beat Line
 			calculate_beat_line(begin, end, i);	
 		}
-		trace(tempo_blocks);
+		//trace(tempo_blocks);
 
 		// store beat's position in a better format
-		calculate_beat_pos();
+		//calculate_beat_pos();
 	}
 	
 	
@@ -310,7 +318,7 @@ class BeatManager extends Entity
 		var sum = 0.0;
 		// calculation of the first second
 		// 43 came from 44100/1024
-		var num_objects = 43; 
+		var num_objects = 43 * 5; 
 		for ( i in 0...num_objects )
 		{
 			sum += energy1024[i];
@@ -342,7 +350,7 @@ class BeatManager extends Entity
 		// 21 came from (44100/1024)/2
 		// means, we compared where i (instant energy) is in the center pos of the window (local energy)
 		energy_peak = new Vector<Float>(num_instant_interval);
-		var lookup_offset = 21;
+		var lookup_offset = 21 * 5;
 		for ( i in 0...num_instant_interval )
 		{
 			var local_avg_index = ((i - lookup_offset) + energy44100.length) % energy44100.length; // loop the lookup
@@ -474,7 +482,7 @@ class BeatManager extends Entity
 			space += 1.0;
 		}
 		
-		trace(pulse_train);
+		//trace(pulse_train);
 				
 		// convolution with instant energy of the music
 		var max_att = 0.0; 	// maximum attitude
@@ -551,7 +559,7 @@ class BeatManager extends Entity
 	}
 	
 	/// analysis 2
-	public function get_samples( samples:Vector<Float>, offset:Int ) : Int
+	public function get_samples( samples:Vector<Float>, offset:Int ) : BeatManagerDataReadState
 	{
 		if ( offset + samples.length <= audio_data_for_analysis.length )
 		{
@@ -568,6 +576,94 @@ class BeatManager extends Entity
 		}
 		
 		// return next_offset (wrap around)
-		return (offset + samples.length) % audio_data_for_analysis.length;
+		return { data_offset: (offset + samples.length) % audio_data_for_analysis.length, num_loops: Std.int((offset + samples.length) / audio_data_for_analysis.length) };
+	}
+	
+	
+	/// fft analysis
+	public static var hop_size = 1024;// 512;
+	public static var history_size = 50 * 15;
+	public static var multipliers = [ 4.0, 2.0, 2.0 ];
+	
+	public static var bands = [ { low:100, high:500 } ];// , 4000, 10000, 10000, 16000 ];
+	//public static var bands = [ 500, 1500, 4000, 10000, 10000, 16000 ];
+	
+	public function process_audio_fft()
+	{		
+		var spectrum_provider = new SpectrumProvider(this, 1024, hop_size, true);
+		var spectrum = spectrum_provider.next_spectrum();
+		var prev_spectrum = new Vector<Float>(spectrum.length);
+		
+		var spectral_flux = new Array<Array<Float>>();
+		for ( i in 0...bands.length )
+		{
+			spectral_flux.push(new Array<Float>());
+		}
+		
+		do
+		{
+			var i = 0;
+			while ( i < bands.length )
+			{
+				var start_freq = spectrum_provider.fft.freq_to_index( bands[i].low );
+				var end_freq = spectrum_provider.fft.freq_to_index( bands[i].high );
+				
+				var flux = 0.0;
+				for ( j in start_freq...end_freq + 1 )
+				{
+					var val = (spectrum[j] - prev_spectrum[j]);
+					val = (val + Math.abs(val)) / 2;
+					flux += val;
+				}
+				spectral_flux[i].push(flux);
+				
+				i += 2;
+			}
+			
+			Vector.blit( spectrum, 0, prev_spectrum, 0, spectrum.length );
+			
+			spectrum = spectrum_provider.next_spectrum();
+		}
+		while (spectrum != null);
+		
+		for ( i in 0...spectral_flux.length )
+		{
+			trace(spectral_flux[i].length);
+		}
+		
+		//trace(spectral_flux);
+		
+		var thresholds = new Array<Array<Float>>();
+		for ( i in 0...bands.length )
+		{
+			var threshold = new ThresholdFunction( history_size, multipliers[i] ).calculate( spectral_flux[i] );
+			thresholds.push( threshold );
+		}
+
+		var arry_size = spectral_flux[0].length;
+		var a_spectral_flux = spectral_flux[0];
+		var threshold = thresholds[0];
+		var pruned_spectral_flux = new Vector<Float>(arry_size);
+		// onset detection
+		for( i in 0...arry_size)
+		{
+			pruned_spectral_flux[i] = 0.0;
+			if ( threshold[i] <= a_spectral_flux[i] )
+			{
+				pruned_spectral_flux[i] = a_spectral_flux[i] - threshold[i];
+			}
+		}
+		
+		for ( i in 2...beat.length  )
+		{
+			beat[i] = 0.0;
+			
+			if ( pruned_spectral_flux[i] < pruned_spectral_flux[i-1] && pruned_spectral_flux[i-2] == 0)
+			{
+				beat[i] = 1;
+			}
+		}
+		
+		calculate_beat_pos();
 	}
 }

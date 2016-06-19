@@ -1,4 +1,5 @@
 package analysis;
+import entities.BeatManager;
 import haxe.ds.Vector;
 
 /**
@@ -16,15 +17,18 @@ import haxe.ds.Vector;
  */
 class SpectrumProvider
 {
-	var  
+	var data_provider : BeatManager; 
 	
 	var hop_size = 0;
-	var fft : FFT;
+	public var fft : FFT;
 	
 	// samples
 	var samples : Vector<Float>;
 	var next_samples : Vector<Float>;
 	var temp_samples : Vector<Float>;
+	
+	var data_state : BeatManagerDataReadState = { data_offset:0, num_loops:0 };
+	var curr_sample = 0;
 	
 	/**
 	 * Constructor, sets the {@link Decoder}, the sample window size and the
@@ -38,8 +42,10 @@ class SpectrumProvider
 	 * @param hopSize The hop size.
 	 * @param useHamming Wheter to use hamming smoothing or not.
 	 */
-	public function new(sample_window_size:Int, _hop_size:Int, use_hamming:Bool)
+	public function new( _data_provider:BeatManager, sample_window_size:Int, _hop_size:Int, use_hamming:Bool)
 	{
+		data_provider = _data_provider;
+		
 		samples = new Vector<Float>(sample_window_size);
 		next_samples = new Vector<Float>(sample_window_size);
 		temp_samples = new Vector<Float>(sample_window_size);
@@ -51,7 +57,37 @@ class SpectrumProvider
 		
 		// read samples
 		// read next_samples
-		
+		data_state = data_provider.get_samples(samples, data_state.data_offset);
+		data_state = data_provider.get_samples(next_samples, data_state.data_offset);
 	}
 	
+	public function next_spectrum() : Vector<Float>
+	{
+		if ( curr_sample >= samples.length)
+		{
+			if (data_state.num_loops > 0)
+			{
+				trace("finish reading");
+				return null;
+			}
+			
+			// double buffering technique here, so we don't have allocate new Vector everytime we progressively read data
+			var tmp = next_samples;
+			next_samples = samples;
+			samples = tmp;
+			data_state = data_provider.get_samples(next_samples, data_state.data_offset);
+			//trace("fft out " + data_state.data_offset);
+			
+			curr_sample -= samples.length;
+		}
+		
+		// copy into temp array for FFT processing
+		Vector.blit(samples, curr_sample, temp_samples, 0, samples.length - curr_sample);
+		Vector.blit(next_samples, 0, temp_samples, samples.length - curr_sample, curr_sample);
+		
+		fft.forward( temp_samples );
+		curr_sample += hop_size;
+		
+		return fft.spectrum;
+	}
 }

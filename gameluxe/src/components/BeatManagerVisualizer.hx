@@ -44,13 +44,16 @@ class BeatManagerVisualizer extends Component
 	
 	var size : Vector; 
 	
-	// display
+	/// display
 	var energy1024_disp	: HVector<QuadGeometry>;
 	var energy44100_disp : HVector<QuadGeometry>;
 	var energypeaks_disp : HVector<QuadGeometry>;
 	var conv_disp : HVector<QuadGeometry>;
 	var beats_disp : HVector<QuadGeometry>;
 	var audiopos_disp : LineGeometry;
+	
+	/// fft analysis
+	var spectral_flux_disp : HVector<QuadGeometry>;
 	
 	public function new(?_options:ComponentOptions) 
 	{
@@ -74,66 +77,7 @@ class BeatManagerVisualizer extends Component
 		
 		init_display();
 	}
-	
-	public function OnAudioLoad(e)
-	{	
-		/*
-		
-		// draw energy
-		for(i in 0...parent.num_instant_interval)
-		Luxe.draw.box({
-				batcher : viewport_ui,
-				depth : 1,
-                x : offsetx + i*bar_size.x, y : offsety + bar_size.y,
-                w : bar_size.x,
-                h : bar_size.y * parent.energy1024[i]/(65335*65335*2),
-				color : new Color(0.5, 0.5, 0, 1)
-            });
-			
-		// draw energy peaks
-		for(i in 0...parent.num_instant_interval)
-		Luxe.draw.box({
-				batcher : viewport_ui,
-				depth : 1,
-                x : offsetx + i*bar_size.x, y : offsety,
-                w : bar_size.x,
-                h : bar_size.y * (parent.energy_peak[i] > 0.0 ? 0.1 : 0.0),
-				color : new Color(0.75, 0.75, 0, 1)
-            });
-			
-		// draw conv
-		for(i in 0...parent.num_instant_interval)
-		Luxe.draw.box({
-				batcher : viewport_ui,
-				depth : 1,
-                x : offsetx + i*bar_size.x, y : offsety + bar_size.y * 0.1,
-                w : bar_size.x,
-                h : bar_size.y * (parent.conv[i] > 0.0 ? 0.1 : 0.0),
-				color : new Color(0.0, 0.75, 0, 1)
-            });
-			
-		// draw beats
-		for(i in 0...parent.beat.length)
-		Luxe.draw.line({
-				batcher : viewport_ui,
-				depth : 2,
-				p0 : new Vector( offsetx + parent.beat_pos[i]/parent.num_instant_interval * size.x, offsety ),
-				p1 : new Vector( offsetx + parent.beat_pos[i]/parent.num_instant_interval * size.x, offsety + size.y ),
-				color : new Color(0.0, 0.5, 0, 1)
-            });
-			
-		// draw audio line
-		audio_pos = Luxe.draw.line({
-			batcher : viewport_ui,
-			depth : 3,
-            p0 : new Vector( offsetx + parent.audio_pos * size.x, offsety ),
-            p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
-            color : new Color(0.5,0.2,0.2,1)
-        });
-		
-		*/
-	}
-			
+				
 	public function init_display()
 	{
 		// draw into UI view
@@ -166,7 +110,6 @@ class BeatManagerVisualizer extends Component
 		}
 				
 		// draw energy
-		
 		energy1024_disp = new HVector<QuadGeometry>(num_bars_disp);
 		var init_options = { container: energy1024_disp, depth: 1, color : new Color(0.5, 0.5, 0, 1) };
 		init_display_geometry(init_options);
@@ -181,8 +124,8 @@ class BeatManagerVisualizer extends Component
 		
 		conv_disp = new HVector<QuadGeometry>(num_bars_disp);
 		init_options = { container: conv_disp, depth: 1, color : new Color(0.0, 0.75, 0, 1) };
-		init_display_geometry(init_options);		
-		
+		init_display_geometry(init_options);
+				
 		beats_disp = new HVector<QuadGeometry>(num_bars_disp);
 		init_options = { container: beats_disp, depth: 2, color : new Color(0.0, 0.5, 0, 1) };
 		init_display_geometry(init_options);
@@ -195,6 +138,10 @@ class BeatManagerVisualizer extends Component
             p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
             color : new Color(0.5,0.2,0.2,1)
         });
+		
+		spectral_flux_disp = new HVector<QuadGeometry>(num_bars_disp);
+		init_options = { container: spectral_flux_disp, depth: 1, color : new Color(0.5, 0.0, 0, 1) };
+		init_display_geometry(init_options);
 	}
 	
 	public function update_display(curr_time:Float)
