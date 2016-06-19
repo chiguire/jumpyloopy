@@ -74,6 +74,7 @@ class GameState extends State
 	
 	/// Text
 	var processing_text : Text;
+	var debug_text : Text;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -182,6 +183,14 @@ class GameState extends State
 		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.screen.height - 100);
 		
 		mouse_pos = new Vector();
+		
+		debug_text = new Text({
+			pos: new Vector(10, 10),
+			text: "",
+			color: new Color(210/255.0, 210/255.0, 210/255.0),
+			point_size: 12,
+			scene: scene,
+		});
 	}
 	
 	override function update(dt:Float) 
@@ -202,13 +211,19 @@ class GameState extends State
 		sky_sprite.uv.set(sky_uv.x, sky_uv.y, sky_uv.w, sky_uv.h);
 		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
 		
-		mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
-		mouse_index_y = - Std.int(Math.fround((Luxe.camera.pos.y + mouse_pos.y) / jump_height));
-		var mouse_platform_x = lane_start + mouse_index_x * (lanes[2] - lanes[1]);
-		var mouse_platform_y = (- mouse_index_y ) * jump_height;
-		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
+		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
+		var lanes_distance = (lanes[2] - lanes[1]);
+		var max_tile = Math.round( -Luxe.camera.pos.y / jump_height);
+		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance*0.5) / lanes_distance))));
+		mouse_index_y = Math.round (mouse_pos.y / jump_height);
+		var mouse_platform_x = lane_start + mouse_index_x * lanes_distance;
+		var mouse_platform_y = mouse_index_y * jump_height;
+		mouse_platform.pos.set_xy(mouse_platform_x, Luxe.camera.pos.y + mouse_platform_y);
 		
 		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.camera.pos.y + Luxe.screen.height - 100);
+		
+		debug_text.pos.y = Luxe.camera.pos.y + 10;
+		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y)\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y})';
 	}
 	
 	private function connect_input()
@@ -230,7 +245,7 @@ class GameState extends State
 	function OnLevelStart( e:LevelStartEvent )
 	{
 		var jump_height = e.beat_height;
-		var peg_y = e.pos.y - jump_height;
+		var peg_y = e.pos.y;
 		var j = 0;
 		for (i in 0...jumping_points.length)
 		{
@@ -264,8 +279,8 @@ class GameState extends State
 	{
 		var pl = get_platform(player_sprite.current_lane, beat_n);
 		
-		trace('player is now at ${player_sprite.current_lane}, $beat_n' );
-		trace('cursor is now at ${mouse_index_x}, $mouse_index_y' );
+		//trace('player is now at ${player_sprite.current_lane}, $beat_n' );
+		//trace('cursor is now at ${mouse_index_x}, $mouse_index_y' );
 		
 		if (pl == null)
 		{
@@ -281,11 +296,11 @@ class GameState extends State
 				case RIGHT: 1;
 			}
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			if (pl.type != NONE)
-			{
+			//if (pl.type != NONE)
+			//{
 				player_sprite.trajectory_movement.nextPos.y -= jump_height;
 				beat_n++;
-			}
+			//}
 			
 			if (beat_n >= beat_start_wrap)
 			{
@@ -338,8 +353,9 @@ class GameState extends State
 	
 	function put_platform() : Void
 	{
-		trace('putting platform at $mouse_index_x, ${mouse_index_y}' );
-		var pl = get_platform(mouse_index_x, mouse_index_y + beat_start_wrap);
+		//trace('putting platform at $mouse_index_x, ${mouse_index_y}' );
+		var max_tile = Math.round( -Luxe.camera.pos.y / jump_height);
+		var pl = get_platform(mouse_index_x, max_tile + mouse_index_y);
 		
 		if (pl == null)
 		{
@@ -347,10 +363,12 @@ class GameState extends State
 			return;
 		}
 		
-		if (pl.type == NONE)
+		if (pl.type != NONE)
 		{
-			pl.type = current_platform_type;
+			return;
 		}
+		
+		pl.type = current_platform_type;
 		
 		current_platform_type = next_platform_type;
 		next_platform_type = get_next_platform_type();
