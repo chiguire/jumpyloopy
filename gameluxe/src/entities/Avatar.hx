@@ -46,8 +46,8 @@ class TrajectoryMovement extends Component
 		
 		if (!nextPos.equals(pos))
 		{
-			Actuate.tween(pos, T, {x:nextPos.x});
-			Actuate.tween(pos, T, { y:nextPos.y } ).ease(luxe.tween.easing.Cubic.easeIn);		}
+			Actuate.tween(pos, T, {x:nextPos.x,  y:nextPos.y}).ease(luxe.tween.easing.Cubic.easeIn);
+		}
 		else
 		{
 			var motionPath = new MotionPath();
@@ -94,6 +94,7 @@ class Avatar extends Sprite
 	function OnLevelStart( e:LevelStartEvent )
 	{
 		visible = true;
+		gamecamera.set_x(starting_x);
 		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		jump_height = e.beat_height;
