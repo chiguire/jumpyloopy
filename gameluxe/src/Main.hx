@@ -13,11 +13,24 @@ import luxe.Input;
 
 class Main extends luxe.Game 
 {
+	public static var global_info : GlobalGameInfo;
+	
 	private var game_info : GameInfo;
 	private var machine : States;
 	
+	// Don't need this, use reference Window Size instead
+	//public static var global_camera_zoom = 1.0; 
+	
+	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
+	
+	public static function ref_window_aspect() : Float
+	{
+		return global_info.ref_window_size_x / global_info.ref_window_size_y;
+	}
+	
 	override function ready() 
 	{
+		
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
 		game_info = {
@@ -37,15 +50,23 @@ class Main extends luxe.Game
 		machine.set("MenuState");
 	}
 
-	override function config(config:luxe.GameConfig) {
-
+	override function config(config:luxe.GameConfig) 
+	{
+		global_info = 
+		{
+			ref_window_size_x : config.user.ref_window_size[0] ? config.user.ref_window_size[0] : 1440,
+			ref_window_size_y : config.user.ref_window_size[1] ? config.user.ref_window_size[1] : 900
+		};
+		
 #if (web && sample)
-		config.window.width = 405;
-		config.window.height = 720;
+		config.window.width = global_info.ref_window_size_x;// 405;
+		config.window.height = global_info.ref_window_size_y;// 720;
 #else
-		config.window.width = 405;
-		config.window.height = 720;
+		config.window.width = global_info.ref_window_size_x;// 405;
+		config.window.height = global_info.ref_window_size_y;// 720;
+		config.window.borderless = true;
 #end
+		//global_camera_zoom = 1.0 * multiplier;
 
 		config.preload.textures.push({id:'assets/image/darkPurple.png'});
         config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});

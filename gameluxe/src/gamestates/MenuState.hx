@@ -2,8 +2,11 @@ package gamestates;
 
 import analysis.FFT;
 import data.GameInfo;
+import luxe.Camera;
 import luxe.Input.MouseEvent;
 import luxe.Scene;
+import luxe.Screen;
+import luxe.Sprite;
 import luxe.Vector;
 import luxe.Color;
 import luxe.Game;
@@ -72,14 +75,16 @@ class MenuState extends State
 		trace("Entering menu");
 		
 		scene = new Scene("MenuScene");
+		//Luxe.camera.size_mode = luxe.SizeMode.contain;
+		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 		
 		title_text = new Text({
 			text: "Jumpyloopy (please change this)",
 			point_size: 48,
-			pos: new Vector(10, 10),
 			color: Color.random(),
 			scene: scene,
 		});
+		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 10);
 		
 		play_button = new Button({
 			name: "Play",
@@ -111,6 +116,13 @@ class MenuState extends State
 			scene: scene,
 		});
 		
+		new Sprite(
+		{
+			pos: new Vector( 1440/2, 400 ),
+			size: new Vector( 1420, 200 ),
+			scene: scene,
+		});
+		
 		
 		play_button.events.listen('button.clicked', function (e:ButtonEvent)
 		{
@@ -119,14 +131,18 @@ class MenuState extends State
 		
 		scores_button.events.listen('button.clicked', function (e:ButtonEvent)
 		{
-			machine.set("ScoreState");
+			//machine.set("ScoreState");
+			
+			sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
 		});
 		
 		credits_button.events.listen('button.clicked', function (e:ButtonEvent)
 		{
-			machine.set("CreditsState");
+			//machine.set("CreditsState");
+			// Luxe.snow.io.url_open(Main.WARCHILD_URL); //no implementation in Snow for native, Damn
+			Sys.command("start", [Main.WARCHILD_URL]);
 		});
 		
-		FFT.test_fft();
+		//FFT.test_fft();
 	}
 }
