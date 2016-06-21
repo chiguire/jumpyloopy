@@ -4,6 +4,7 @@ import data.GameInfo;
 import data.GameInfo.ScoreList;
 import gamestates.CreditsState;
 import gamestates.GameState;
+import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import luxe.States;
@@ -29,7 +30,7 @@ class Main extends luxe.Game
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
 	/// UI by mint
-	public static var canvas : Canvas;
+	public static var canvas : AutoCanvas;
 	public static var mint_rendering : LuxeMintRender;
 	public static var layout : Margins;
 	public static var focus : Focus;
@@ -71,6 +72,7 @@ class Main extends luxe.Game
 		machine = new States({ name: 'appmachine' });
 		
 		machine.add(new MenuState("MenuState", game_info));
+		machine.add(new LevelSelectState("LevelSelect", game_info));
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
