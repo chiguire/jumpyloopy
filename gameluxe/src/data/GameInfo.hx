@@ -11,6 +11,10 @@ typedef GlobalGameInfo =
 {
 	var ref_window_size_x : Int;
 	var ref_window_size_y : Int;
+	var window_size_x : Int;
+	var window_size_y : Int;
+	var fullscreen : Bool;
+	var borderless : Bool;
 };
 
 typedef GameInfo =

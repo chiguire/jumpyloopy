@@ -5,6 +5,8 @@ import data.GameInfo;
 import haxe.Json;
 import luxe.Camera;
 import luxe.Input.MouseEvent;
+import luxe.Parcel;
+import luxe.ParcelProgress;
 import luxe.Scene;
 import luxe.Screen;
 import luxe.Sprite;
@@ -31,6 +33,7 @@ class MenuState extends State
 	private var scores_button : Button;
 	private var credits_button : Button;
 	
+	var frontend_parcel : Parcel;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -41,9 +44,6 @@ class MenuState extends State
 		play_button = null;
 		scores_button = null;
 		credits_button = null;
-		
-		// load resources
-		Luxe.resources.load_json("assets/data/frontend.json").then(on_layout_loaded);
 	}
 	
 	override function init()
@@ -77,10 +77,33 @@ class MenuState extends State
 	override function onenter<T>(_value:T)
 	{
 		trace("Entering menu");
+		
+		// load parcels
+		frontend_parcel = new Parcel();
+		frontend_parcel.from_json(Luxe.resources.json("assets/data/frontend_parcel.json").asset.json);
+		
+		var progress = new ParcelProgress({
+            parcel      : frontend_parcel,
+            background  : new Color(1,1,1,0.85),
+            oncomplete  : on_loaded
+        });
+		
+		frontend_parcel.load();
 				
 		scene = new Scene("MenuScene");
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
+		
+		//FFT.test_fft();
+	}
+	
+	function on_loaded( p: Parcel )
+	{
+		var json_resource = Luxe.resources.json("assets/data/frontend.json");
+		var layout_data = json_resource.asset.json;
+		//trace(layout_data);
+		
+		var canvas = Main.canvas;
 		
 		title_text = new Text({
 			text: "Jumpyloopy (please change this)",
@@ -90,13 +113,31 @@ class MenuState extends State
 		});
 		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 10);
 		
-		//FFT.test_fft();
-	}
-	
-	function on_layout_loaded()
-	{
-		var layout_data = Luxe.resources.json("assets/data/frontend.json").asset.json;
-		trace(layout_data);
+		new mint.Button({
+            parent: canvas,
+            name: 'button1',
+            x: 10, y: 52, w: 100, h: 100,
+            text: 'mint',
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } },
+            onclick: function(e,c) {trace('mint button! ${Luxe.time}' );}
+        });
+		
+		var warchild_tex_id = "assets/image/war-child-logo-home.png";
+		var warchild_tex = Luxe.resources.texture(warchild_tex_id); 
+		var warchild_img = new mint.Image({
+                parent: canvas, name: "warchild_img",
+                x:layout_data.warchild_img.pos_x, y:layout_data.warchild_img.pos_y, w:warchild_tex.width, h:warchild_tex.height,
+                path: warchild_tex_id,
+				mouse_input: true
+            });
+		warchild_img.onmouseup.listen(
+			function(e,c) 
+			{
+				trace('mint img button! ${Luxe.time}' );
+				Sys.command("start", [Main.WARCHILD_URL]);
+			}
+		);
 		
 		play_button = new Button({
 			name: "Play",

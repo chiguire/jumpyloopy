@@ -10,6 +10,11 @@ import luxe.States;
 import haxe.xml.Fast;
 import luxe.Rectangle;
 import luxe.Input;
+import mint.Canvas;
+import mint.focus.Focus;
+import mint.layout.margins.Margins;
+import mint.render.luxe.LuxeMintRender;
+import ui.AutoCanvas;
 
 class Main extends luxe.Game 
 {
@@ -23,6 +28,12 @@ class Main extends luxe.Game
 	
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
+	/// UI by mint
+	public static var canvas : Canvas;
+	public static var mint_rendering : LuxeMintRender;
+	public static var layout : Margins;
+	public static var focus : Focus;
+	
 	public static function ref_window_aspect() : Float
 	{
 		return global_info.ref_window_size_x / global_info.ref_window_size_y;
@@ -30,6 +41,23 @@ class Main extends luxe.Game
 	
 	override function ready() 
 	{
+		//app.debug.visible = true;
+		
+		// UI rendering initilization
+		mint_rendering = new LuxeMintRender();
+		layout = new Margins();
+		
+		var auto_canvas = new AutoCanvas(
+		{
+			name: "canvas",
+			rendering: mint_rendering,
+			x: 0, y: 0, w: global_info.window_size_x, h:global_info.window_size_y
+		});
+		
+		auto_canvas.auto_listen();
+		canvas = auto_canvas;
+		focus = new Focus(canvas);
+		///////////////////////////////////
 		
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
@@ -55,7 +83,11 @@ class Main extends luxe.Game
 		global_info = 
 		{
 			ref_window_size_x : config.user.ref_window_size[0] ? config.user.ref_window_size[0] : 1440,
-			ref_window_size_y : config.user.ref_window_size[1] ? config.user.ref_window_size[1] : 900
+			ref_window_size_y : config.user.ref_window_size[1] ? config.user.ref_window_size[1] : 900,
+			window_size_x : config.user.window_size[0] ? config.user.window_size[0] : 1440,
+			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
+			fullscreen : false,
+			borderless : true
 		};
 		
 #if (web && sample)
@@ -66,7 +98,8 @@ class Main extends luxe.Game
 		config.window.height = global_info.ref_window_size_y;// 720;
 		config.window.borderless = true;
 #end
-		//global_camera_zoom = 1.0 * multiplier;
+		
+		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 
 		config.preload.textures.push({id:'assets/image/darkPurple.png'});
         config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
