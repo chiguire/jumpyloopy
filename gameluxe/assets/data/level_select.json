@@ -1,6 +1,6 @@
 {
 	"background": { "pos_x": 720, "pos_y": 450 },
 	"title": { "text": "Audio Boy", "pos_x": 720, "pos_y": 50},
-	"level_0": { "text": "Level 0", "pos_x": 720, "pos_y": 250, "width":256, "height":256},
+	"level_0": { "text": "Level 0\nWar Child", "pos_x": 720, "pos_y": 250, "width":256, "height":256},
 	"warchild_img": {"pos_x": 720, "pos_y": 720}
 }

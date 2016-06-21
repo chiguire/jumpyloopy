@@ -7,14 +7,17 @@ import gamestates.GameState;
 import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
+import luxe.Camera;
 import luxe.States;
 import haxe.xml.Fast;
 import luxe.Rectangle;
 import luxe.Input;
+import luxe.Vector;
 import mint.Canvas;
 import mint.focus.Focus;
 import mint.layout.margins.Margins;
 import mint.render.luxe.LuxeMintRender;
+import phoenix.Batcher;
 import ui.AutoCanvas;
 
 class Main extends luxe.Game 
@@ -27,7 +30,8 @@ class Main extends luxe.Game
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
 	/// Camera
-	
+	public static var batcher_ui : Batcher;
+	public static var camera_ui : Camera;
 	
 	/// UI by mint
 	public static var canvas : AutoCanvas;
@@ -44,8 +48,16 @@ class Main extends luxe.Game
 	{
 		//app.debug.visible = true;
 		
+		// camera
+		// create a view for UI rendering
+		var viewport_size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
+		Luxe.camera.size = new Vector(viewport_size.x, viewport_size.y);
+		camera_ui = new Camera({name: "camera_ui"});
+		camera_ui.size = new Vector(viewport_size.x, viewport_size.y);
+		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
+		
 		// UI rendering initilization
-		mint_rendering = new LuxeMintRender();
+		mint_rendering = new LuxeMintRender({batcher:batcher_ui, depth:4});
 		layout = new Margins();
 		
 		var auto_canvas = new AutoCanvas(

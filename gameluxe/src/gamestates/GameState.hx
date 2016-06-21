@@ -30,12 +30,7 @@ import phoenix.Texture;
  * @author 
  */
 class GameState extends State
-{
-	/// UI View
-	var batcher_ui : Batcher;
-	var camera_ui : Camera;
-	
-	
+{	
 	private var game_info : GameInfo;
 	private var scene : Scene;
 	
@@ -133,12 +128,9 @@ class GameState extends State
 		lanes.push(lane_start + 4.0 * lane_width / num_all_lanes);
 		
 		scene = new Scene("GameScene");
-		// create a view for UI rendering
-		camera_ui = new Camera({name: "camera_ui"});
-		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
 		
-		beat_manager = new BeatManager({batcher : batcher_ui});		
-		level = new Level({batcher_ui : batcher_ui});
+		beat_manager = new BeatManager({batcher : Main.batcher_ui});		
+		level = new Level({batcher_ui : Main.batcher_ui});
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
 		sky_texture.clamp_s = ClampType.repeat;
