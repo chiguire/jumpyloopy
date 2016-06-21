@@ -23,11 +23,11 @@ class Main extends luxe.Game
 	
 	private var game_info : GameInfo;
 	private var machine : States;
-	
-	// Don't need this, use reference Window Size instead
-	//public static var global_camera_zoom = 1.0; 
-	
+		
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
+	
+	/// Camera
+	
 	
 	/// UI by mint
 	public static var canvas : AutoCanvas;
@@ -102,6 +102,7 @@ class Main extends luxe.Game
 #end
 		
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
+		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
 
 		config.preload.textures.push({id:'assets/image/darkPurple.png'});
         config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});

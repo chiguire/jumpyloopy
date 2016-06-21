@@ -1,0 +1,11 @@
+{
+	"textures" : 
+	[ 
+		{ "id" : "assets/image/war-child-logo-home.png" }
+	],
+	
+	"json" : 
+	[
+		{ "id" : "assets/data/level_select.json" }
+	]
+}

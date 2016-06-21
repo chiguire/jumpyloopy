@@ -64,6 +64,8 @@ class MenuState extends State
 		scene.destroy();
 		scene = null;
 		title_text = null;
+		
+		frontend_parcel = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -89,7 +91,7 @@ class MenuState extends State
 		//FFT.test_fft();
 	}
 	
-	function create_button( button_data : Dynamic ) : Button
+	public static function create_button( button_data : Dynamic ) : Button
 	{
 		var canvas = Main.canvas;
 		
@@ -99,8 +101,7 @@ class MenuState extends State
             text: button_data.text,
 			w: button_data.width, h: button_data.height,
             text_size: 14,
-            options: { label: { color:new Color().rgb(0x9dca63) } },
-            onclick: function(e, c) { change_to = "LevelSelect"; }
+            options: { label: { color:new Color().rgb(0x9dca63) } }
         });
 		button.set_pos(button_data.pos_x - button.w / 2, button_data.pos_y - button.h / 2);
 		
