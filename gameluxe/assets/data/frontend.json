@@ -1,0 +1,7 @@
+{
+	"title": {"pos_x": 720, "pos_y": 50},
+	"play_button": {"pos_x": 720, "pos_y": 160},
+	"score_button": {"pos_x": 720, "pos_y": 210},
+	"credits_button": {"pos_x": 720, "pos_y": 260},
+	"warchild_link": {"pos_x": 720, "pos_y": 800}
+}

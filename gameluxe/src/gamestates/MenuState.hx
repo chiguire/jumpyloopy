@@ -2,6 +2,7 @@ package gamestates;
 
 import analysis.FFT;
 import data.GameInfo;
+import haxe.Json;
 import luxe.Camera;
 import luxe.Input.MouseEvent;
 import luxe.Scene;
@@ -40,6 +41,9 @@ class MenuState extends State
 		play_button = null;
 		scores_button = null;
 		credits_button = null;
+		
+		// load resources
+		Luxe.resources.load_json("assets/data/frontend.json").then(on_layout_loaded);
 	}
 	
 	override function init()
@@ -73,7 +77,7 @@ class MenuState extends State
 	override function onenter<T>(_value:T)
 	{
 		trace("Entering menu");
-		
+				
 		scene = new Scene("MenuScene");
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
@@ -86,9 +90,17 @@ class MenuState extends State
 		});
 		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 10);
 		
+		//FFT.test_fft();
+	}
+	
+	function on_layout_loaded()
+	{
+		var layout_data = Luxe.resources.json("assets/data/frontend.json").asset.json;
+		trace(layout_data);
+		
 		play_button = new Button({
 			name: "Play",
-			pos: new Vector(10, 110),
+			pos: new Vector(layout_data.play_button.pos_x, layout_data.play_button.pos_y),
 			text: {
 				text: "Play",
 				point_size: 12
@@ -98,7 +110,7 @@ class MenuState extends State
 		
 		scores_button = new Button({
 			name: "Scores",
-			pos: new Vector(10, 160),
+			pos: new Vector(layout_data.score_button.pos_x, layout_data.score_button.pos_y),
 			text: {
 				text: "Scores",
 				point_size: 12,
@@ -108,7 +120,7 @@ class MenuState extends State
 		
 		credits_button = new Button({
 			name: "Credits",
-			pos: new Vector(10, 210),
+			pos: new Vector(layout_data.credits_button.pos_x, layout_data.credits_button.pos_y),
 			text: {
 				text: "Credits",
 				point_size: 12,
@@ -116,18 +128,14 @@ class MenuState extends State
 			scene: scene,
 		});
 		
+		/*
 		new Sprite(
 		{
 			pos: new Vector( 1440/2, 400 ),
 			size: new Vector( 1420, 200 ),
 			scene: scene,
 		});
-		
-		
-		play_button.events.listen('button.clicked', function (e:ButtonEvent)
-		{
-			machine.set("GameState");
-		});
+		*/
 		
 		scores_button.events.listen('button.clicked', function (e:ButtonEvent)
 		{
@@ -143,6 +151,11 @@ class MenuState extends State
 			Sys.command("start", [Main.WARCHILD_URL]);
 		});
 		
-		//FFT.test_fft();
+		play_button.events.listen('button.clicked', function (e:ButtonEvent)
+		{
+			machine.set("GameState");
+		});
+		
+		
 	}
 }
