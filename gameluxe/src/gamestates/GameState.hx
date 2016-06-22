@@ -136,7 +136,8 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
-		beat_manager = new BeatManager({batcher : Main.batcher_ui});		
+		beat_manager = new BeatManager({batcher : Main.batcher_ui});
+		beat_manager.attach_visualizer();
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
