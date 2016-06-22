@@ -351,10 +351,11 @@ class GameState extends State
 			}
 			
 			player_sprite.current_lane = platform_destination_x;
-			beat_n++;
+			beat_n = platform_destination_y;
+			//beat_n++;
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			player_sprite.trajectory_movement.nextPos.y -= level.beat_height;
+			player_sprite.trajectory_movement.nextPos.y = platform_destination_y * level.beat_height;//level.beat_height;
 			
 			if (beat_n >= beat_start_wrap)
 			{
