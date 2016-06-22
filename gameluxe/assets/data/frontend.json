@@ -1,8 +1,8 @@
 {
-	"background": { "pos_x": 720, "pos_y": 450 },
+	"background": { "pos_x": 720, "pos_y": 450, "width": 563, "height": 900 },
 	"title": { "text": "Audio Boy", "pos_x": 720, "pos_y": 50},
 	"play_button": { "text": "Play", "pos_x": 720, "pos_y": 250, "width":128, "height":32},
 	"score_button": { "text": "Score", "pos_x": 720, "pos_y": 300, "width":128, "height":32},
 	"credits_button": { "text": "Credits", "pos_x": 720, "pos_y": 350, "width":128, "height":32},
-	"warchild_img": {"pos_x": 720, "pos_y": 720}
+	"warchild_img": {"pos_x": 720, "pos_y": 650}
 }

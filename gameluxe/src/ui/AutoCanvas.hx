@@ -1,5 +1,6 @@
 package ui;
 
+import luxe.Camera;
 import mint.Canvas;
 import mint.Canvas.CanvasOptions;
 import mint.render.luxe.Convert;
@@ -8,12 +9,25 @@ import mint.render.luxe.Convert;
  * ...
  * @author ...
  */
+typedef AutoCanvasOptions =
+{
+	> CanvasOptions,
+	var camera : Camera;
+}
 
 /** This canvas will automatically listen to relevant luxe events, when you call auto_listen()
-    which is convenient for quickly testing things and throwing ideas around. To stop listening call auto_unlisten(). */
- 
+    which is convenient for quickly testing things and throwing ideas around. To stop listening call auto_unlisten(). */	
 class AutoCanvas extends Canvas
 {
+	public var camera : Camera;
+	
+	public function new(?_options:AutoCanvasOptions) 
+	{
+		super(_options);
+		
+		camera = _options.camera;
+	} 
+	
 	
 	public function auto_listen() {
 
@@ -49,10 +63,10 @@ class AutoCanvas extends Canvas
 
     function conv_update(dt:Float)  update(dt);
     function conv_render(_)         render();
-    function conv_mousewheel(e)     mousewheel(Convert.mouse_event(e, scale));
-    function conv_mousedown(e)      mousedown(Convert.mouse_event(e, scale));
-    function conv_mouseup(e)        mouseup(Convert.mouse_event(e, scale));
-    function conv_mousemove(e)      mousemove(Convert.mouse_event(e, scale));
+    function conv_mousewheel(e)     mousewheel(Convert.mouse_event(e, scale, camera.view));
+    function conv_mousedown(e)      mousedown(Convert.mouse_event(e, scale, camera.view));
+    function conv_mouseup(e)        mouseup(Convert.mouse_event(e, scale, camera.view));
+    function conv_mousemove(e)      mousemove(Convert.mouse_event(e, scale, camera.view));
     function conv_keyup(e)          keyup(Convert.key_event(e));
     function conv_keydown(e)        keydown(Convert.key_event(e));
     function conv_textinput(e)      textinput(Convert.text_event(e));

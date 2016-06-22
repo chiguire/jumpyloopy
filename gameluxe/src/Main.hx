@@ -8,6 +8,7 @@ import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import luxe.Camera;
+import luxe.Screen.WindowEvent;
 import luxe.States;
 import haxe.xml.Fast;
 import luxe.Rectangle;
@@ -57,14 +58,17 @@ class Main extends luxe.Game
 		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
 		
 		// UI rendering initilization
-		mint_rendering = new LuxeMintRender({batcher:batcher_ui, depth:4});
+		mint_rendering = new LuxeMintRender({batcher: batcher_ui, depth:4});
 		layout = new Margins();
 		
+		//var scale = global_info.ref_window_size_x/Luxe.screen.w;
 		var auto_canvas = new AutoCanvas(
 		{
 			name: "canvas",
 			rendering: mint_rendering,
-			x: 0, y: 0, w: global_info.window_size_x, h:global_info.window_size_y
+			//scale: scale,
+			x: 0, y: 0, w: global_info.ref_window_size_x, h:global_info.ref_window_size_y,
+			camera : camera_ui
 		});
 		
 		auto_canvas.auto_listen();
@@ -108,8 +112,8 @@ class Main extends luxe.Game
 		config.window.width = global_info.ref_window_size_x;// 405;
 		config.window.height = global_info.ref_window_size_y;// 720;
 #else
-		config.window.width = global_info.ref_window_size_x;// 405;
-		config.window.height = global_info.ref_window_size_y;// 720;
+		config.window.width = global_info.window_size_x;// 405;
+		config.window.height = global_info.window_size_y;// 720;
 		config.window.borderless = true;
 #end
 		
@@ -166,4 +170,9 @@ class Main extends luxe.Game
 		return score_list;
 	}
 	
+	override function onwindowresized( e:WindowEvent ) 
+	{
+        trace('window resized : ${e.x} / ${e.y}');
+		//canvas.set_size(e.x, e.y);
+    }
 }

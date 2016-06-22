@@ -2,6 +2,7 @@ package gamestates;
 
 import analysis.FFT;
 import data.GameInfo;
+import entities.Background;
 import haxe.Json;
 import luxe.Camera;
 import luxe.Input.MouseEvent;
@@ -114,6 +115,15 @@ class MenuState extends State
 		var layout_data = json_resource.asset.json;
 		//trace(layout_data);
 		
+		// Background Layer
+		var background1 = new Background({
+			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
+			pos: new Vector(layout_data.background.pos_x, layout_data.background.pos_y),
+			size: new Vector(layout_data.background.width, layout_data.background.height),
+			scene: scene,
+		});
+		
+		// UI layer
 		var canvas = Main.canvas;
 		
 		title_text = new Text({
@@ -136,8 +146,8 @@ class MenuState extends State
 		button2.onmouseup.listen(
 			function(e,c) 
 			{
-				change_to = "ScoreState";
-				//sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
+				//change_to = "ScoreState";
+				sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
 			}
 		);
 		

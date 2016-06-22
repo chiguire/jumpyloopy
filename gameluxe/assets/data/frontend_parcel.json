@@ -1,7 +1,8 @@
 {
 	"textures" : 
 	[ 
-		{ "id" : "assets/image/war-child-logo-home.png" }
+		{ "id" : "assets/image/war-child-logo-home.png" },
+		{ "id" : "assets/image/frontend_bg.png" }
 	],
 	
 	"json" : 
