@@ -167,12 +167,32 @@ class MenuState extends State
                 path: warchild_tex_id,
 				mouse_input: true
             });
+			
+		warchild_img.onmouseenter.listen(
+			function(e,c) 
+			{
+				var renderer = cast(warchild_img.renderer, mint.render.luxe.Image);
+				var hsl = renderer.visual.color.toColorHSL();
+				hsl.l *= 1.1;
+				renderer.visual.color.fromColorHSL(hsl);
+			}
+		);
+		
+		warchild_img.onmouseleave.listen(
+			function(e,c) 
+			{
+				var renderer = cast(warchild_img.renderer, mint.render.luxe.Image);
+				var hsl = renderer.visual.color.toColorHSL();
+				hsl.l /= 1.1;
+				renderer.visual.color.fromColorHSL(hsl);
+			}
+		);
 		
 		warchild_img.onmouseup.listen(
 			function(e,c) 
 			{
-				trace('mint img button! ${Luxe.time}' );
-				//Sys.command("start", [Main.WARCHILD_URL]);
+				//trace('mint img button! ${Luxe.time}' );
+				Sys.command("start", [Main.WARCHILD_URL]);
 			}
 		);
 	}
