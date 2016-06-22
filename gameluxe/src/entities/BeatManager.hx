@@ -99,12 +99,19 @@ class BeatManager extends Entity
 			batcher = Luxe.renderer.batcher;
 		}
 		
-		beatManagerVisualizer = new BeatManagerVisualizer();
-		add(beatManagerVisualizer);
+		/// create a visualizer, don't attached this yet
+		beatManagerVisualizer = new BeatManagerVisualizer({name:"visual_component"});
+		
 		
 		// events
 		Luxe.events.listen("Level.Init", OnLevelInit );
 		Luxe.events.listen("Level.Start", OnLevelStart );
+	}
+	
+	public function attach_visualizer()
+	{
+		var comp = get("visual_component");
+		if (comp == null) add(beatManagerVisualizer);
 	}
 	
 	var request_next_beat = false;

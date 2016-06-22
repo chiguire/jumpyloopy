@@ -65,6 +65,14 @@ class LevelSelectState extends State
 				change_to = "GameState";
 			}
 		);
+		
+		var button2 = MenuState.create_button( layout_data.level_x );
+		button2.onmouseup.listen(
+			function(e,c) 
+			{
+				change_to = "GameState";
+			}
+		);
 	}
 	
 	override public function update(dt:Float) 
