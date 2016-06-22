@@ -44,18 +44,27 @@ class TrajectoryMovement extends Component
 	{
 		var T = e.interval;
 		
+		var dst_y = pos.y - cast(entity, Avatar).jump_height;
+		var apex_y = pos.y - cast(entity, Avatar).jump_height * 1.25;
+		
 		if (!nextPos.equals(pos))
 		{
-			Actuate.tween(pos, T, {x:nextPos.x,  y:nextPos.y}).ease(luxe.tween.easing.Cubic.easeIn);
+			var motionPath = new MotionPath();
+			var half_x = pos.x + (nextPos.x - pos.x) / 2.0;
+			var full_x = pos.x + (nextPos.x - pos.x);
+			
+			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
+			motionPath.bezier(full_x, dst_y, full_x, apex_y);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+
 		}
 		else
 		{
 			var motionPath = new MotionPath();
-			motionPath.line(pos.x, pos.y);
-			motionPath.line(pos.x, pos.y - cast(entity, Avatar).jump_height * 1.25);
-			motionPath.line(pos.x, pos.y);
-		
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeIn);		}
+			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
+			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+		}
 	}
 }
  

@@ -48,10 +48,11 @@ class GameState extends State
 	
 	var jumping_points : Array<PlatformPeg>;
 	var platform_points : Array<Platform>;
-	var jump_height : Float;
 	var lane_start : Float;
 	
 	var sky_uv : Rectangle;
+	
+	var level_rect : Rectangle;
 	
 	var num_internal_lanes : Int;
 	var num_all_lanes : Int;
@@ -86,6 +87,12 @@ class GameState extends State
 		num_all_lanes = 5;
 		num_peg_levels = 12;
 		
+		var aspect_ratio = Main.ref_window_aspect();
+		var level_height = Main.global_info.ref_window_size_y;
+		var level_width = level_height / aspect_ratio;
+		
+		level_rect = new Rectangle((Main.global_info.ref_window_size_x - level_width) / 2.0, 0, level_width, level_height);
+		
 		Luxe.events.listen("Level.Start", OnLevelStart );
 		Luxe.events.listen("player_move_event", OnPlayerMove );
 	}
@@ -117,7 +124,7 @@ class GameState extends State
 	{
 		trace("Entering game");
 		
-		var lane_width = Luxe.screen.width * 1.25;
+		var lane_width = level_rect.w * 1.25;
 		
 		lane_start = -0.5 * lane_width / num_all_lanes;
 		lanes = new Array<Float>();
@@ -130,7 +137,7 @@ class GameState extends State
 		scene = new Scene("GameScene");
 		
 		beat_manager = new BeatManager({batcher : Main.batcher_ui});		
-		level = new Level({batcher_ui : Main.batcher_ui});
+		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
 		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
 		sky_texture.clamp_s = ClampType.repeat;
@@ -143,7 +150,7 @@ class GameState extends State
 			texture: sky_texture,
 			pos: Luxe.screen.mid,
 			uv: sky_uv,
-			size: new Vector(Luxe.screen.w, Luxe.screen.h)
+			size: new Vector(level_rect.w, level_rect.h)
 		});
 		
 		jumping_points = new Array<PlatformPeg>();
@@ -219,14 +226,14 @@ class GameState extends State
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
-		max_tile = Math.round( (Luxe.screen.height/2.0 - Luxe.camera.pos.y) / jump_height);
+		max_tile = Math.round( (Luxe.screen.height/2.0 - Luxe.camera.pos.y) / level.beat_height);
 		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance*0.5) / lanes_distance))));
-		mouse_index_y = Math.round (mouse_pos.y / jump_height);
+		mouse_index_y = Math.round (mouse_pos.y / level.beat_height);
 		var mouse_platform_x = lane_start + mouse_index_x * lanes_distance;
-		var mouse_platform_y = mouse_index_y * jump_height;
+		var mouse_platform_y = mouse_index_y * level.beat_height;
 		mouse_platform.pos.set_xy(mouse_platform_x, Math.min(Luxe.camera.pos.y + mouse_platform_y, starting_y));
 		
-		next_platform.pos.set_xy(Luxe.screen.width - 100, Luxe.camera.pos.y + 40);
+		next_platform.pos.set_xy(level_rect.x + level_rect.w + 20, Luxe.camera.pos.y + 40);
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
 		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y)\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile';
@@ -250,7 +257,6 @@ class GameState extends State
 	
 	function OnLevelStart( e:LevelStartEvent )
 	{
-		var jump_height = e.beat_height;
 		var peg_y = e.pos.y;
 		starting_y = e.pos.y;
 		var j = 0;
@@ -277,10 +283,9 @@ class GameState extends State
 			{
 				first_line = false;
 				j = 0;
-				peg_y -= jump_height;
+				peg_y -= level.beat_height;
 			}
 		}
-		this.jump_height = jump_height;
 		beat_n = 0;
 		beat_start_wrap = 7;
 		
@@ -297,6 +302,13 @@ class GameState extends State
 	function OnPlayerMove( e:BeatEvent )
 	{
 		var pl_src = get_platform(player_sprite.current_lane, beat_n);
+		var pl_dst = null;
+		
+		var platform_destination_x = player_sprite.current_lane;
+		var platform_destination_y = beat_n;
+		var outside_lanes_left = false;
+		var outside_lanes_right = false;
+		var fall_below = false;
 		
 		//trace('player is now at ${player_sprite.current_lane}, $beat_n' );
 		//trace('cursor is now at ${mouse_index_x}, $mouse_index_y' );
@@ -307,28 +319,42 @@ class GameState extends State
 		}
 		else
 		{
-			player_sprite.current_lane = player_sprite.current_lane + switch (pl_src.type)
+			platform_destination_x += switch (pl_src.type)
 			{
 				case NONE: 0;
 				case CENTER: 0;
 				case LEFT: -1;
 				case RIGHT: 1;
 			}
+			platform_destination_y += 1;
 			
-			if (player_sprite.current_lane < 1 || player_sprite.current_lane > 3)
+			outside_lanes_left = player_sprite.current_lane < 1;
+			outside_lanes_right = player_sprite.current_lane > 3;
+			
+			if (!outside_lanes_left && !outside_lanes_right)
 			{
-				trace('Game over');
-				return;
+				do
+				{
+					pl_dst = get_platform(platform_destination_x, platform_destination_y);
+					
+					if (pl_dst.type == NONE)
+					{
+						platform_destination_y -= 1;
+						
+						if (platform_destination_y - beat_n < -2)
+						{
+							fall_below = true;
+							pl_dst = null;
+						}
+					}
+				} while (pl_dst.type != NONE || fall_below);
 			}
 			
-			var pl_dst = get_platform(player_sprite.current_lane, beat_n + 1);
+			player_sprite.current_lane = platform_destination_x;
+			beat_n++;
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			if (pl_dst.type != NONE)
-			{
-				player_sprite.trajectory_movement.nextPos.y -= jump_height;
-				beat_n++;
-			}
+			player_sprite.trajectory_movement.nextPos.y -= level.beat_height;
 			
 			if (beat_n >= beat_start_wrap)
 			{
@@ -349,9 +375,9 @@ class GameState extends State
 				var peg_current_1 = jumping_points[current_1_n];
 				var peg_current_2 = jumping_points[current_2_n];
 				
-				peg_current_0.pos.y = peg_prev_0.pos.y - jump_height;
-				peg_current_1.pos.y = peg_prev_1.pos.y - jump_height;
-				peg_current_2.pos.y = peg_prev_2.pos.y - jump_height;
+				peg_current_0.pos.y = peg_prev_0.pos.y - level.beat_height;
+				peg_current_1.pos.y = peg_prev_1.pos.y - level.beat_height;
+				peg_current_2.pos.y = peg_prev_2.pos.y - level.beat_height;
 				
 				var platform_prev_0 = platform_points[prev_0_n];
 				var platform_prev_1 = platform_points[prev_1_n];
@@ -364,9 +390,9 @@ class GameState extends State
 				platform_current_1.type = NONE;
 				platform_current_2.type = NONE;
 				
-				platform_current_0.pos.y = platform_prev_0.pos.y - jump_height;
-				platform_current_1.pos.y = platform_prev_1.pos.y - jump_height;
-				platform_current_2.pos.y = platform_prev_2.pos.y - jump_height;
+				platform_current_0.pos.y = platform_prev_0.pos.y - level.beat_height;
+				platform_current_1.pos.y = platform_prev_1.pos.y - level.beat_height;
+				platform_current_2.pos.y = platform_prev_2.pos.y - level.beat_height;
 			}
 		}
 	}
