@@ -2,6 +2,7 @@ package;
 
 import data.GameInfo;
 import data.GameInfo.ScoreList;
+import entities.BeatManager;
 import gamestates.CreditsState;
 import gamestates.GameState;
 import gamestates.LevelSelectState;
@@ -40,6 +41,9 @@ class Main extends luxe.Game
 	public static var layout : Margins;
 	public static var focus : Focus;
 	
+	/// Beat Manager
+	public static var beat_manager (default, null) : BeatManager;
+	
 	public static function ref_window_aspect() : Float
 	{
 		return global_info.ref_window_size_x / global_info.ref_window_size_y;
@@ -75,6 +79,9 @@ class Main extends luxe.Game
 		canvas = auto_canvas;
 		focus = new Focus(canvas);
 		///////////////////////////////////
+		
+		// audio/ beat manager
+		beat_manager = new BeatManager({batcher : batcher_ui});
 		
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
