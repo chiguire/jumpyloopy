@@ -64,7 +64,7 @@ class Level extends Entity
 		{
 			var rect = Luxe.draw.rectangle({
             x : 96 + i*lanes_width, y : game_start_pos - lanes_height,
-            depth: -2,
+            depth: 10,
             w : lanes_width,
             h : lanes_height,
             color : new Color(0.5,0.5,0.5)
@@ -77,6 +77,7 @@ class Level extends Entity
 		for (i in 1...Std.int(lanes_height/beat_height))
 		{
 			var obj = Luxe.draw.line( {
+			depth: 10,
 			p0 : new Vector(90, game_start_pos - i * beat_height),
 			p1 : new Vector(96 + lanes_width * lanes.length, game_start_pos - i * beat_height),
             color : new Color(0.5,0.75,0.5)
