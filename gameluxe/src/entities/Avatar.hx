@@ -7,6 +7,7 @@ import luxe.Component;
 import luxe.Input.MouseEvent;
 import luxe.Timer;
 import luxe.Vector;
+import luxe.components.sprite.SpriteAnimation;
 import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import luxe.tween.Actuate;
@@ -72,6 +73,7 @@ class Avatar extends Sprite
 {
 	/// components
 	public var trajectory_movement : TrajectoryMovement;
+	public var anim : SpriteAnimation;
 	var gamecamera : GameCameraComponent;
 	
 	public var starting_x : Float;
@@ -87,8 +89,14 @@ class Avatar extends Sprite
 		// components
 		gamecamera = new GameCameraComponent({name: "GameCamera"});
 		trajectory_movement = new TrajectoryMovement( { name:"TrajectoryMovement" } );
+		anim = new SpriteAnimation({name: "PlayerSpriteAnimation" });
+		
 		add(gamecamera);
 		add(trajectory_movement);
+		add(anim);
+		
+		//var anim_object = Luxe.resources.json('assets/animation/animation_jumper.json');
+		//anim.add_from_json_object(anim_object.asset.json);
 		
 		// events
 		Luxe.events.listen("Level.Start", OnLevelStart );
@@ -107,6 +115,10 @@ class Avatar extends Sprite
 		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		jump_height = e.beat_height;
+		
+		//Set default animation
+		//anim.animation = 'idle';
+		//anim.play();
 	}
 	
 	function OnPlayerMove( e:BeatEvent )

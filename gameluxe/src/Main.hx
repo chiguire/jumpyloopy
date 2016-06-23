@@ -126,6 +126,7 @@ class Main extends luxe.Game
 		
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
+		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
 
 		config.preload.textures.push({id:'assets/image/darkPurple.png'});
         config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
