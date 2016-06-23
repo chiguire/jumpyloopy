@@ -1,12 +1,15 @@
 package gamestates;
 
 import data.GameInfo;
+import luxe.Audio.AudioState;
 import luxe.Color;
 import luxe.Parcel;
 import luxe.ParcelProgress;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import luxe.tween.Actuate;
+import snow.types.Types.AudioHandle;
 
 /**
  * ...
@@ -20,6 +23,10 @@ class LevelSelectState extends State
 	
 	/// deferred state transition
 	var change_to = "";
+	
+	/// music preview
+	var music_handle : AudioHandle;
+	var music_volume = 0.0;
 
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -29,8 +36,10 @@ class LevelSelectState extends State
 	
 	override function onleave<T>(_value:T)
 	{
-		Main.canvas.destroy_children();
+		Luxe.audio.stop(music_handle);
+		Luxe.resources.destroy("assets/music/Warchild_Music_Prototype.ogg", true);
 		
+		Main.canvas.destroy_children();		
 		parcel = null;
 	}
 	
@@ -63,8 +72,36 @@ class LevelSelectState extends State
 			function(e,c) 
 			{
 				change_to = "GameState";
-			}
-		);
+			});
+		
+		button1.onmouseenter.listen(
+			function(e, c)
+			{
+				if (Luxe.audio.state_of(music_handle) == AudioState.as_playing)
+				{
+					return;
+				}
+				
+				var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		
+				var load = snow.api.Promise.all([
+					Luxe.resources.load_audio(audio_name, {is_stream:true})
+				]);
+		
+				load.then(function(_)
+				{
+					var music = Luxe.resources.audio(audio_name);
+					music_handle = Luxe.audio.play(music.source, music_volume, false);
+					
+					Actuate.tween(this, 0.5, {music_volume:1.0});
+				});
+			});
+			
+		button1.onmouseleave.listen( function(e, c)
+		{
+			Actuate.tween(this, 0.5, {music_volume:0.0})
+				.onComplete(function() {Luxe.audio.stop(music_handle);});
+		});
 		
 		var button2 = MenuState.create_button( layout_data.level_x );
 		button2.onmouseup.listen(
@@ -83,6 +120,12 @@ class LevelSelectState extends State
 		{
 			machine.set(change_to);
 			change_to = "";
+		}
+		
+		// fade music in/out if we need to
+		if (music_handle != null)
+		{
+			Luxe.audio.volume(music_handle, music_volume);
 		}
 	}
 }
