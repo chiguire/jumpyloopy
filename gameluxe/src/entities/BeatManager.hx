@@ -131,7 +131,6 @@ class BeatManager extends Entity
 			// update display
 			beatManagerVisualizer.update_display(audio_time);
 			
-			// search for the closest beat
 			if (cooldown_counter <= 0.0)
 			{
 				request_next_beat = true;
@@ -141,20 +140,20 @@ class BeatManager extends Entity
 			{
 				cooldown_counter -= dt;
 			}
-			
+			// search for the closest beat
 			if (request_next_beat)
 			{
 				for ( i in 0...beat_pos.length )
 				{
 					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-					var in_beat = audio_time - beat_time < 0.016;
-					
+					var in_beat = Math.abs(audio_time - beat_time) < 30/200;
+					//trace(audio_time - beat_time);
 					
 					if (in_beat && beat_pos[i]!=curr_beat_pos)
 					{
 						request_next_beat = false;
 						curr_beat_pos = beat_pos[i];
-						//trace("beat " + beat_pos[i]);
+						trace("beat " + beat_pos[i]);
 						
 						var next_beat_pos = (i+1) % beat_pos.length;
 						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
@@ -206,7 +205,7 @@ class BeatManager extends Entity
 	public function load_song()
 	{
 		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
-		//var audio_name = "assets/music/260566_zagi2_pop-rock-loop-3.ogg";
+		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
