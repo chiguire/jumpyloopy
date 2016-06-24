@@ -40,6 +40,8 @@ typedef BeatManagerDataReadState =
  
 class BeatManager extends Entity
 {
+	/// game play constants
+	
 	var beatManagerVisualizer : BeatManagerVisualizer;
 	
 	private var music: AudioResource;
@@ -115,7 +117,9 @@ class BeatManager extends Entity
 	}
 	
 	var request_next_beat = false;
+	var cooldown_counter = 0.0;
 	var next_beat_time = 0.0;
+	var curr_beat_pos = 0;
 	
 	override function update(dt:Float)
 	{
@@ -128,10 +132,14 @@ class BeatManager extends Entity
 			beatManagerVisualizer.update_display(audio_time);
 			
 			// search for the closest beat
-			
-			if (next_beat_time - audio_time < 0.016)
+			if (cooldown_counter <= 0.0)
 			{
 				request_next_beat = true;
+				cooldown_counter = 0;
+			}
+			else
+			{
+				cooldown_counter -= dt;
 			}
 			
 			if (request_next_beat)
@@ -139,9 +147,13 @@ class BeatManager extends Entity
 				for ( i in 0...beat_pos.length )
 				{
 					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-					if (audio_time - beat_time < 0.016)
+					var in_beat = audio_time - beat_time < 0.016;
+					
+					
+					if (in_beat && beat_pos[i]!=curr_beat_pos)
 					{
 						request_next_beat = false;
+						curr_beat_pos = beat_pos[i];
 						//trace("beat " + beat_pos[i]);
 						
 						var next_beat_pos = (i+1) % beat_pos.length;
@@ -149,7 +161,9 @@ class BeatManager extends Entity
 						
 						if (next_beat_time - audio_time > 0)
 						{
-							var jump_time = next_beat_time - audio_time;
+							//var jump_time = next_beat_time - audio_time;
+							var jump_time = 60 / 200;
+							cooldown_counter = jump_time;
 							Luxe.events.fire("player_move_event", { interval: jump_time }, false );
 						}
 						
@@ -661,14 +675,21 @@ class BeatManager extends Entity
 			}
 		}
 		
+		var peaks_filter = 10; // hard capped for now, 200 bpm is the fastest beat we want to keep
+		var counter = 0;
 		for ( i in 2...beat.length  )
 		{
 			beat[i] = 0.0;
 			
 			if ( pruned_spectral_flux[i] < pruned_spectral_flux[i-1] && pruned_spectral_flux[i-2] == 0)
 			{
-				beat[i] = 1;
+				if (counter > peaks_filter)
+				{
+					beat[i] = 1;
+					counter = 0;
+				}
 			}
+			counter++;
 		}
 		
 		calculate_beat_pos();
