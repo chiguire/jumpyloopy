@@ -321,6 +321,7 @@ class GameState extends State
 		
 		var platform_destination_x = player_sprite.current_lane;
 		var platform_destination_y = beat_n;
+		var old_beat_n = beat_n;
 		var outside_lanes_left = false;
 		var outside_lanes_right = false;
 		var fall_below = false;
@@ -356,27 +357,32 @@ class GameState extends State
 					{
 						platform_destination_y -= 1;
 						
-						if (platform_destination_y - beat_n < -2)
+						if (platform_destination_y < beat_bottom - 2)
 						{
 							fall_below = true;
 							pl_dst = null;
+							platform_destination_y -= 2;
+							trace('fell below!'); // TODO: GAME OVER Set a timer here and wait 2 seconds before restart
 						}
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
 				s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
+			else
+			{
+				// TODO: GAME OVER Set a timer here and wait 2 seconds before restart
+			}
 			
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = platform_destination_y;
-			//beat_n++;
 			
 			trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;//level.beat_height;
+			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height - player_sprite.size.y / 2.0;
 			
-			if (beat_bottom >= beat_start_wrap)
+			if (beat_n > old_beat_n && beat_bottom >= beat_start_wrap)
 			{
 				trace('Moving over');
 				

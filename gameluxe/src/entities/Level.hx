@@ -37,7 +37,7 @@ class Level extends Entity
 	
 	public var can_put_platforms : Bool = false;
 	
-	public var beat_height = 120;
+	public var beat_height = 200;
 	//var beat_lines : Array<LineGeometry>;
 	
 	//var game_start_pos : Float;

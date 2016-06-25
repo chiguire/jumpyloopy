@@ -10,11 +10,13 @@ import luxe.options.ComponentOptions;
 class GameCameraComponent extends Component
 {
 	private var _x : Float;
+	private var _highest_y : Float;
 	
 	public function new(?_options:ComponentOptions) 
 	{
 		super(_options);
 		_x = 0;
+		_highest_y = 10000;
 	}
 	
 	public function set_x(value:Float)
@@ -26,6 +28,7 @@ class GameCameraComponent extends Component
 	{
 		var offsetx = Luxe.screen.size.x / 2;
 		var offsety = Luxe.screen.size.y / 2;
-		Luxe.camera.pos.set_xy( _x - offsetx, pos.y - offsety );
+		_highest_y = Math.min(_highest_y, pos.y);
+		Luxe.camera.pos.set_xy( _x - offsetx, _highest_y - offsety );
 	}
 }
