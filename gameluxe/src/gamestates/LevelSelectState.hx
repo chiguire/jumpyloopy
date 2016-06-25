@@ -9,6 +9,7 @@ import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.Actuate;
+import mint.Button;
 import snow.types.Types.AudioHandle;
 
 /**
@@ -62,19 +63,11 @@ class LevelSelectState extends State
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
-	function on_loaded( p: Parcel )
+	function create_button( desc: Dynamic) : Button
 	{
-		var json_resource = Luxe.resources.json("assets/data/level_select.json");
-		var layout_data = json_resource.asset.json;
+		var button = MenuState.create_button( desc );
 		
-		var button1 = MenuState.create_button( layout_data.level_0 );
-		button1.onmouseup.listen(
-			function(e,c) 
-			{
-				change_to = "GameState";
-			});
-		
-		button1.onmouseenter.listen(
+		button.onmouseenter.listen(
 			function(e, c)
 			{
 				if (Luxe.audio.state_of(music_handle) == AudioState.as_playing)
@@ -82,7 +75,7 @@ class LevelSelectState extends State
 					return;
 				}
 				
-				var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+				var audio_name = desc.track;
 		
 				var load = snow.api.Promise.all([
 					Luxe.resources.load_audio(audio_name, {is_stream:true})
@@ -97,11 +90,33 @@ class LevelSelectState extends State
 				});
 			});
 			
-		button1.onmouseleave.listen( function(e, c)
+		button.onmouseleave.listen( function(e, c)
 		{
 			Actuate.tween(this, 0.5, {music_volume:0.0})
 				.onComplete(function() {Luxe.audio.stop(music_handle);});
 		});
+		
+		return button;
+	}
+	
+	function on_loaded( p: Parcel )
+	{
+		var json_resource = Luxe.resources.json("assets/data/level_select.json");
+		var layout_data = json_resource.asset.json;
+		
+		var button0 = create_button( layout_data.level_0 );
+		button0.onmouseup.listen(
+			function(e,c) 
+			{
+				change_to = "GameState";
+			});
+		
+		var button1 = create_button( layout_data.level_1 );
+		button1.onmouseup.listen(
+			function(e,c) 
+			{
+				change_to = "GameState";
+			});
 		
 		var button2 = MenuState.create_button( layout_data.level_x );
 		button2.onmouseup.listen(

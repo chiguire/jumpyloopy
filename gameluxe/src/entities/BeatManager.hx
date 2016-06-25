@@ -153,7 +153,7 @@ class BeatManager extends Entity
 					{
 						request_next_beat = false;
 						curr_beat_pos = beat_pos[i];
-						trace("beat " + beat_pos[i]);
+						//trace("beat " + beat_pos[i]);
 						
 						var next_beat_pos = (i+1) % beat_pos.length;
 						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
@@ -206,6 +206,7 @@ class BeatManager extends Entity
 	{
 		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
+		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)

@@ -1,7 +1,8 @@
 {
 	"background": { "pos_x": 720, "pos_y": 450 },
-	"title": { "text": "Audio Boy", "pos_x": 720, "pos_y": 50},
-	"level_0": { "text": "Level 0\nWar Child", "pos_x": 720, "pos_y": 256, "width":256, "height":256},
-	"level_x": { "text": "Load Your Own Music", "pos_x": 720, "pos_y": 538, "width":256, "height":256},
+	"title": { "text": "Level Select", "pos_x": 720, "pos_y": 50},
+	"level_0": { "text": "Chapter 0\nTutorial", "pos_x": 582, "pos_y": 256, "width":256, "height":256, "track":"assets/music/Warchild_SimpleDrums.ogg"},
+	"level_1": { "text": "Chapter 1\nFor War Child", "pos_x": 858, "pos_y": 256, "width":256, "height":256, "track":"assets/music/Warchild_Music_Prototype.ogg"},
+	"level_x": { "text": "Your Chapter\nLoad Your Music", "pos_x": 720, "pos_y": 538, "width":256, "height":256 },
 	"warchild_img": {"pos_x": 720, "pos_y": 720}
 }

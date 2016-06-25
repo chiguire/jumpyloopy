@@ -116,7 +116,7 @@ class MenuState extends State
 		//trace(layout_data);
 		
 		// Background Layer
-		var background1 = new Background({
+		var background1 = new Sprite({
 			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
 			pos: new Vector(layout_data.background.pos_x, layout_data.background.pos_y),
 			size: new Vector(layout_data.background.width, layout_data.background.height),
