@@ -34,6 +34,9 @@ class Level extends Entity
 	//var lanes_width = 64;
 	//var lanes_height = 8192;
 	//
+	
+	public var can_put_platforms : Bool = false;
+	
 	public var beat_height = 100;
 	//var beat_lines : Array<LineGeometry>;
 	
@@ -54,6 +57,7 @@ class Level extends Entity
 		this.player_start_pos = player_start_pos;
 		
 		batcher_ui = _options.batcher_ui;
+		can_put_platforms = false;
 		
 		Luxe.events.listen("BeatManager.AudioLoaded", OnAudioLoad );
 	}
@@ -100,6 +104,7 @@ class Level extends Entity
 			batcher: batcher_ui
 		});
 		countdown_text.visible = false;
+		can_put_platforms = false;
 		
 		Luxe.events.fire("Level.Init", {}, false );
 	}
@@ -123,6 +128,7 @@ class Level extends Entity
 		countdown_counter = countdown_time;
 		countdown_text.visible = true;
 		countdown_text.text = Std.string(countdown_counter);
+		can_put_platforms = false;
 		
 		countdown_timer = Luxe.timer.schedule( 1.0, function()
 		{
@@ -133,6 +139,7 @@ class Level extends Entity
 				countdown_timer.stop();
 				//var player_startpos = get_player_start_pos();
 				countdown_text.visible = false;
+				can_put_platforms = true;
 				Luxe.events.fire("Level.Start", {pos:player_start_pos, beat_height:beat_height}, false );
 			}
 			//trace(countdown_counter);

@@ -209,15 +209,18 @@ class GameState extends State
 	
 	override function update(dt:Float) 
 	{
-		if (Luxe.input.inputpressed("put_platform"))
+		if (level.can_put_platforms)
 		{
-			trace("Putting platform!");
-			put_platform();
-		}
-		else if (Luxe.input.inputpressed("switch_platform"))
-		{
-			trace("Switching platform!");
-			switch_platform();
+			if (Luxe.input.inputpressed("put_platform"))
+			{
+				trace("Putting platform!");
+				put_platform();
+			}
+			else if (Luxe.input.inputpressed("switch_platform"))
+			{
+				trace("Switching platform!");
+				switch_platform();
+			}
 		}
 		
 		sky_uv.set((Luxe.camera.pos.x - Luxe.screen.width/2.0), (Luxe.camera.pos.y - Luxe.screen.height/2.0), sky_uv.w, sky_uv.h);
@@ -302,6 +305,7 @@ class GameState extends State
 	
 	function OnPlayerMove( e:BeatEvent )
 	{
+		var s_debug = 'Player goes from (${player_sprite.current_lane}, $beat_n) to ';
 		var pl_src = get_platform(player_sprite.current_lane, beat_n);
 		var pl_dst = null;
 		
@@ -348,18 +352,24 @@ class GameState extends State
 							pl_dst = null;
 						}
 					}
-				} while (pl_dst.type != NONE || fall_below);
+				} while (pl_dst.type != NONE && !fall_below);
+				
+				s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
 			
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = platform_destination_y;
 			//beat_n++;
 			
+			trace(s_debug);
+			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = platform_destination_y * level.beat_height;//level.beat_height;
 			
 			if (beat_n >= beat_start_wrap)
 			{
+				trace('Moving over');
+				
 				var n = beat_n - beat_start_wrap;
 				var l = jumping_points.length;
 				

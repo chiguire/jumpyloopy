@@ -21,6 +21,7 @@ import luxe.tween.easing.Cubic;
 class TrajectoryMovement extends Component
 {
 	public var nextPos = new Vector();
+	public var height : Float;
 	
 	override function init()
 	{
@@ -45,7 +46,7 @@ class TrajectoryMovement extends Component
 	{
 		var T = e.interval;
 		
-		var dst_y = pos.y - cast(entity, Avatar).jump_height;
+		var dst_y = nextPos.y - height / 2; // pos.y - cast(entity, Avatar).jump_height;
 		var apex_y = pos.y - cast(entity, Avatar).jump_height * 1.25;
 		
 		if (!nextPos.equals(pos))
@@ -56,7 +57,7 @@ class TrajectoryMovement extends Component
 			
 			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
 			motionPath.bezier(full_x, dst_y, full_x, apex_y);
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
 
 		}
 		else
@@ -64,7 +65,7 @@ class TrajectoryMovement extends Component
 			var motionPath = new MotionPath();
 			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
 			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 	}
 }
@@ -114,6 +115,7 @@ class Avatar extends Sprite
 		gamecamera.set_x(starting_x);
 		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
+		trajectory_movement.height = size.y / 2.0;
 		jump_height = e.beat_height;
 		
 		//Set default animation
