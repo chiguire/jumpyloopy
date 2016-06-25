@@ -4,6 +4,7 @@ import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
+import entities.Collectable_Coin;
 import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
@@ -21,7 +22,7 @@ import luxe.tween.easing.Back;
 import phoenix.Batcher;
 
 import luxe.tween.Actuate;
-import phoenix.Vector;
+import luxe.Vector;
 import luxe.Input;
 import luxe.Sprite;
 import luxe.Scene;
@@ -43,7 +44,7 @@ class GameState extends State
 
 	private var beat_manager: BeatManager;
 
-	private var player_sprite: Avatar;
+	public static var player_sprite: Avatar;
 	
 	private var absolute_floor : Sprite;
 	
@@ -51,6 +52,7 @@ class GameState extends State
 	
 	var jumping_points : Array<PlatformPeg>;
 	var platform_points : Array<Platform>;
+	
 	var lane_start : Float;
 	
 	var sky_uv : Rectangle;
@@ -259,6 +261,9 @@ class GameState extends State
 			//trace('Setting peg at (${lanes[j + 1]}, $peg_y)');
 			peg.visible = true;
 			platform.visible = platform.type != NONE;
+			
+			//DEBUG - Add bcoin
+			var coin = new Collectable_Coin(scene, "coin"+i+j, new Vector(lanes[j + 1], peg_y));
 			
 			if (first_line)
 			{

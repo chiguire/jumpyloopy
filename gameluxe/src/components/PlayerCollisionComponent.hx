@@ -13,28 +13,42 @@ import luxe.collision.shapes.Shape;
  */
 class PlayerCollisionComponent extends Component
 {
-	private var playerCollision : CollisionShape;
+	private var initialised : Bool = false;
+	private var player_collision : CollisionShape;
 	private var collision_shapes : Array<CollisionShape> = new Array();
 	
 	public function SetupPlayerCollision(playerSprite : Sprite) 
 	{
 		trace("Setting up player collision.");
-		playerCollision = new CollisionShape(playerSprite);
+		player_collision = new CollisionShape(playerSprite);
+		initialised = true;
 	}
 	
-	override public function onfixedupdate(rate:Float) 
+	override public function update(dt:Float) 
 	{
+		if (!initialised)
+		{
+			return;
+		}
+		
 		var collided_shapes = new Array();
-		super.onfixedupdate(rate);
 		
 		//Update all our shapes.
+		player_collision.Update(dt);
 		for (s in collision_shapes)
 		{
-			s.Update(rate);
+			s.Update(dt);
 		}
 		
 		//Check for player collisions.
-		collided_shapes = CollisionShapeWithShapes(playerCollision, collision_shapes);
+		collided_shapes = CollisionShapeWithShapes(player_collision, collision_shapes);
+		//trace("num shapes collided = " + collided_shapes.length);
+		for (cs in collided_shapes)
+		{
+			cs.onCollisionEnter(player_collision);
+		}
+		
+		super.update(dt);
 	}
 	
 	public function RegisterCollisionEntity(obj : CollisionShape)

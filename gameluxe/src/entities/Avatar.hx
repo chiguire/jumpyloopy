@@ -87,6 +87,8 @@ class Avatar extends Sprite
 	public var jump_height : Float;
 	public var current_lane : Int;
 	
+	private var debug_animations = false;
+	
 	public function new(starting_x : Float, options:SpriteOptions) 
 	{		
 		super(options);
@@ -136,14 +138,18 @@ class Avatar extends Sprite
 		//trajectory_movement.nextPos.y -= jump_height;
 		trajectory_movement.doJump(e);
 		
-		trace("player_jump");
+		if(debug_animations)
+			trace("player_jump");
+			
 		anim.animation = 'jump';
 		anim.play();
 	}
 	
 	public function OnPlayerLand()
 	{
-		trace("player_landed");
+		if(debug_animations)
+			trace("player_landed");
+		
 		anim.animation = 'land';
 		anim.play();
 	}
@@ -156,19 +162,25 @@ class Avatar extends Sprite
 		
 		//Setup events.
 		events.listen('landed', function(e){
-			trace("player_finished landing");
+			if(debug_animations)
+				trace("player_finished landing");
+			
             anim.animation = 'idle';
 			anim.play();
         });
 		
 		events.listen('landed_left', function(e){
-			trace("player_finished landing left");
+			if(debug_animations)
+				trace("player_finished landing left");
+			
             anim.animation = 'idle_left';
 			anim.play();
         });
 		
 		events.listen('landed_right', function(e){
-			trace("player_finished landing right");
+			if(debug_animations)
+				trace("player_finished landing right");
+				
             anim.animation = 'idle_right';
 			anim.play();
         });

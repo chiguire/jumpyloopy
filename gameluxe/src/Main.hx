@@ -148,6 +148,8 @@ class Main extends luxe.Game
 		// placeholder
 		config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
         config.preload.texts.push({id:'assets/image/spritesheet_jumper.xml'});
+		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
+		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
 
         return config;
 
