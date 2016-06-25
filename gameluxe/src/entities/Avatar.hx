@@ -73,6 +73,7 @@ class TrajectoryMovement extends Component
 				.ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 	}
+	
 }
  
 class Avatar extends Sprite

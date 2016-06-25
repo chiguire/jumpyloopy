@@ -55,7 +55,7 @@ class Level extends Entity
 		
 		batcher_ui = _options.batcher_ui;
 		
-		Luxe.events.listen("BeatManager.AudioLoaded", OnAudioLoad );
+		Luxe.events.listen("game.unpause", on_game_unpause );
 	}
 	
 	override public function init() 
@@ -93,14 +93,15 @@ class Level extends Entity
 		//}
 		
 		countdown_text = new Text({
-			text: "Jumpyloopy (please change this)",
+			text: "Rise",
 			point_size: 36,
-			pos: new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
+			pos: new Vector(Main.global_info.ref_window_size_x/2, Main.global_info.ref_window_size_y * 0.25 ),
 			color: Color.random(),
 			batcher: batcher_ui
 		});
 		countdown_text.visible = false;
 		
+		OnAudioLoad({});
 		Luxe.events.fire("Level.Init", {}, false );
 	}
 	
@@ -110,14 +111,10 @@ class Level extends Entity
 		
 	}
 	
-	public function send_player_move_event()
-	{
-		//Luxe.events.fire("player_move_event");
-	}
-	
 	var countdown_timer : Timer;
 	var countdown_time = 3;
 	var countdown_counter = 0;
+	
 	public function OnAudioLoad(e)
 	{
 		countdown_counter = countdown_time;
@@ -134,6 +131,27 @@ class Level extends Entity
 				//var player_startpos = get_player_start_pos();
 				countdown_text.visible = false;
 				Luxe.events.fire("Level.Start", {pos:player_start_pos, beat_height:beat_height}, false );
+			}
+			//trace(countdown_counter);
+			
+		}, true);
+	}
+	
+	public function on_game_unpause(e)
+	{
+		countdown_counter = countdown_time;
+		countdown_text.visible = true;
+		countdown_text.text = Std.string(countdown_counter);
+		
+		countdown_timer = Luxe.timer.schedule( 1.0, function()
+		{
+			countdown_counter--;
+			countdown_text.text = countdown_counter == 1 ? "Go!" : Std.string(countdown_counter);
+			if (countdown_counter == 0)
+			{
+				countdown_timer.stop();
+				//var player_startpos = get_player_start_pos();
+				countdown_text.visible = false;
 			}
 			//trace(countdown_counter);
 			
