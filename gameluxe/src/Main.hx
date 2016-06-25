@@ -120,7 +120,7 @@ class Main extends luxe.Game
 			window_size_x : config.user.window_size[0] ? config.user.window_size[0] : 1440,
 			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
 			fullscreen : false,
-			borderless : true
+			borderless : false
 		};
 		
 #if (web && sample)
@@ -129,19 +129,24 @@ class Main extends luxe.Game
 #else
 		config.window.width = global_info.window_size_x;// 405;
 		config.window.height = global_info.window_size_y;// 720;
-		config.window.borderless = true;
+		config.window.borderless = global_info.borderless;
 #end
 		
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
-		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
+		
 
 		// move to parcel
 		config.preload.textures.push({id:"assets/image/bg/sky_01_tiling.png"});
 		config.preload.textures.push({id:"assets/image/bg/space_01_transition.png"});
 		config.preload.textures.push({id:"assets/image/bg/space_02_tiling.png"});
 		
-        config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
+		config.preload.textures.push({id:"assets/image/aviator_sprite.png"});
+		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
+		//////////////////
+		
+		// placeholder
+		config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
         config.preload.texts.push({id:'assets/image/spritesheet_jumper.xml'});
 
         return config;

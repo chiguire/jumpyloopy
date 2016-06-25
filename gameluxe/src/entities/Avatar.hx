@@ -95,8 +95,11 @@ class Avatar extends Sprite
 		add(trajectory_movement);
 		add(anim);
 		
-		//var anim_object = Luxe.resources.json('assets/animation/animation_jumper.json');
-		//anim.add_from_json_object(anim_object.asset.json);
+		var anim_object = Luxe.resources.json('assets/animation/animation_jumper.json');
+		anim.add_from_json_object(anim_object.asset.json);
+		
+		anim.animation = "idle";
+		anim.play();
 		
 		// events
 		Luxe.events.listen("Level.Start", OnLevelStart );

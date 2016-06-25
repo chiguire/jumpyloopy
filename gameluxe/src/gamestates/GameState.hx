@@ -162,11 +162,9 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
-			uv: game_info.spritesheet_elements['bunny1_ready.png'],
+			texture: Luxe.resources.texture("assets/image/aviator_sprite.png"),
 			pos: Luxe.screen.mid,
-			//size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
-			size: new Vector(24, 48),
+			size: new Vector(140, 140),
 			scene: scene,
 		});
 		player_sprite.current_lane = 2;
