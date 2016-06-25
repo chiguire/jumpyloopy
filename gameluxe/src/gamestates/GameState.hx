@@ -2,6 +2,7 @@ package gamestates;
 
 import data.GameInfo;
 import entities.Avatar;
+import entities.Background;
 import entities.BeatManager;
 import entities.Level;
 import entities.Platform;
@@ -16,6 +17,7 @@ import luxe.Rectangle;
 import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import luxe.tween.easing.Back;
 import phoenix.Batcher;
 
 import luxe.tween.Actuate;
@@ -36,7 +38,8 @@ class GameState extends State
 	
 	private var level: Level;
 
-	private var sky_sprite : Sprite;
+	//private var sky_sprite : Sprite;
+	var background : Background;
 
 	private var beat_manager: BeatManager;
 
@@ -116,6 +119,7 @@ class GameState extends State
 		scene.empty();
 		scene.destroy();
 		player_sprite = null;
+		background = null;
 		level = null;
 		scene = null;
 	}
@@ -140,20 +144,8 @@ class GameState extends State
 		beat_manager.attach_visualizer();
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
-		var sky_texture = Luxe.resources.texture('assets/image/darkPurple.png');
-		sky_texture.clamp_s = ClampType.repeat;
-		sky_texture.clamp_t = ClampType.repeat;
-		
-		sky_uv = new Rectangle(0, 0, Luxe.screen.width, Luxe.screen.height);
-		
-		sky_sprite = new Sprite({
-			name: 'Sky',
-			texture: sky_texture,
-			pos: Luxe.screen.mid,
-			uv: sky_uv,
-			size: new Vector(level_rect.w, level_rect.h)
-		});
-		
+		background = new Background({});
+				
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
 		
@@ -170,11 +162,9 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
-			uv: game_info.spritesheet_elements['bunny1_ready.png'],
+			texture: Luxe.resources.texture("assets/image/aviator_sprite.png"),
 			pos: Luxe.screen.mid,
-			//size: new Vector(game_info.spritesheet_elements['bunny1_ready.png'].w, game_info.spritesheet_elements['bunny1_ready.png'].h),
-			size: new Vector(24, 48),
+			size: new Vector(140, 140),
 			scene: scene,
 		});
 		player_sprite.current_lane = 2;
@@ -223,10 +213,7 @@ class GameState extends State
 			}
 		}
 		
-		sky_uv.set((Luxe.camera.pos.x - Luxe.screen.width/2.0), (Luxe.camera.pos.y - Luxe.screen.height/2.0), sky_uv.w, sky_uv.h);
-		//trace(sky_uv);
-		sky_sprite.uv.set(sky_uv.x, sky_uv.y, sky_uv.w, sky_uv.h);
-		sky_sprite.pos.set_xy(Luxe.camera.pos.x + Luxe.screen.width/2.0, Luxe.camera.pos.y + Luxe.screen.height/2.0);
+		background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);

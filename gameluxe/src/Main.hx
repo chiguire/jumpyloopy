@@ -32,6 +32,8 @@ class Main extends luxe.Game
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
 	/// Camera
+	public static var batcher_bg : Batcher;
+	public static var camera_bg : Camera;
 	public static var batcher_ui : Batcher;
 	public static var camera_ui : Camera;
 	
@@ -54,12 +56,18 @@ class Main extends luxe.Game
 		//app.debug.visible = true;
 		
 		// camera
-		// create a view for UI rendering
+		// create views for all layers
 		var viewport_size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
-		Luxe.camera.size = new Vector(viewport_size.x, viewport_size.y);
+		
+		camera_bg = new Camera({name: "camera_bg"});
+		camera_bg.size = viewport_size.clone();
+		batcher_bg = Luxe.renderer.create_batcher({name: "viewport_bg", layer: -1, camera: camera_bg.view});
+		
+		Luxe.camera.size = viewport_size.clone();
+		
 		camera_ui = new Camera({name: "camera_ui"});
-		camera_ui.size = new Vector(viewport_size.x, viewport_size.y);
-		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", camera: camera_ui.view});
+		camera_ui.size = viewport_size.clone();
+		batcher_ui = Luxe.renderer.create_batcher({name: "viewport_ui", layer: 1, camera: camera_ui.view});
 		
 		// UI rendering initilization
 		mint_rendering = new LuxeMintRender({batcher: batcher_ui, depth:4});
@@ -112,7 +120,7 @@ class Main extends luxe.Game
 			window_size_x : config.user.window_size[0] ? config.user.window_size[0] : 1440,
 			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
 			fullscreen : false,
-			borderless : true
+			borderless : false
 		};
 		
 #if (web && sample)
@@ -121,15 +129,24 @@ class Main extends luxe.Game
 #else
 		config.window.width = global_info.window_size_x;// 405;
 		config.window.height = global_info.window_size_y;// 720;
-		config.window.borderless = true;
+		config.window.borderless = global_info.borderless;
 #end
 		
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
-		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
+		
 
-		config.preload.textures.push({id:'assets/image/darkPurple.png'});
-        config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
+		// move to parcel
+		config.preload.textures.push({id:"assets/image/bg/sky_01_tiling.png"});
+		config.preload.textures.push({id:"assets/image/bg/space_01_transition.png"});
+		config.preload.textures.push({id:"assets/image/bg/space_02_tiling.png"});
+		
+		config.preload.textures.push({id:"assets/image/aviator_sprite.png"});
+		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
+		//////////////////
+		
+		// placeholder
+		config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
         config.preload.texts.push({id:'assets/image/spritesheet_jumper.xml'});
 
         return config;
