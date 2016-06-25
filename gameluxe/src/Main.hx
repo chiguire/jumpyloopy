@@ -3,6 +3,7 @@ package;
 import data.GameInfo;
 import data.GameInfo.ScoreList;
 import entities.BeatManager;
+import entities.CollectableManager;
 import gamestates.CreditsState;
 import gamestates.GameState;
 import gamestates.LevelSelectState;
@@ -151,6 +152,8 @@ class Main extends luxe.Game
 		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
 		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
 
+		config.preload.jsons.push({id:"assets/collectable_groups/collectable_groups.json"});
+		
         return config;
 
     } //config
