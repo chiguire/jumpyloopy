@@ -3,6 +3,7 @@ package entities;
 import analysis.FFT;
 import analysis.SpectrumProvider;
 import analysis.ThresholdFunction;
+import components.BeatManagerGameHUD;
 import components.BeatManagerVisualizer;
 import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
@@ -42,7 +43,9 @@ class BeatManager extends Entity
 {
 	/// game play constants
 	
-	var beatManagerVisualizer : BeatManagerVisualizer;
+	
+	var beat_manager_debug_visual : BeatManagerVisualizer;
+	var beat_manager_game_hud : BeatManagerGameHUD;
 	
 	private var music: AudioResource;
 	private var music_handle: luxe.Audio.AudioHandle;
@@ -102,8 +105,8 @@ class BeatManager extends Entity
 		}
 		
 		/// create a visualizer, don't attached this yet
-		beatManagerVisualizer = new BeatManagerVisualizer({name:"visual_component"});
-		
+		beat_manager_debug_visual = new BeatManagerVisualizer({name:"beat_manager_debug_visual"});
+		beat_manager_game_hud = new BeatManagerGameHUD({name:"beat_manager_game_hud"});
 		
 		// events
 		Luxe.events.listen("Level.Init", OnLevelInit );
@@ -112,8 +115,11 @@ class BeatManager extends Entity
 	
 	public function attach_visualizer()
 	{
-		var comp = get("visual_component");
-		if (comp == null) add(beatManagerVisualizer);
+		var comp = get("beat_manager_debug_visual");
+		if (comp == null) add(beat_manager_debug_visual);
+		
+		var comp1 = get("beat_manager_game_hud");
+		if (comp1 == null) add(beat_manager_game_hud);
 	}
 	
 	var request_next_beat = false;
@@ -129,7 +135,8 @@ class BeatManager extends Entity
 			audio_pos = audio_time / music.source.duration();
 			
 			// update display
-			beatManagerVisualizer.update_display(audio_time);
+			beat_manager_debug_visual.update_display(audio_time);
+			//beat_manager_game_hud.update_display(audio_time);
 			
 			if (cooldown_counter <= 0.0)
 			{
@@ -204,9 +211,9 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)

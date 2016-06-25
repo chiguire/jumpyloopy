@@ -9,12 +9,10 @@ import luxe.options.ComponentOptions;
 import luxe.tween.easing.Quad;
 import phoenix.geometry.LineGeometry;
 import phoenix.geometry.QuadGeometry;
+import components.Common.HVector;
 
 import haxe.ds.Vector;
 import luxe.Vector;
-
-typedef HVector<T> = haxe.ds.Vector<T>;
-
 
 /**
  * ...
@@ -70,10 +68,11 @@ class BeatManagerVisualizer extends Component
 		parent = cast( entity, BeatManager );
 		
 		num_bars_disp = Std.int(display_interval * BeatManager.num_samples_one_second / BeatManager.instant_interval);
-		size = new Vector( Luxe.screen.size.x - 10, 0.23 * Luxe.screen.size.y );
+		size = new Vector( (Main.global_info.ref_window_size_x - Main.global_info.ref_window_size_y / Main.ref_window_aspect()) / 2 - 10, 0.1 * Main.global_info.ref_window_size_y );
 		bar_size = new Vector( size.x / num_bars_disp, size.y );
 		
-		offsety = Std.int(0.75 * Luxe.screen.height);
+		offsetx = 10;
+		offsety = 10;
 		
 		init_display();
 	}
@@ -139,9 +138,9 @@ class BeatManagerVisualizer extends Component
             color : new Color(0.5,0.2,0.2,1)
         });
 		
-		spectral_flux_disp = new HVector<QuadGeometry>(num_bars_disp);
-		init_options = { container: spectral_flux_disp, depth: 1, color : new Color(0.5, 0.0, 0, 1) };
-		init_display_geometry(init_options);
+		//spectral_flux_disp = new HVector<QuadGeometry>(num_bars_disp);
+		//init_options = { container: spectral_flux_disp, depth: 1, color : new Color(0.5, 0.0, 0, 1) };
+		//init_display_geometry(init_options);
 	}
 	
 	public function update_display(curr_time:Float)
