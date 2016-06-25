@@ -1,14 +1,47 @@
 {
     "idle" : {
         "frame_size":{ "x":"140", "y":"140" },
-        "frameset": ["1-5", "hold 5", "4-1"],
+        "frameset": ["1-4", "hold 4", "3-1"],
         "loop": "true",
         "speed": "20"
     },
-    "jump" : {
+	"land" : {
+		"frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["6-5"],
+		"events" : [{"frame":5, "event":"landed"}],
+        "loop": "false",
+        "speed": "20"
+	},
+	"jump" : {
         "frame_size":{ "x":"140", "y":"140" },
-        "frameset": ["6-10"],
-        "loop": "true",
+        "frameset": ["5-10"],
+        "loop": "false",
         "speed": "9"
+    },	
+	"land_left" : {
+		"frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["11-12", "11"],
+		"events" : [{"frame":12, "event":"landed_left"}],
+        "loop": "false",
+        "speed": "20"
+	},
+	"idle_left" : {
+        "frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["13-16", "hold 16", "15-13"],
+        "loop": "true",
+        "speed": "20"
+    },
+	"land_right" : {
+		"frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["17-18", "17"],
+		"events" : [{"frame":18, "event":"landed_right"}],
+        "loop": "false",
+        "speed": "20"
+	},
+	"idle_right" : {
+        "frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["18-21", "hold 21", "20-18"],
+        "loop": "true",
+        "speed": "20"
     }
 }
