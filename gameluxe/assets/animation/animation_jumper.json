@@ -7,7 +7,7 @@
     },
     "jump" : {
         "frame_size":{ "x":"140", "y":"140" },
-        "frameset": ["5-10"],
+        "frameset": ["6-10"],
         "loop": "true",
         "speed": "9"
     }

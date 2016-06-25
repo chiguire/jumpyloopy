@@ -1,6 +1,5 @@
 package entities;
 
-import components.BeatManagerVisualizer.HVector;
 import entities.BeatManager.BeatEvent;
 import entities.Level.LevelStartEvent;
 import luxe.Input.Key;

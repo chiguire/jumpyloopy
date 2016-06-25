@@ -98,8 +98,8 @@ class Level extends Entity
 		
 		countdown_text = new Text({
 			text: "Jumpyloopy (please change this)",
-			point_size: 24,
-			pos: Luxe.screen.mid,
+			point_size: 36,
+			pos: new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
 			color: Color.random(),
 			batcher: batcher_ui
 		});
