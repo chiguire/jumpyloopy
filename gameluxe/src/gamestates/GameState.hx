@@ -62,6 +62,7 @@ class GameState extends State
 	var num_peg_levels : Int;
 	
 	var beat_n : Int;
+	var beat_bottom : Int;
 	var beat_start_wrap : Int;
 	var platform_list : Array<Platform>;
 	var mouse_platform : Platform;
@@ -138,6 +139,9 @@ class GameState extends State
 		lanes.push(lane_start + 3.0 * lane_width / num_all_lanes);
 		lanes.push(lane_start + 4.0 * lane_width / num_all_lanes);
 		
+		lanes[0] -= lane_width;
+		lanes[4] += lane_width;
+		
 		scene = new Scene("GameScene");
 		
 		beat_manager = new BeatManager({batcher : Main.batcher_ui});
@@ -191,8 +195,8 @@ class GameState extends State
 		debug_text = new Text({
 			pos: new Vector(10, 10),
 			text: "",
-			color: new Color(210/255.0, 210/255.0, 210/255.0),
-			point_size: 12,
+			color: new Color(120/255.0, 120/255.0, 120/255.0),
+			point_size: 18,
 			scene: scene,
 		});
 	}
@@ -203,12 +207,12 @@ class GameState extends State
 		{
 			if (Luxe.input.inputpressed("put_platform"))
 			{
-				trace("Putting platform!");
+				//trace("Putting platform!");
 				put_platform();
 			}
 			else if (Luxe.input.inputpressed("switch_platform"))
 			{
-				trace("Switching platform!");
+				//trace("Switching platform!");
 				switch_platform();
 			}
 		}
@@ -218,16 +222,17 @@ class GameState extends State
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
 		max_tile = Math.round( (Luxe.screen.height/2.0 - Luxe.camera.pos.y) / level.beat_height);
-		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance*0.5) / lanes_distance))));
-		mouse_index_y = Math.round (mouse_pos.y / level.beat_height);
+		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance * 0.5) / lanes_distance))));
+		beat_bottom = Math.round((starting_y - Luxe.camera.pos.y - mouse_pos.y) / level.beat_height);
+		mouse_index_y = Std.int(Math.max(beat_bottom, 0));
 		var mouse_platform_x = lane_start + mouse_index_x * lanes_distance;
-		var mouse_platform_y = mouse_index_y * level.beat_height;
-		mouse_platform.pos.set_xy(mouse_platform_x, Math.min(Luxe.camera.pos.y + mouse_platform_y, starting_y));
+		var mouse_platform_y = (starting_y - mouse_index_y * level.beat_height);
+		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
 		
 		next_platform.pos.set_xy(level_rect.x + level_rect.w + 20, Luxe.camera.pos.y + 40);
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
-		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y)\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile';
+		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length}\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 	}
 	
 	private function connect_input()
@@ -320,8 +325,8 @@ class GameState extends State
 			}
 			platform_destination_y += 1;
 			
-			outside_lanes_left = player_sprite.current_lane < 1;
-			outside_lanes_right = player_sprite.current_lane > 3;
+			outside_lanes_left = platform_destination_x < 1;
+			outside_lanes_right = platform_destination_x > 3;
 			
 			if (!outside_lanes_left && !outside_lanes_right)
 			{
@@ -339,7 +344,7 @@ class GameState extends State
 							pl_dst = null;
 						}
 					}
-				} while (pl_dst.type != NONE && !fall_below);
+				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
 				s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
@@ -351,13 +356,13 @@ class GameState extends State
 			trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			player_sprite.trajectory_movement.nextPos.y = platform_destination_y * level.beat_height;//level.beat_height;
+			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;//level.beat_height;
 			
-			if (beat_n >= beat_start_wrap)
+			if (beat_bottom >= beat_start_wrap)
 			{
 				trace('Moving over');
 				
-				var n = beat_n - beat_start_wrap;
+				var n = beat_bottom - beat_start_wrap;
 				var l = jumping_points.length;
 				
 				var prev_0_n = ( l + ( (n - 1) * num_internal_lanes + 0 ) ) % l;
@@ -400,14 +405,13 @@ class GameState extends State
 	{
 		if (x < 1 || x > 3) return null;
 		if (y < 0) return null;
-		var current = (platform_points.length + (y * num_internal_lanes + (x - 1))) % platform_points.length;
+		var current = (platform_points.length + ((y) * num_internal_lanes + (x - 1))) % platform_points.length;
 		return platform_points[current];
 	}
 	
 	function put_platform() : Void
 	{
-		//trace('putting platform at $mouse_index_x, ${max_tile - mouse_index_y}' );
-		var pl = get_platform(mouse_index_x, max_tile - mouse_index_y);
+		var pl = get_platform(mouse_index_x, mouse_index_y);
 		
 		if (pl == null)
 		{
