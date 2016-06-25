@@ -11,6 +11,8 @@ import haxe.ds.Vector;
 import luxe.Audio.AudioHandle;
 import luxe.Audio.AudioState;
 import luxe.Entity;
+import luxe.Input.Key;
+import luxe.Input.KeyEvent;
 import luxe.options.EntityOptions;
 import luxe.resource.Resource.AudioResource;
 import phoenix.Batcher;
@@ -107,13 +109,9 @@ class BeatManager extends Entity
 		/// create a visualizer, don't attached this yet
 		beat_manager_debug_visual = new BeatManagerVisualizer({name:"beat_manager_debug_visual"});
 		beat_manager_game_hud = new BeatManagerGameHUD({name:"beat_manager_game_hud"});
-		
-		// events
-		Luxe.events.listen("Level.Init", OnLevelInit );
-		Luxe.events.listen("Level.Start", OnLevelStart );
 	}
 	
-	public function attach_visualizer()
+	public function attach_visual()
 	{
 		var comp = get("beat_manager_debug_visual");
 		if (comp == null) add(beat_manager_debug_visual);
@@ -122,13 +120,40 @@ class BeatManager extends Entity
 		if (comp1 == null) add(beat_manager_game_hud);
 	}
 	
+	public function detach_visual()
+	{
+		remove("beat_manager_debug_visual");
+		remove("beat_manager_game_hud");
+	}
+	
+	public function enter_game_state()
+	{
+		attach_visual();
+		
+		// events
+		Luxe.events.listen("Level.Start", on_level_start );
+		Luxe.events.listen("game.pause", on_game_pause );
+		Luxe.events.listen("game.unpause", on_game_unpause );
+	}
+	
+	public function leave_game_state()
+	{
+		Luxe.audio.stop(music_handle);
+		
+		detach_visual();
+		
+		Luxe.events.unlisten("Level.Start");
+		Luxe.events.unlisten("game.pause");
+		Luxe.events.unlisten("game.unpause");
+	}
+	
 	var request_next_beat = false;
 	var cooldown_counter = 0.0;
 	var next_beat_time = 0.0;
 	var curr_beat_pos = 0;
 	
 	override function update(dt:Float)
-	{
+	{		
 		if (music != null && Luxe.audio.state_of(music_handle) == AudioState.as_playing)
 		{
 			var audio_time = Luxe.audio.position_of(music_handle);
@@ -180,25 +205,41 @@ class BeatManager extends Entity
 		}
 	}
 	
-	var t = 0.0;
-	public function async_load() : Promise
+	public function on_game_pause(e)
 	{
-		if (t > 8)
+		Luxe.audio.pause(music_handle);
+		request_next_beat = false;
+		cooldown_counter = 3.0;
+	}
+	
+	public function on_game_unpause(e)
+	{
+		Luxe.audio.unpause(music_handle);
+	}
+	
+	override public function onkeyup(e:KeyEvent) 
+	{
+		// test interupt
+		if (e.keycode == Key.key_b)
 		{
-			return Promise.resolve(true);
+			trace("game pause");
+			
 		}
 		
-		t += Luxe.tick_delta;
-		trace("Beats Loading in progress... " + Luxe.time);
-		return Promise.reject();
+		if (e.keycode == Key.key_n)
+		{
+			trace("game continue");
+			
+			
+		}
 	}
 	
-	function OnLevelInit( e )
+	function handle_pause()
 	{
-		load_song();
+		
 	}
 	
-	function OnLevelStart( e )
+	function on_level_start( e )
 	{
 		music_handle = Luxe.audio.loop(music.source);
 	}
@@ -209,21 +250,27 @@ class BeatManager extends Entity
 		return container[ i % container.length ];
 	}
 	
-	public function load_song()
+	public function load_song( audio_id: String )
 	{
-		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
+		// we need to reload it if it is already been loaded as a stream
+		var res = Luxe.resources.audio(audio_id);
+		if (res != null && res.asset.audio.is_stream == true)
+		{
+			Luxe.resources.destroy(audio_id, true);
+		}
+		
+		// reload the whole file, for analysis
 		var load = snow.api.Promise.all([
-            Luxe.resources.load_audio(audio_name)
+            Luxe.resources.load_audio(audio_id)
         ]);
 		
 		load.then(function(_) {
-
-            //go away
-            //box.color.tween(2, {a:0});
-			music = Luxe.resources.audio(audio_name);
+			
+			music = Luxe.resources.audio(audio_id);
 			music_handle = Luxe.audio.loop(music.source, 1.0, true);
 			
 			trace("Format: " + music.source.data.format);
@@ -233,15 +280,6 @@ class BeatManager extends Entity
 			trace("Duration: " + music.source.duration());
 			
 			trace(music.source.data);
-			
-	 		//var s = "";
-			//for (i in 0...1024)
-			//{
-			//	s += Std.string(music.source.data.samples[i]) +",";
-			//}
-			//log(s);
-			
-			//Luxe.showConsole(true);
 			
 			process_audio();
 			process_audio_fft();

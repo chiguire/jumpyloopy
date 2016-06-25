@@ -4,6 +4,7 @@ import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
+import entities.Collectable_Coin;
 import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
@@ -21,7 +22,7 @@ import luxe.tween.easing.Back;
 import phoenix.Batcher;
 
 import luxe.tween.Actuate;
-import phoenix.Vector;
+import luxe.Vector;
 import luxe.Input;
 import luxe.Sprite;
 import luxe.Scene;
@@ -41,9 +42,7 @@ class GameState extends State
 	//private var sky_sprite : Sprite;
 	var background : Background;
 
-	private var beat_manager: BeatManager;
-
-	private var player_sprite: Avatar;
+	public static var player_sprite: Avatar;
 	
 	private var absolute_floor : Sprite;
 	
@@ -51,6 +50,7 @@ class GameState extends State
 	
 	var jumping_points : Array<PlatformPeg>;
 	var platform_points : Array<Platform>;
+	
 	var lane_start : Float;
 	
 	var sky_uv : Rectangle;
@@ -79,6 +79,8 @@ class GameState extends State
 	/// Text
 	var processing_text : Text;
 	var debug_text : Text;
+	
+	public var is_pause (default, null) = false;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -109,13 +111,26 @@ class GameState extends State
 	
 	override function onkeyup(e:KeyEvent) 
 	{
-		//if (e.keycode == Key.escape)
-		//	machine.set("MenuState");
+		if( e.keycode == Key.escape ) machine.set("MenuState");
+			
+		if ( e.keycode == Key.key_p && is_pause == false)
+		{
+			is_pause = true;
+			Luxe.events.fire("game.pause");
+		}
+		
+		if ( e.keycode == Key.key_o && is_pause == true)
+		{
+			is_pause = false;
+			Luxe.events.fire("game.unpause");
+		}
 	}
 	
 	override function onleave<T>(d:T)
 	{
 		trace("Exiting game");
+		
+		Main.beat_manager.leave_game_state();
 		
 		scene.empty();
 		scene.destroy();
@@ -139,13 +154,13 @@ class GameState extends State
 		lanes.push(lane_start + 3.0 * lane_width / num_all_lanes);
 		lanes.push(lane_start + 4.0 * lane_width / num_all_lanes);
 		
-		lanes[0] -= lane_width;
-		lanes[4] += lane_width;
+		lanes[0] -= lane_width / num_all_lanes;
+		lanes[4] += lane_width / num_all_lanes;
 		
 		scene = new Scene("GameScene");
 		
-		beat_manager = new BeatManager({batcher : Main.batcher_ui});
-		beat_manager.attach_visualizer();
+		Main.beat_manager.enter_game_state();
+		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
 		background = new Background({});
@@ -267,6 +282,9 @@ class GameState extends State
 			//trace('Setting peg at (${lanes[j + 1]}, $peg_y)');
 			peg.visible = true;
 			platform.visible = platform.type != NONE;
+			
+			//DEBUG - Add bcoin
+			var coin = new Collectable_Coin(scene, "coin"+i+j, new Vector(lanes[j + 1], peg_y));
 			
 			if (first_line)
 			{

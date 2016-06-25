@@ -89,7 +89,7 @@ class Main extends luxe.Game
 		///////////////////////////////////
 		
 		// audio/ beat manager
-		//beat_manager = new BeatManager({batcher : batcher_ui});
+		beat_manager = new BeatManager({batcher : batcher_ui});
 		
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
@@ -148,6 +148,8 @@ class Main extends luxe.Game
 		// placeholder
 		config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
         config.preload.texts.push({id:'assets/image/spritesheet_jumper.xml'});
+		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
+		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
 
         return config;
 

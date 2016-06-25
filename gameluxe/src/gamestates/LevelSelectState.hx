@@ -33,12 +33,13 @@ class LevelSelectState extends State
 	{
 		super({name: _name});
 		this.game_info = game_info;
+		
+		Luxe.events.listen("BeatManager.AudioLoaded", on_audio_analysis_completed );
 	}
 	
 	override function onleave<T>(_value:T)
 	{
 		Luxe.audio.stop(music_handle);
-		Luxe.resources.destroy("assets/music/Warchild_Music_Prototype.ogg", true);
 		
 		Main.canvas.destroy_children();		
 		parcel = null;
@@ -108,23 +109,30 @@ class LevelSelectState extends State
 		button0.onmouseup.listen(
 			function(e,c) 
 			{
-				change_to = "GameState";
+				Main.beat_manager.load_song(layout_data.level_0.track);
+				//change_to = "GameState";
 			});
 		
 		var button1 = create_button( layout_data.level_1 );
 		button1.onmouseup.listen(
 			function(e,c) 
 			{
-				change_to = "GameState";
+				Main.beat_manager.load_song(layout_data.level_1.track);
+				//change_to = "GameState";
 			});
 		
 		var button2 = MenuState.create_button( layout_data.level_x );
 		button2.onmouseup.listen(
 			function(e,c) 
 			{
-				change_to = "GameState";
+				//change_to = "GameState";
 			}
 		);
+	}
+	
+	public function on_audio_analysis_completed(e)
+	{
+		change_to = "GameState";
 	}
 	
 	override public function update(dt:Float) 

@@ -22,11 +22,11 @@ import luxe.tween.easing.Cubic;
 class TrajectoryMovement extends Component
 {
 	public var nextPos = new Vector();
-	public var height : Float;
-	
+
+	private var parentAvatar : Avatar;	public var height : Float;	
 	override function init()
 	{
-		
+		parentAvatar = cast(entity, Avatar);
 	}
 	
 	override function update(dt:Float)
@@ -47,9 +47,8 @@ class TrajectoryMovement extends Component
 	{
 		var T = e.interval;
 		
-		var dst_y = nextPos.y - height / 2; // pos.y - cast(entity, Avatar).jump_height;
-		var apex_y = pos.y - cast(entity, Avatar).jump_height * 1.25;
-		
+		var dst_y = nextPos.y - height / 2; // pos.y - parentAvatar.jump_height;
+		var apex_y = pos.y - parentAvatar.jump_height * 1.25;		
 		if (!nextPos.equals(pos))
 		{
 			var motionPath = new MotionPath();
@@ -58,17 +57,20 @@ class TrajectoryMovement extends Component
 			
 			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
 			motionPath.bezier(full_x, dst_y, full_x, apex_y);
-			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
-
+			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){parentAvatar.OnPlayerLand(); })
+				.ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 		else
 		{
 			var motionPath = new MotionPath();
 			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
 			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
-			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
-		}
+			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){parentAvatar.OnPlayerLand(); })
+				.ease(luxe.tween.easing.Cubic.easeInOut);		}
 	}
+	
 }
  
 class Avatar extends Sprite
@@ -82,6 +84,8 @@ class Avatar extends Sprite
 	public var starting_x : Float;
 	public var jump_height : Float;
 	public var current_lane : Int;
+	
+	private var debug_animations = false;
 	
 	public function new(starting_x : Float, options:SpriteOptions) 
 	{		
@@ -122,9 +126,7 @@ class Avatar extends Sprite
 		trajectory_movement.height = size.y / 2.0;
 		jump_height = e.beat_height;
 		
-		//Set default animation
-		anim.animation = 'idle';
-		anim.play();
+		InitialiseAnimations();
 		
 		//Register player collision.
 		collision.SetupPlayerCollision(this);
@@ -134,5 +136,52 @@ class Avatar extends Sprite
 	{
 		//trajectory_movement.nextPos.y -= jump_height;
 		trajectory_movement.doJump(e);
+		
+		if(debug_animations)
+			trace("player_jump");
+			
+		anim.animation = 'jump';
+		anim.play();
+	}
+	
+	public function OnPlayerLand()
+	{
+		if(debug_animations)
+			trace("player_landed");
+		
+		anim.animation = 'land';
+		anim.play();
+	}
+	
+	function InitialiseAnimations()
+	{
+		//Set default animation
+		anim.animation = 'idle';
+		anim.play();
+		
+		//Setup events.
+		events.listen('landed', function(e){
+			if(debug_animations)
+				trace("player_finished landing");
+			
+            anim.animation = 'idle';
+			anim.play();
+        });
+		
+		events.listen('landed_left', function(e){
+			if(debug_animations)
+				trace("player_finished landing left");
+			
+            anim.animation = 'idle_left';
+			anim.play();
+        });
+		
+		events.listen('landed_right', function(e){
+			if(debug_animations)
+				trace("player_finished landing right");
+				
+            anim.animation = 'idle_right';
+			anim.play();
+        });
 	}
 }
