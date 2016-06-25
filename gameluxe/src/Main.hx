@@ -89,7 +89,7 @@ class Main extends luxe.Game
 		///////////////////////////////////
 		
 		// audio/ beat manager
-		//beat_manager = new BeatManager({batcher : batcher_ui});
+		beat_manager = new BeatManager({batcher : batcher_ui});
 		
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));

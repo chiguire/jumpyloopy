@@ -67,6 +67,7 @@ class TrajectoryMovement extends Component
 			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 	}
+	
 }
  
 class Avatar extends Sprite
