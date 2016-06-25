@@ -22,10 +22,11 @@ import luxe.tween.easing.Cubic;
 class TrajectoryMovement extends Component
 {
 	public var nextPos = new Vector();
+	private var parentAvatar : Avatar;
 	
 	override function init()
 	{
-		
+		parentAvatar = cast(entity, Avatar);
 	}
 	
 	override function update(dt:Float)
@@ -46,8 +47,8 @@ class TrajectoryMovement extends Component
 	{
 		var T = e.interval;
 		
-		var dst_y = pos.y - cast(entity, Avatar).jump_height;
-		var apex_y = pos.y - cast(entity, Avatar).jump_height * 1.25;
+		var dst_y = pos.y - parentAvatar.jump_height;
+		var apex_y = pos.y - parentAvatar.jump_height * 1.25;
 		
 		if (!nextPos.equals(pos))
 		{
@@ -57,7 +58,9 @@ class TrajectoryMovement extends Component
 			
 			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
 			motionPath.bezier(full_x, dst_y, full_x, apex_y);
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){parentAvatar.OnPlayerLand(); })
+				.ease(luxe.tween.easing.Cubic.easeInOut);
 
 		}
 		else
@@ -65,7 +68,9 @@ class TrajectoryMovement extends Component
 			var motionPath = new MotionPath();
 			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
 			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
-			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y}).ease(luxe.tween.easing.Cubic.easeInOut);
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){parentAvatar.OnPlayerLand(); })
+				.ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 	}
 }
@@ -120,9 +125,7 @@ class Avatar extends Sprite
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		jump_height = e.beat_height;
 		
-		//Set default animation
-		anim.animation = 'idle';
-		anim.play();
+		InitialiseAnimations();
 		
 		//Register player collision.
 		collision.SetupPlayerCollision(this);
@@ -132,5 +135,42 @@ class Avatar extends Sprite
 	{
 		//trajectory_movement.nextPos.y -= jump_height;
 		trajectory_movement.doJump(e);
+		
+		trace("player_jump");
+		anim.animation = 'jump';
+		anim.play();
+	}
+	
+	public function OnPlayerLand()
+	{
+		trace("player_landed");
+		anim.animation = 'land';
+		anim.play();
+	}
+	
+	function InitialiseAnimations()
+	{
+		//Set default animation
+		anim.animation = 'idle';
+		anim.play();
+		
+		//Setup events.
+		events.listen('landed', function(e){
+			trace("player_finished landing");
+            anim.animation = 'idle';
+			anim.play();
+        });
+		
+		events.listen('landed_left', function(e){
+			trace("player_finished landing left");
+            anim.animation = 'idle_left';
+			anim.play();
+        });
+		
+		events.listen('landed_right', function(e){
+			trace("player_finished landing right");
+            anim.animation = 'idle_right';
+			anim.play();
+        });
 	}
 }

@@ -211,9 +211,9 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)
