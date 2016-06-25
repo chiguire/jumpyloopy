@@ -1,0 +1,12 @@
+{
+	"groups":[
+	{
+		"weighting":"1",
+		"elements":["1","2","x","y"]
+	},
+	{
+		"weighting":"2",
+		"elements":["1","4","x","y"]
+	}
+	]
+}

@@ -3,6 +3,7 @@ package gamestates;
 import analysis.FFT;
 import data.GameInfo;
 import entities.Background;
+import entities.CollectableManager;
 import haxe.Json;
 import luxe.Camera;
 import luxe.Input.MouseEvent;
@@ -36,12 +37,19 @@ class MenuState extends State
 	
 	var change_to = "";
 	
+	//HACK!
+	public var collMan : CollectableManager;
+	
 	public function new(_name:String, game_info : GameInfo) 
 	{
 		super({name: _name});
 		this.game_info = game_info;
 		scene = null;
 		title_text = null;
+		
+		//HACK!
+		collMan = new CollectableManager();
+		
 	}
 	
 	override function init()
