@@ -135,8 +135,8 @@ class BeatManager extends Entity
 			audio_pos = audio_time / music.source.duration();
 			
 			// update display
-			beat_manager_debug_visual.update_display(audio_time);
-			//beat_manager_game_hud.update_display(audio_time);
+			//beat_manager_debug_visual.update_display(audio_time);
+			beat_manager_game_hud.update_display(audio_time);
 			
 			if (cooldown_counter <= 0.0)
 			{
@@ -153,7 +153,7 @@ class BeatManager extends Entity
 				for ( i in 0...beat_pos.length )
 				{
 					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-					var in_beat = Math.abs(audio_time - beat_time) < 30/200;
+					var in_beat = audio_time - beat_time < 30/200 && audio_time - beat_time > 0.0;
 					//trace(audio_time - beat_time);
 					
 					if (in_beat && beat_pos[i]!=curr_beat_pos)
@@ -211,9 +211,9 @@ class BeatManager extends Entity
 	
 	public function load_song()
 	{
-		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
+		var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		var load = snow.api.Promise.all([
             Luxe.resources.load_audio(audio_name)

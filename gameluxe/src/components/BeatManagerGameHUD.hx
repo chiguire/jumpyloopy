@@ -7,6 +7,7 @@ import luxe.Color;
 import luxe.Component;
 import luxe.Vector;
 import luxe.options.ComponentOptions;
+import luxe.tween.Actuate;
 import phoenix.geometry.CircleGeometry;
 import phoenix.geometry.QuadGeometry;
 
@@ -34,6 +35,8 @@ class BeatManagerGameHUD extends Component
 	public function new(?_options:ComponentOptions) 
 	{
 		super(_options);
+		
+		Luxe.events.listen("player_move_event", on_move_event );
 	}
 	
 	override public function onadded() 
@@ -89,8 +92,9 @@ class BeatManagerGameHUD extends Component
 					depth : init_options.depth,
 					x : inner_offset.x + i*bar_size.x, y : inner_offset.y + bar_size.y,
 					w : bar_size.x,
-					h : bar_size.y,
-					color : init_options.color
+					h : -bar_size.y,
+					color : init_options.color,
+					visible : false
 				});
 			}
 		}
@@ -104,8 +108,31 @@ class BeatManagerGameHUD extends Component
 		audiopos_disp = Luxe.draw.circle({
 			batcher : viewport_ui,
 			depth : init_options.depth,
-			x : inner_offset.x , y : inner_offset.y,
-			r : bar_size.x / 2
+			x : inner_offset.x , y : inner_offset.y + inner_bound.y * 0.8,
+			r : bar_size.x * 5
 		});
+	}
+	
+	public function update_display(curr_time:Float)
+	{
+		var curr_display_interval = Std.int(curr_time / display_interval);
+		var curr_display_interval_frag = (curr_time / display_interval) % 1.0; 
+		var curr_display_interval_beg = curr_display_interval * num_bars_disp;
+		
+		for (i in 0...beats_disp.length)
+		{
+			var beat = BeatManager.get_data(parent.beat, curr_display_interval_beg + i) > 0;
+			beats_disp[i].visible = beat;
+		}
+		
+		if (audiopos_disp != null)
+		{
+			audiopos_disp.transform.pos.x = inner_offset.x + curr_display_interval_frag * inner_bound.x;
+		}
+	}
+	
+	public function on_move_event(e:BeatEvent)
+	{
+		Actuate.tween(audiopos_disp.transform.pos, e.interval * 0.25, {y:inner_offset.y + inner_bound.y * 0.25}).reflect().repeat(1);
 	}
 }
