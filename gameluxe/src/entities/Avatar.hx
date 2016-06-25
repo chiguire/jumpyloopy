@@ -1,6 +1,7 @@
 package entities;
 
 import components.GameCameraComponent;
+import components.PlayerCollisionComponent;
 import entities.BeatManager.BeatEvent;
 import entities.Level.LevelStartEvent;
 import luxe.Component;
@@ -74,6 +75,7 @@ class Avatar extends Sprite
 	/// components
 	public var trajectory_movement : TrajectoryMovement;
 	public var anim : SpriteAnimation;
+	public var collision : PlayerCollisionComponent;
 	var gamecamera : GameCameraComponent;
 	
 	public var starting_x : Float;
@@ -90,17 +92,16 @@ class Avatar extends Sprite
 		gamecamera = new GameCameraComponent({name: "GameCamera"});
 		trajectory_movement = new TrajectoryMovement( { name:"TrajectoryMovement" } );
 		anim = new SpriteAnimation({name: "PlayerSpriteAnimation" });
+		collision = new PlayerCollisionComponent({name: "PlayerCollision"});
 		
 		add(gamecamera);
 		add(trajectory_movement);
 		add(anim);
+		add(collision);
 		
 		var anim_object = Luxe.resources.json('assets/animation/animation_jumper.json');
 		anim.add_from_json_object(anim_object.asset.json);
-		
-		anim.animation = "idle";
-		anim.play();
-		
+
 		// events
 		Luxe.events.listen("Level.Start", OnLevelStart );
 		Luxe.events.listen("player_move_event", OnPlayerMove );
@@ -120,8 +121,11 @@ class Avatar extends Sprite
 		jump_height = e.beat_height;
 		
 		//Set default animation
-		//anim.animation = 'idle';
-		//anim.play();
+		anim.animation = 'idle';
+		anim.play();
+		
+		//Register player collision.
+		collision.SetupPlayerCollision(this);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
