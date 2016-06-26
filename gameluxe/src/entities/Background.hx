@@ -58,6 +58,15 @@ class Background extends Visual
 		rect = new Rectangle(0, 0, 500, bg_size_y);
 		
 		geoms = new HVector<QuadGeometry>(4);
+		for (i in 0...geoms.length)
+		{
+			var geom = new QuadGeometry({
+				x: Main.global_info.ref_window_size_x/2 - bg_size_x/2, y:0 - i*Main.global_info.ref_window_size_y, w:bg_size_x, h:bg_size_y,
+				batcher: Main.batcher_bg,
+				depth: depth
+			});
+			geoms[i] = geom;
+		}
 		
 		level_start_ev = Luxe.events.listen("Level.Start", on_level_start );
 	}
@@ -65,6 +74,9 @@ class Background extends Visual
 	override public function ondestroy() 
 	{
 		Luxe.events.unlisten(level_start_ev);
+		
+		for (i in 0...geoms.length) 
+			geoms[i].drop();
 		
 		super.ondestroy();
 	}
@@ -90,14 +102,8 @@ class Background extends Visual
 		
 		for (i in 0...geoms.length)
 		{
-			var geom = new QuadGeometry({
-				texture: base_tex0,
-				x: Main.global_info.ref_window_size_x/2 - bg_size_x/2, y:0 - i*Main.global_info.ref_window_size_y, w:bg_size_x, h:bg_size_y,
-				uv: rect,
-				batcher: Main.batcher_bg,
-				depth: depth
-			});
-			geoms[i] = geom;
+			geoms[i].texture = base_tex0;
+			geoms[i].uv(rect);
 		}
 		
 		//trace(Main.global_info.ref_window_size_y * (geoms.length - 1));

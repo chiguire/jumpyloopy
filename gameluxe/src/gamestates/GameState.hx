@@ -180,7 +180,7 @@ class GameState extends State
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
-		background = new Background({});
+		background = new Background({scene : scene});
 				
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
