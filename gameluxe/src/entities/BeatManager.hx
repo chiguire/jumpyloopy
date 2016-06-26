@@ -93,6 +93,9 @@ class BeatManager extends Entity
 	/// renderer
 	public var batcher: Batcher;
 	
+	// event id, stored so we can unlisten
+	var game_event_id : Array<String>;
+	
 	public function new(?_options:BeatManagerOptions) 
 	{
 		super(_options);
@@ -131,9 +134,10 @@ class BeatManager extends Entity
 		attach_visual();
 		
 		// events
-		Luxe.events.listen("Level.Start", on_level_start );
-		Luxe.events.listen("game.pause", on_game_pause );
-		Luxe.events.listen("game.unpause", on_game_unpause );
+		game_event_id = new Array<String>();
+		game_event_id.push(Luxe.events.listen("Level.Start", on_level_start ));
+		game_event_id.push(Luxe.events.listen("game.pause", on_game_pause ));
+		game_event_id.push(Luxe.events.listen("game.unpause", on_game_unpause ));
 	}
 	
 	public function leave_game_state()
@@ -142,9 +146,11 @@ class BeatManager extends Entity
 		
 		detach_visual();
 		
-		Luxe.events.unlisten("Level.Start");
-		Luxe.events.unlisten("game.pause");
-		Luxe.events.unlisten("game.unpause");
+		// events
+		for (i in 0...game_event_id.length)
+		{
+			var res = Luxe.events.unlisten(game_event_id[i]);
+		}
 	}
 	
 	var request_next_beat = false;

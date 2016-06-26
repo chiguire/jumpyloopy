@@ -50,6 +50,8 @@ class Level extends Entity
 	
 	var player_start_pos : Vector;
 	
+	var game_unpause_ev : String;
+	
 	public function new(?_options:LevelOptions, player_start_pos : Vector ) 
 	{
 		super(_options);
@@ -59,7 +61,14 @@ class Level extends Entity
 		batcher_ui = _options.batcher_ui;
 		can_put_platforms = false;
 		
-		Luxe.events.listen("game.unpause", on_game_unpause );
+		game_unpause_ev = Luxe.events.listen("game.unpause", on_game_unpause );
+	}
+	
+	override public function ondestroy() 
+	{
+		Luxe.events.unlisten(game_unpause_ev);
+		
+		super.ondestroy();
 	}
 	
 	override public function init() 

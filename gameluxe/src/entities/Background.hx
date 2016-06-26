@@ -41,6 +41,8 @@ class Background extends Visual
 	
 	var prev_camera_pos_y = Math.NEGATIVE_INFINITY;
 	
+	var level_start_ev : String;
+	
 	public function new(options:VisualOptions) 
 	{
 		super(options);
@@ -57,7 +59,14 @@ class Background extends Visual
 		
 		geoms = new HVector<QuadGeometry>(4);
 		
-		Luxe.events.listen("Level.Start", on_level_start );
+		level_start_ev = Luxe.events.listen("Level.Start", on_level_start );
+	}
+	
+	override public function ondestroy() 
+	{
+		Luxe.events.unlisten(level_start_ev);
+		
+		super.ondestroy();
 	}
 	
 	override public function init() 

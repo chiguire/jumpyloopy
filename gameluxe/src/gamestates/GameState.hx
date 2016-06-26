@@ -144,12 +144,13 @@ class GameState extends State
 		trace("Exiting game");
 		
 		Main.beat_manager.leave_game_state();
-		
-		scene.empty();
-		scene.destroy();
+
 		player_sprite = null;
 		background = null;
 		level = null;
+
+		scene.empty();
+		scene.destroy();
 		scene = null;
 	}
 	

@@ -32,11 +32,11 @@ class BeatManagerGameHUD extends Component
 	
 	var parent : BeatManager;
 	
+	var player_move_event_id : String;
+	
 	public function new(?_options:ComponentOptions) 
 	{
 		super(_options);
-		
-		Luxe.events.listen("player_move_event", on_move_event );
 	}
 	
 	override public function onadded() 
@@ -54,6 +54,15 @@ class BeatManagerGameHUD extends Component
 		inner_offset = new Vector( outer_offset.x + 0.025 * inner_bound.x, outer_offset.y + 0.025 * inner_bound.y );
 		
 		init_display();
+		
+		Luxe.events.listen("player_move_event", on_move_event );
+	}
+	
+	override public function onremoved() 
+	{
+		Luxe.events.unlisten(player_move_event_id);
+		
+		super.onremoved();
 	}
 	
 	public function init_display()

@@ -101,6 +101,9 @@ class Avatar extends Sprite
 	
 	private var debug_animations = false;
 	
+	// event id, stored so we can unlisten
+	var event_id : Array<String>;
+	
 	public function new(starting_x : Float, options:SpriteOptions) 
 	{		
 		super(options);
@@ -122,15 +125,20 @@ class Avatar extends Sprite
 		anim.add_from_json_object(anim_object.asset.json);
 
 		// events
-		Luxe.events.listen("Level.Start", OnLevelStart );
-		Luxe.events.listen("player_move_event", OnPlayerMove );
+		event_id = new Array<String>();
+		event_id.push(Luxe.events.listen("Level.Start", OnLevelStart ));
+		event_id.push(Luxe.events.listen("player_move_event", OnPlayerMove ));
+		
+		//trace(event_id);
 	}
 	
 	override public function ondestroy() 
 	{
 		// events
-		Luxe.events.unlisten("Level.Start");
-		Luxe.events.unlisten("player_move_event");
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
 		
 		super.ondestroy();
 	}
