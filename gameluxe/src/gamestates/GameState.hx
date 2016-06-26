@@ -19,6 +19,7 @@ import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
+import mint.Panel;
 import phoenix.Batcher;
 
 import luxe.tween.Actuate;
@@ -27,6 +28,10 @@ import luxe.Input;
 import luxe.Sprite;
 import luxe.Scene;
 import phoenix.Texture;
+
+import mint.types.Types.TextAlign;
+
+typedef MintTextAlign = mint.types.Types.TextAlign;
 
 /**
  * ...
@@ -38,6 +43,8 @@ class GameState extends State
 	private var scene : Scene;
 	
 	private var level: Level;
+	
+	var parcel : Parcel;
 
 	//private var sky_sprite : Sprite;
 	var background : Background;
@@ -82,6 +89,11 @@ class GameState extends State
 	var debug_text : Text;
 	
 	public var is_pause (default, null) = false;
+	/// pause panel
+	var pause_panel : Panel;
+	
+	var restart_signal = false;
+	var state_change_menu_signal = false;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -117,11 +129,13 @@ class GameState extends State
 		if ( e.keycode == Key.key_p && is_pause == false)
 		{
 			is_pause = true;
+			activate_pause_panel();
 			Luxe.events.fire("game.pause");
 		}
 		else if ( e.keycode == Key.key_p && is_pause == true)
 		{
 			is_pause = false;
+			deactivate_pause_panel();
 			Luxe.events.fire("game.unpause");
 		}
 		
@@ -148,6 +162,7 @@ class GameState extends State
 		Actuate.reset();
 		
 		Main.beat_manager.leave_game_state();
+		Main.canvas.destroy_children();
 
 		player_sprite = null;
 		background = null;
@@ -156,11 +171,17 @@ class GameState extends State
 		scene.empty();
 		scene.destroy();
 		scene = null;
+		
+		parcel = null;
 	}
 	
 	override function onenter<T>(d:T)
 	{
 		trace("Entering game");
+		var restart_signal = false;
+		var state_change_menu_signal = false;
+		
+		Main.load_parcel(parcel, "assets/data/game_state_parcel.json", on_parcel_loaded);
 		
 		var lane_width = level_rect.w * 1.25;
 		
@@ -234,8 +255,27 @@ class GameState extends State
 		});
 	}
 	
+	function on_parcel_loaded( p: Parcel )
+	{
+		create_pause_panel();
+	}
+	
 	override function update(dt:Float) 
 	{
+		// state control
+		if (restart_signal)
+		{
+			restart_signal = false;
+			reset_state();
+		}
+		else if (state_change_menu_signal)
+		{
+			state_change_menu_signal = false;
+			machine.set("MenuState");
+			return;
+		}
+		
+		
 		if (level.can_put_platforms)
 		{
 			if (Luxe.input.inputpressed("put_platform"))
@@ -511,5 +551,65 @@ class GameState extends State
 	function get_next_platform_type() : PlatformType
 	{
 		return Type.createEnumIndex(PlatformType, Luxe.utils.random.int(1, Type.getEnumConstructs(PlatformType).length));
+	}
+	
+	function activate_pause_panel()
+	{
+		pause_panel.visible = true;
+	}
+	
+	function deactivate_pause_panel()
+	{
+		pause_panel.visible = false;
+	}
+	
+	function create_pause_panel()
+	{
+		pause_panel = new mint.Panel({
+			parent: Main.canvas,
+			name: 'panel_pause',
+			mouse_input: true,
+			x: 595, y: 300, w: 250, h: 300,
+		});
+		pause_panel.visible = false;
+		
+		var title = new mint.Label({
+			parent: pause_panel, name: 'label',
+			mouse_input:false, x:0, y:0, w:250, h:100, text_size: 32,
+			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
+			text: "Game Pause",
+		});
+		
+		var button = new mint.Button({
+            parent: pause_panel,
+            name: 'button',
+            text: "Restart",
+			x: 61, y: 110, w: 128, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button.onmouseup.listen(
+			function(e,c) 
+			{
+				restart_signal = true;
+				//reset_state();
+			}
+		);
+		
+		var button1 = new mint.Button({
+            parent: pause_panel,
+            name: 'button',
+            text: "Main Menu",
+			x: 61, y: 110+42, w: 128, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button1.onmouseup.listen(
+			function(e,c) 
+			{
+				state_change_menu_signal = true;
+				//reset_state();
+			}
+		);
 	}
 }

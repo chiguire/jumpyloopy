@@ -39,6 +39,7 @@ class LevelSelectState extends State
 	
 	override function onleave<T>(_value:T)
 	{
+		Actuate.reset();
 		Luxe.audio.stop(music_handle);
 		
 		Main.canvas.destroy_children();		
@@ -55,7 +56,7 @@ class LevelSelectState extends State
 		
 		var progress = new ParcelProgress({
             parcel      : parcel,
-            background  : new Color(1,1,1,0.85),
+            background  : new Color(0,0,0,0.85),
             oncomplete  : on_loaded
         });
 		

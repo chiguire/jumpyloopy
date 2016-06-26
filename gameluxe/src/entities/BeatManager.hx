@@ -131,6 +131,9 @@ class BeatManager extends Entity
 	
 	public function enter_game_state()
 	{
+		cooldown_counter = 0;
+		curr_beat_pos = 0;
+		
 		attach_visual();
 		
 		// events
@@ -142,6 +145,9 @@ class BeatManager extends Entity
 	
 	public function leave_game_state()
 	{
+		cooldown_counter = 0;
+		curr_beat_pos = 0;
+		
 		Luxe.audio.stop(music_handle);
 		
 		detach_visual();
@@ -178,6 +184,7 @@ class BeatManager extends Entity
 			{
 				cooldown_counter -= dt;
 			}
+			
 			// search for the closest beat
 			if (request_next_beat)
 			{

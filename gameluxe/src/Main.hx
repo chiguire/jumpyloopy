@@ -10,6 +10,9 @@ import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import luxe.Camera;
+import luxe.Color;
+import luxe.Parcel;
+import luxe.ParcelProgress;
 import luxe.Screen.WindowEvent;
 import luxe.States;
 import haxe.xml.Fast;
@@ -50,6 +53,23 @@ class Main extends luxe.Game
 	public static function ref_window_aspect() : Float
 	{
 		return global_info.ref_window_size_x / global_info.ref_window_size_y;
+	}
+	
+	// load parcel with progress bar
+	public static function load_parcel( parcel: Parcel, parcel_id: String, on_complete: Parcel->Void)
+	{
+		// load parcels
+		parcel = new Parcel();
+		parcel.from_json(Luxe.resources.json(parcel_id).asset.json);
+		
+		var progress = new ParcelProgress({
+            parcel      : parcel,
+            background  : new Color(0,0,0,0.85),
+            oncomplete  : on_complete,
+			no_visuals 	: true
+        });
+		
+		parcel.load();
 	}
 	
 	override function ready() 
@@ -132,9 +152,11 @@ class Main extends luxe.Game
 		config.window.height = global_info.window_size_y;// 720;
 		config.window.borderless = global_info.borderless;
 #end
-		
+	
+		// preload all parcel description
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
+		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
 		
 
 		// move to parcel
