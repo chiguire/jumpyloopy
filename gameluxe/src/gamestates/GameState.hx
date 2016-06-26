@@ -143,6 +143,9 @@ class GameState extends State
 	{
 		trace("Exiting game");
 		
+		// reset and remove all tweenign that is current in-flight
+		Actuate.reset();
+		
 		Main.beat_manager.leave_game_state();
 
 		player_sprite = null;
