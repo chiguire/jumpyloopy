@@ -22,6 +22,8 @@ class BeatManagerGameHUD extends Component
 	var bar_size : Vector;
 	var num_bars_disp = 0;
 	
+	var outer_box : QuadGeometry;
+	var inner_box : QuadGeometry;
 	var beats_disp : HVector<QuadGeometry>;
 	var audiopos_disp : CircleGeometry;
 	
@@ -62,16 +64,18 @@ class BeatManagerGameHUD extends Component
 	{
 		Luxe.events.unlisten(player_move_event_id);
 		
+		deinit_display();
+		
 		super.onremoved();
 	}
-	
+		
 	public function init_display()
 	{
 		// draw into UI view
 		var viewport_ui = parent.batcher;
 		
 		// static border
-		var outer_box = Luxe.draw.box(
+		outer_box = Luxe.draw.box(
 		{
 			batcher : viewport_ui,
 			depth : 1,
@@ -81,7 +85,7 @@ class BeatManagerGameHUD extends Component
 			color : new Color(0.5, 0.5, 0.5, 0.1)
 		});
 		
-		var inner_box = Luxe.draw.box(
+		inner_box = Luxe.draw.box(
 		{
 			batcher : viewport_ui,
 			depth : 1,
@@ -120,6 +124,16 @@ class BeatManagerGameHUD extends Component
 			x : inner_offset.x , y : inner_offset.y + inner_bound.y * 0.8,
 			r : bar_size.x * 5
 		});
+	}
+	
+	function deinit_display() 
+	{
+		audiopos_disp.drop();
+		
+		for (i in 0...beats_disp.length ) beats_disp[i].drop();
+		
+		inner_box.drop();
+		outer_box.drop();
 	}
 	
 	public function update_display(curr_time:Float)

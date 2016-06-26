@@ -119,8 +119,7 @@ class GameState extends State
 			is_pause = true;
 			Luxe.events.fire("game.pause");
 		}
-		
-		if ( e.keycode == Key.key_p && is_pause == true)
+		else if ( e.keycode == Key.key_p && is_pause == true)
 		{
 			is_pause = false;
 			Luxe.events.fire("game.unpause");
@@ -142,6 +141,8 @@ class GameState extends State
 	override function onleave<T>(d:T)
 	{
 		trace("Exiting game");
+		
+		is_pause = false;
 		
 		// reset and remove all tweenign that is current in-flight
 		Actuate.reset();

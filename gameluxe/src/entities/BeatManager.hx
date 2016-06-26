@@ -46,7 +46,7 @@ class BeatManager extends Entity
 	/// game play constants
 	
 	
-	var beat_manager_debug_visual : BeatManagerVisualizer;
+	//var beat_manager_debug_visual : BeatManagerVisualizer;
 	var beat_manager_game_hud : BeatManagerGameHUD;
 	
 	private var music: AudioResource;
@@ -110,14 +110,14 @@ class BeatManager extends Entity
 		}
 		
 		/// create a visualizer, don't attached this yet
-		beat_manager_debug_visual = new BeatManagerVisualizer({name:"beat_manager_debug_visual"});
+		//beat_manager_debug_visual = new BeatManagerVisualizer({name:"beat_manager_debug_visual"});
 		beat_manager_game_hud = new BeatManagerGameHUD({name:"beat_manager_game_hud"});
 	}
 	
 	public function attach_visual()
 	{
-		var comp = get("beat_manager_debug_visual");
-		if (comp == null) add(beat_manager_debug_visual);
+		//var comp = get("beat_manager_debug_visual");
+		//if (comp == null) add(beat_manager_debug_visual);
 		
 		var comp1 = get("beat_manager_game_hud");
 		if (comp1 == null) add(beat_manager_game_hud);
