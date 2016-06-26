@@ -120,11 +120,23 @@ class GameState extends State
 			Luxe.events.fire("game.pause");
 		}
 		
-		if ( e.keycode == Key.key_o && is_pause == true)
+		if ( e.keycode == Key.key_p && is_pause == true)
 		{
 			is_pause = false;
 			Luxe.events.fire("game.unpause");
 		}
+		
+		if ( e.keycode == Key.key_o)
+		{
+			trace("game over");
+			reset_state();
+		}
+	}
+	
+	function reset_state()
+	{
+		onleave({});
+		onenter({});
 	}
 	
 	override function onleave<T>(d:T)

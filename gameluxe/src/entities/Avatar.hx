@@ -126,15 +126,25 @@ class Avatar extends Sprite
 		Luxe.events.listen("player_move_event", OnPlayerMove );
 	}
 	
+	override public function ondestroy() 
+	{
+		// events
+		Luxe.events.unlisten("Level.Start");
+		Luxe.events.unlisten("player_move_event");
+		
+		super.ondestroy();
+	}
+	
 	override function update(dt:Float)
 	{
 		
 	}
 	
 	function OnLevelStart( e:LevelStartEvent )
-	{
+	{		
 		visible = true;
 		gamecamera.set_x(starting_x);
+		
 		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		trajectory_movement.height = size.y / 2.0;
