@@ -13,6 +13,7 @@ import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import luxe.tween.Actuate;
 import luxe.tween.MotionPath;
+import luxe.tween.actuators.GenericActuator.IGenericActuator;
 import luxe.tween.easing.Cubic;
 
 /**
@@ -22,6 +23,9 @@ import luxe.tween.easing.Cubic;
 class TrajectoryMovement extends Component
 {
 	public var nextPos = new Vector();
+	public var oldNextPos = new Vector();
+	
+	var tweening : Bool = false;
 
 	private var parentAvatar : Avatar;	public var height : Float;	
 	override function init()
@@ -47,6 +51,12 @@ class TrajectoryMovement extends Component
 	{
 		var T = e.interval;
 		
+		if (tweening)
+		{
+			tweening = false;
+			pos.set_xy(oldNextPos.x, oldNextPos.y);
+		}
+		
 		var dst_y = nextPos.y - height / 2; // pos.y - parentAvatar.jump_height;
 		var apex_y = pos.y - parentAvatar.jump_height * 1.25;		
 		if (!nextPos.equals(pos))
@@ -57,8 +67,8 @@ class TrajectoryMovement extends Component
 			
 			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
 			motionPath.bezier(full_x, dst_y, full_x, apex_y);
-			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y})
-				.onComplete(function(){parentAvatar.OnPlayerLand(); })
+			Actuate.motionPath(pos, 0.4, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){parentAvatar.OnPlayerLand(); tweening = false; })
 				.ease(luxe.tween.easing.Cubic.easeInOut);
 		}
 		else
@@ -66,9 +76,13 @@ class TrajectoryMovement extends Component
 			var motionPath = new MotionPath();
 			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
 			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
-			Actuate.motionPath(pos, 0.6, {x:motionPath.x, y:motionPath.y})
-				.onComplete(function(){parentAvatar.OnPlayerLand(); })
-				.ease(luxe.tween.easing.Cubic.easeInOut);		}
+			Actuate.motionPath(pos, 0.4, {x:motionPath.x, y:motionPath.y})
+				.onComplete(function(){ parentAvatar.OnPlayerLand(); tweening = false; })
+				.ease(luxe.tween.easing.Cubic.easeInOut);		
+		}
+		
+		oldNextPos = nextPos;
+		tweening = true;
 	}
 	
 }

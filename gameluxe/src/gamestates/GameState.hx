@@ -62,7 +62,8 @@ class GameState extends State
 	var num_peg_levels : Int;
 	
 	var beat_n : Int;
-	var beat_bottom : Int;
+	var beat_index_y : Int;
+	var beat_bottom_y : Int;
 	var beat_start_wrap : Int;
 	var platform_list : Array<Platform>;
 	var mouse_platform : Platform;
@@ -230,16 +231,33 @@ class GameState extends State
 				//trace("Switching platform!");
 				switch_platform();
 			}
+			
+			if (Luxe.input.keypressed(Key.key_1))
+			{
+				current_platform_type = LEFT;
+				mouse_platform.type = current_platform_type;
+			}
+			else if (Luxe.input.keypressed(Key.key_2))
+			{
+				current_platform_type = CENTER;
+				mouse_platform.type = current_platform_type;
+			}
+			else if (Luxe.input.keypressed(Key.key_3))
+			{
+				current_platform_type = RIGHT;
+				mouse_platform.type = current_platform_type;
+			}
 		}
 		
 		background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
-		max_tile = Math.round( (Luxe.screen.height/2.0 - Luxe.camera.pos.y) / level.beat_height);
+		max_tile = Math.round( (Main.global_info.ref_window_size_y/2.0 - Luxe.camera.pos.y) / level.beat_height);
 		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance * 0.5) / lanes_distance))));
-		beat_bottom = Math.round((starting_y - Luxe.camera.pos.y - mouse_pos.y) / level.beat_height);
-		mouse_index_y = Std.int(Math.max(beat_bottom, 0));
+		beat_index_y = Math.round((starting_y - Luxe.camera.pos.y - mouse_pos.y) / level.beat_height);
+		mouse_index_y = Std.int(Math.max(beat_index_y, 0));
+		beat_bottom_y = Math.round((starting_y - Luxe.camera.pos.y - Main.global_info.ref_window_size_y) / level.beat_height);
 		var mouse_platform_x = lane_start + mouse_index_x * lanes_distance;
 		var mouse_platform_y = (starting_y - mouse_index_y * level.beat_height);
 		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
@@ -247,7 +265,7 @@ class GameState extends State
 		next_platform.pos.set_xy(level_rect.x + level_rect.w + 20, Luxe.camera.pos.y + 40);
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
-		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length}\ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
+		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 	}
 	
 	private function connect_input()
@@ -301,7 +319,7 @@ class GameState extends State
 			}
 		}
 		beat_n = 0;
-		beat_start_wrap = 7;
+		beat_start_wrap = 0;
 		
 		absolute_floor.visible = true;
 		absolute_floor.pos.x = lanes[2];
@@ -357,7 +375,7 @@ class GameState extends State
 					{
 						platform_destination_y -= 1;
 						
-						if (platform_destination_y < beat_bottom - 2)
+						if (platform_destination_y < beat_bottom_y)
 						{
 							fall_below = true;
 							pl_dst = null;
@@ -375,41 +393,42 @@ class GameState extends State
 			}
 			
 			player_sprite.current_lane = platform_destination_x;
-			beat_n = platform_destination_y;
+			beat_n = Std.int(Math.max(0, platform_destination_y));
 			
 			trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height - player_sprite.size.y / 2.0;
 			
-			if (beat_n > old_beat_n && beat_bottom >= beat_start_wrap)
+			if (beat_bottom_y >= beat_start_wrap && beat_n > old_beat_n)
 			{
-				trace('Moving over');
-				
-				var n = beat_bottom - beat_start_wrap;
+				var n = beat_bottom_y - beat_start_wrap;
 				var l = jumping_points.length;
 				
-				var prev_0_n = ( l + ( (n - 1) * num_internal_lanes + 0 ) ) % l;
-				var prev_1_n = ( l + ( (n - 1) * num_internal_lanes + 1 ) ) % l;
-				var prev_2_n = ( l + ( (n - 1) * num_internal_lanes + 2 ) ) % l;
+				//var prev_0_n = ( l + ( (n - 1) * num_internal_lanes + 0 ) ) % l;
+				//var prev_1_n = ( l + ( (n - 1) * num_internal_lanes + 1 ) ) % l;
+				//var prev_2_n = ( l + ( (n - 1) * num_internal_lanes + 2 ) ) % l;
 				var current_0_n = (n * num_internal_lanes + 0) % l;
 				var current_1_n = (n * num_internal_lanes + 1) % l;
 				var current_2_n = (n * num_internal_lanes + 2) % l;
 				
-				var peg_prev_0 = jumping_points[prev_0_n];
-				var peg_prev_1 = jumping_points[prev_1_n];
-				var peg_prev_2 = jumping_points[prev_2_n];
+				//var peg_prev_0 = jumping_points[prev_0_n];
+				//var peg_prev_1 = jumping_points[prev_1_n];
+				//var peg_prev_2 = jumping_points[prev_2_n];
 				var peg_current_0 = jumping_points[current_0_n];
 				var peg_current_1 = jumping_points[current_1_n];
 				var peg_current_2 = jumping_points[current_2_n];
 				
-				peg_current_0.pos.y = peg_prev_0.pos.y - level.beat_height;
-				peg_current_1.pos.y = peg_prev_1.pos.y - level.beat_height;
-				peg_current_2.pos.y = peg_prev_2.pos.y - level.beat_height;
+				//peg_current_0.pos.y = peg_prev_0.pos.y - level.beat_height;
+				//peg_current_1.pos.y = peg_prev_1.pos.y - level.beat_height;
+				//peg_current_2.pos.y = peg_prev_2.pos.y - level.beat_height;
+				peg_current_0.pos.y = peg_current_0.pos.y - num_peg_levels * level.beat_height;
+				peg_current_1.pos.y = peg_current_1.pos.y - num_peg_levels * level.beat_height;
+				peg_current_2.pos.y = peg_current_2.pos.y - num_peg_levels * level.beat_height;
 				
-				var platform_prev_0 = platform_points[prev_0_n];
-				var platform_prev_1 = platform_points[prev_1_n];
-				var platform_prev_2 = platform_points[prev_2_n];
+				//var platform_prev_0 = platform_points[prev_0_n];
+				//var platform_prev_1 = platform_points[prev_1_n];
+				//var platform_prev_2 = platform_points[prev_2_n];
 				var platform_current_0 = platform_points[current_0_n];
 				var platform_current_1 = platform_points[current_1_n];
 				var platform_current_2 = platform_points[current_2_n];
@@ -418,9 +437,14 @@ class GameState extends State
 				platform_current_1.type = NONE;
 				platform_current_2.type = NONE;
 				
-				platform_current_0.pos.y = platform_prev_0.pos.y - level.beat_height;
-				platform_current_1.pos.y = platform_prev_1.pos.y - level.beat_height;
-				platform_current_2.pos.y = platform_prev_2.pos.y - level.beat_height;
+				trace('Moving ($n) over ($current_0_n, $current_1_n, $current_2_n), new height is ${ platform_current_0.pos.y - num_peg_levels * level.beat_height}');
+				
+				//platform_current_0.pos.y = platform_prev_0.pos.y - level.beat_height;
+				//platform_current_1.pos.y = platform_prev_1.pos.y - level.beat_height;
+				//platform_current_2.pos.y = platform_prev_2.pos.y - level.beat_height;
+				platform_current_0.pos.y = platform_current_0.pos.y - num_peg_levels * level.beat_height;
+				platform_current_1.pos.y = platform_current_1.pos.y - num_peg_levels * level.beat_height;
+				platform_current_2.pos.y = platform_current_2.pos.y - num_peg_levels * level.beat_height;
 			}
 		}
 	}
