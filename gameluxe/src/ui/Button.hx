@@ -65,7 +65,7 @@ class Button extends Entity
 			scene: _options.scene,
 		});
 		
-		_rect = new Rectangle(_options.pos.x, _options.pos.y, button_border_x*2 + text.geom.text_width, button_border_y*2 + text.geom.text_height);
+		_rect = new Rectangle(Luxe.camera.pos.x + _options.pos.x, Luxe.camera.pos.y + _options.pos.y, button_border_x*2 + text.geom.text_width, button_border_y*2 + text.geom.text_height);
 		
 		rectangle = new Visual({
 			depth: -1,

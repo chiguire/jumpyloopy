@@ -5,9 +5,10 @@
     author : 'luxeengine',
 
     app : {
+      icon : 'flow/icons/',
       name : 'jumpyloopy',
       package : 'com.luxeengine.empty',
-      main : 'Main'
+      main : 'Main',
     },
 
     build : {
