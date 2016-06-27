@@ -1,5 +1,6 @@
 package gamestates;
 
+import data.BackgroundGroup;
 import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
@@ -47,6 +48,7 @@ class GameState extends State
 	var parcel : Parcel;
 
 	//private var sky_sprite : Sprite;
+	var background_groups : Array<BackgroundGroup>;
 	var background : Background;
 
 	public static var player_sprite: Avatar;
@@ -123,20 +125,16 @@ class GameState extends State
 	}
 	
 	override function onkeyup(e:KeyEvent) 
-	{
-		if( e.keycode == Key.escape ) machine.set("MenuState");
-			
-		if ( e.keycode == Key.key_p && is_pause == false)
+	{			
+		if ( e.keycode == Key.escape && is_pause == false)
 		{
 			is_pause = true;
 			activate_pause_panel();
 			Luxe.events.fire("game.pause");
 		}
-		else if ( e.keycode == Key.key_p && is_pause == true)
+		else if ( e.keycode == Key.escape && is_pause == true)
 		{
-			is_pause = false;
-			deactivate_pause_panel();
-			Luxe.events.fire("game.unpause");
+			unpause();
 		}
 		
 		if ( e.keycode == Key.key_o)
@@ -144,6 +142,13 @@ class GameState extends State
 			trace("game over");
 			reset_state();
 		}
+	}
+	
+	function unpause()
+	{
+		is_pause = false;
+		deactivate_pause_panel();
+		Luxe.events.fire("game.unpause");
 	}
 	
 	function reset_state()
@@ -201,9 +206,7 @@ class GameState extends State
 		Main.beat_manager.enter_game_state();
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
-		
-		background = new Background({scene : scene});
-				
+						
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
 		
@@ -258,6 +261,7 @@ class GameState extends State
 	function on_parcel_loaded( p: Parcel )
 	{
 		create_pause_panel();
+		create_background_groups();
 	}
 	
 	override function update(dt:Float) 
@@ -306,7 +310,7 @@ class GameState extends State
 			}
 		}
 		
-		background.update(dt);
+		if(background != null) background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
@@ -563,6 +567,24 @@ class GameState extends State
 		pause_panel.visible = false;
 	}
 	
+	function create_background_groups()
+	{
+		var json = Luxe.resources.json("assets/data/background_groups.json").asset.json;
+		
+		background_groups = new Array<BackgroundGroup>();
+		var groups : Array<Dynamic> = json.groups;
+		for (i in 0...groups.length)
+		{
+			//trace(groups[i]);
+			var group = new BackgroundGroup();
+			group.load_group(groups[i]);
+			background_groups.push(group);
+		}
+		
+		background = new Background({scene : scene});
+		background.background_group = background_groups[0];
+	}
+	
 	function create_pause_panel()
 	{
 		pause_panel = new mint.Panel({
@@ -583,7 +605,7 @@ class GameState extends State
 		var button = new mint.Button({
             parent: pause_panel,
             name: 'button',
-            text: "Restart",
+            text: "Resume",
 			x: 61, y: 110, w: 128, h: 32,
             text_size: 14,
             options: { label: { color:new Color().rgb(0x9dca63) } }
@@ -591,20 +613,35 @@ class GameState extends State
 		button.onmouseup.listen(
 			function(e,c) 
 			{
-				restart_signal = true;
-				//reset_state();
+				unpause();
 			}
 		);
 		
 		var button1 = new mint.Button({
             parent: pause_panel,
             name: 'button',
-            text: "Main Menu",
-			x: 61, y: 110+42, w: 128, h: 32,
+            text: "Restart",
+			x: 61, y: 152, w: 128, h: 32,
             text_size: 14,
             options: { label: { color:new Color().rgb(0x9dca63) } }
         });
 		button1.onmouseup.listen(
+			function(e,c) 
+			{
+				state_change_menu_signal = true;
+				//reset_state();
+			}
+		);
+		
+		var button2 = new mint.Button({
+            parent: pause_panel,
+            name: 'button',
+            text: "Main Menu",
+			x: 61, y: 152+42, w: 128, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button2.onmouseup.listen(
 			function(e,c) 
 			{
 				state_change_menu_signal = true;

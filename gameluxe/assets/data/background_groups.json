@@ -1,0 +1,9 @@
+{
+	"groups":[
+	{
+		"tile_textures": ["assets/image/bg/cave_01_sketch.png", "assets/image/bg/sky_01_tiling.png", "assets/image/bg/space_02_tiling.png", "assets/image/bg/end_02.png"],
+		"trans_textures": ["assets/image/bg/cave_02_sketch.png", "assets/image/bg/space_01_transition.png", "assets/image/bg/end_01_transition.png", "assets/image/bg/end_02.png"], 
+		"distances": [0, 1200, 2400, 99999]    
+	}
+	]
+}
