@@ -4,7 +4,6 @@ import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
-import entities.CollectableManager;
 import entities.Collectable_Coin;
 import entities.Level;
 import entities.Platform;
@@ -95,8 +94,6 @@ class GameState extends State
 	
 	var restart_signal = false;
 	var state_change_menu_signal = false;
-	
-	var collectable_manager : CollectableManager;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -206,10 +203,7 @@ class GameState extends State
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 		
 		background = new Background({scene : scene});
-		
-		//Initialise collectable manager. -2 from lanes for the gutters.
-		collectable_manager = new CollectableManager(lanes, level.beat_height);
-		
+				
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
 		
@@ -364,6 +358,9 @@ class GameState extends State
 			peg.visible = true;
 			platform.visible = platform.type != NONE;
 			
+			//DEBUG - Add bcoin
+			var coin = new Collectable_Coin(scene, "coin"+i+j, new Vector(lanes[j + 1], peg_y));
+			
 			if (first_line)
 			{
 				platform.type = CENTER;
@@ -389,9 +386,6 @@ class GameState extends State
 		next_platform_type = get_next_platform_type();
 		
 		mouse_platform.type = current_platform_type;
-		
-		//Initialise collectables
-		collectable_manager.CreateFirstGroup(starting_y);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -458,7 +452,7 @@ class GameState extends State
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = Std.int(Math.max(0, platform_destination_y));
 			
-			//trace(s_debug);
+			trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height - player_sprite.size.y / 2.0;

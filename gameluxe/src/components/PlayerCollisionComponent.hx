@@ -53,13 +53,13 @@ class PlayerCollisionComponent extends Component
 	
 	public function RegisterCollisionEntity(obj : CollisionShape)
 	{
-		//trace("Registering collision entity.");
+		trace("Registering collision entity.");
 		collision_shapes.push(obj);
 	}
 	
 	public function DeregisterCollisionEntity(obj : CollisionShape)
 	{
-		//trace("Deregistering collision entity.");
+		trace("Deregistering collision entity.");
 		collision_shapes.remove(obj);
 	}
 	
