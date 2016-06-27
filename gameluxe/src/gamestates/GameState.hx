@@ -1,10 +1,10 @@
 package gamestates;
 
+import data.BackgroundGroup;
 import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
-import entities.CollectableManager;
 import entities.Collectable_Coin;
 import entities.Level;
 import entities.Platform;
@@ -48,6 +48,7 @@ class GameState extends State
 	var parcel : Parcel;
 
 	//private var sky_sprite : Sprite;
+	var background_groups : Array<BackgroundGroup>;
 	var background : Background;
 
 	public static var player_sprite: Avatar;
@@ -96,8 +97,6 @@ class GameState extends State
 	var restart_signal = false;
 	var state_change_menu_signal = false;
 	
-	var collectable_manager : CollectableManager;
-	
 	public function new(_name:String, game_info : GameInfo) 
 	{
 		super({name: _name});
@@ -126,20 +125,16 @@ class GameState extends State
 	}
 	
 	override function onkeyup(e:KeyEvent) 
-	{
-		if( e.keycode == Key.escape ) machine.set("MenuState");
-			
-		if ( e.keycode == Key.key_p && is_pause == false)
+	{			
+		if ( e.keycode == Key.escape && is_pause == false)
 		{
 			is_pause = true;
 			activate_pause_panel();
 			Luxe.events.fire("game.pause");
 		}
-		else if ( e.keycode == Key.key_p && is_pause == true)
+		else if ( e.keycode == Key.escape && is_pause == true)
 		{
-			is_pause = false;
-			deactivate_pause_panel();
-			Luxe.events.fire("game.unpause");
+			unpause();
 		}
 		
 		if ( e.keycode == Key.key_o)
@@ -147,6 +142,13 @@ class GameState extends State
 			trace("game over");
 			reset_state();
 		}
+	}
+	
+	function unpause()
+	{
+		is_pause = false;
+		deactivate_pause_panel();
+		Luxe.events.fire("game.unpause");
 	}
 	
 	function reset_state()
@@ -204,12 +206,7 @@ class GameState extends State
 		Main.beat_manager.enter_game_state();
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
-		
-		background = new Background({scene : scene});
-		
-		//Initialise collectable manager. -2 from lanes for the gutters.
-		collectable_manager = new CollectableManager(lanes, level.beat_height);
-		
+						
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
 		
@@ -264,6 +261,7 @@ class GameState extends State
 	function on_parcel_loaded( p: Parcel )
 	{
 		create_pause_panel();
+		create_background_groups();
 	}
 	
 	override function update(dt:Float) 
@@ -312,7 +310,7 @@ class GameState extends State
 			}
 		}
 		
-		background.update(dt);
+		if(background != null) background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = (lanes[2] - lanes[1]);
@@ -364,6 +362,9 @@ class GameState extends State
 			peg.visible = true;
 			platform.visible = platform.type != NONE;
 			
+			//DEBUG - Add bcoin
+			var coin = new Collectable_Coin(scene, "coin"+i+j, new Vector(lanes[j + 1], peg_y));
+			
 			if (first_line)
 			{
 				platform.type = CENTER;
@@ -389,9 +390,6 @@ class GameState extends State
 		next_platform_type = get_next_platform_type();
 		
 		mouse_platform.type = current_platform_type;
-		
-		//Initialise collectables
-		collectable_manager.CreateFirstGroup(starting_y);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -458,7 +456,7 @@ class GameState extends State
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = Std.int(Math.max(0, platform_destination_y));
 			
-			//trace(s_debug);
+			trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height - player_sprite.size.y / 2.0;
@@ -569,6 +567,24 @@ class GameState extends State
 		pause_panel.visible = false;
 	}
 	
+	function create_background_groups()
+	{
+		var json = Luxe.resources.json("assets/data/background_groups.json").asset.json;
+		
+		background_groups = new Array<BackgroundGroup>();
+		var groups : Array<Dynamic> = json.groups;
+		for (i in 0...groups.length)
+		{
+			//trace(groups[i]);
+			var group = new BackgroundGroup();
+			group.load_group(groups[i]);
+			background_groups.push(group);
+		}
+		
+		background = new Background({scene : scene});
+		background.background_group = background_groups[0];
+	}
+	
 	function create_pause_panel()
 	{
 		pause_panel = new mint.Panel({
@@ -589,7 +605,7 @@ class GameState extends State
 		var button = new mint.Button({
             parent: pause_panel,
             name: 'button',
-            text: "Restart",
+            text: "Resume",
 			x: 61, y: 110, w: 128, h: 32,
             text_size: 14,
             options: { label: { color:new Color().rgb(0x9dca63) } }
@@ -597,20 +613,35 @@ class GameState extends State
 		button.onmouseup.listen(
 			function(e,c) 
 			{
-				restart_signal = true;
-				//reset_state();
+				unpause();
 			}
 		);
 		
 		var button1 = new mint.Button({
             parent: pause_panel,
             name: 'button',
-            text: "Main Menu",
-			x: 61, y: 110+42, w: 128, h: 32,
+            text: "Restart",
+			x: 61, y: 152, w: 128, h: 32,
             text_size: 14,
             options: { label: { color:new Color().rgb(0x9dca63) } }
         });
 		button1.onmouseup.listen(
+			function(e,c) 
+			{
+				state_change_menu_signal = true;
+				//reset_state();
+			}
+		);
+		
+		var button2 = new mint.Button({
+            parent: pause_panel,
+            name: 'button',
+            text: "Main Menu",
+			x: 61, y: 152+42, w: 128, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button2.onmouseup.listen(
 			function(e,c) 
 			{
 				state_change_menu_signal = true;
