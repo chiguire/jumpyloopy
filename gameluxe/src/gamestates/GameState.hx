@@ -5,7 +5,7 @@ import data.GameInfo;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
-import entities.Collectable_Coin;
+import entities.CollectableManager;
 import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
@@ -59,6 +59,7 @@ class GameState extends State
 	
 	var jumping_points : Array<PlatformPeg>;
 	var platform_points : Array<Platform>;
+	var collectable_manager : CollectableManager;
 	
 	var lane_start : Float;
 	
@@ -221,6 +222,8 @@ class GameState extends State
 			platform_points.push(platform);
 		}
 		
+		collectable_manager = new CollectableManager(lanes, level.beat_height);
+		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
 			texture: Luxe.resources.texture("assets/image/aviator_sprite.png"),
@@ -361,10 +364,7 @@ class GameState extends State
 			//trace('Setting peg at (${lanes[j + 1]}, $peg_y)');
 			peg.visible = true;
 			platform.visible = platform.type != NONE;
-			
-			//DEBUG - Add bcoin
-			var coin = new Collectable_Coin(scene, "coin"+i+j, new Vector(lanes[j + 1], peg_y));
-			
+
 			if (first_line)
 			{
 				platform.type = CENTER;
@@ -390,6 +390,8 @@ class GameState extends State
 		next_platform_type = get_next_platform_type();
 		
 		mouse_platform.type = current_platform_type;
+		
+		collectable_manager.CreateFirstGroup(starting_y);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
