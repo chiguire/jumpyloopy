@@ -630,8 +630,7 @@ class GameState extends State
 		button1.onmouseup.listen(
 			function(e,c) 
 			{
-				state_change_menu_signal = true;
-				//reset_state();
+				restart_signal = true;
 			}
 		);
 		
