@@ -54,7 +54,7 @@ class Button extends Entity
 		button_opts = _options;
 		
 		text = new Text({
-			pos: new Vector(_options.pos.x + button_border_x, _options.pos.y + button_border_y),
+			pos: new Vector(Luxe.camera.pos.x +  _options.pos.x + button_border_x, Luxe.camera.pos.y + _options.pos.y + button_border_y),
 			depth: 0,
 			text: _options.text.text,
 			color: if (_options.color_out != null) _options.color_out else default_color_out,
@@ -94,7 +94,9 @@ class Button extends Entity
 	{
 		if (!clicked_inside)
 		{
-			if (_rect.point_inside(event.pos))
+			var v = new Vector(Luxe.camera.pos.x, Luxe.camera.pos.y);
+			v.add(event.pos);
+			if (_rect.point_inside(v))
 			{
 				rectangle.color = if (button_opts.background_over != null) button_opts.background_over else default_background_over;
 				text.geom.color = if (button_opts.color_over != null) button_opts.color_over else default_color_over;
@@ -112,7 +114,9 @@ class Button extends Entity
 	public override function onmousedown(event:MouseEvent)
 	{
 		//rectangle.scale.set_xy(1.0, 1.0);
-		if (_rect.point_inside(event.pos))
+		var v = new Vector(Luxe.camera.pos.x, Luxe.camera.pos.y);
+		v.add(event.pos);
+		if (_rect.point_inside(v))
 		{
 			rectangle.color = if (button_opts.background_click != null) button_opts.background_click else default_background_click;
 			text.geom.color = if (button_opts.color_click != null) button_opts.color_click else default_color_click;
@@ -126,7 +130,9 @@ class Button extends Entity
 	
 	public override function onmouseup(event:MouseEvent)
 	{
-		if (_rect.point_inside(event.pos) && clicked_inside)
+		var v = new Vector(Luxe.camera.pos.x, Luxe.camera.pos.y);
+		v.add(event.pos);
+		if (_rect.point_inside(v) && clicked_inside)
 		{
 			events.fire('button.clicked', { button: this }, true);
 		}
