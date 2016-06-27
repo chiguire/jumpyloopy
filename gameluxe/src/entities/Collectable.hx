@@ -51,14 +51,14 @@ class Collectable extends Sprite
 	
 	private function onCollisionEnter(player : Avatar):Void 
 	{
-		destroy();
+		DestroyCollectable();
 	}
 	
-	override public function destroy(?_from_parent:Bool = false) 
+	public function DestroyCollectable()
 	{
 		GameState.player_sprite.collision.DeregisterCollisionEntity(collisionShape);
 		
-		super.destroy(_from_parent);
+		destroy();
 	}
 	
 	private function buildPolygon(size : Vector):Array<Vector>
