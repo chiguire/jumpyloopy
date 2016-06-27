@@ -12,6 +12,10 @@ import luxe.tween.Actuate;
 import mint.Button;
 import snow.types.Types.AudioHandle;
 
+#if (cpp || neko)
+import systools.Dialogs;
+#end
+
 /**
  * ...
  * @author Aik
@@ -127,6 +131,34 @@ class LevelSelectState extends State
 			function(e,c) 
 			{
 				//change_to = "GameState";
+				#if cpp
+				var filters: FILEFILTERS = { count: 1
+				, descriptions: ["OGG files"]
+				, extensions: ["*.ogg"]	
+				
+				};	
+				var result:Array<String> = Dialogs.openFile(
+				"Select a file please!"
+				, "Please select one or more files, so we can see if this method works"
+				, filters
+				);
+				
+				trace(result);
+				if (result != null)
+				{
+					var load = snow.api.Promise.all([
+						Luxe.resources.load_audio(result[0], {is_stream:true})
+					]);
+			
+					load.then(function(_)
+					{
+						var music = Luxe.resources.audio(result[0]);
+						music_handle = Luxe.audio.play(music.source, music_volume, false);
+						
+						Actuate.tween(this, 0.5, {music_volume:1.0});
+					});
+				}
+				#end
 			}
 		);
 	}

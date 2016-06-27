@@ -230,23 +230,6 @@ class BeatManager extends Entity
 		Luxe.audio.unpause(music_handle);
 	}
 	
-	override public function onkeyup(e:KeyEvent) 
-	{
-		// test interupt
-		if (e.keycode == Key.key_b)
-		{
-			trace("game pause");
-			
-		}
-		
-		if (e.keycode == Key.key_n)
-		{
-			trace("game continue");
-			
-			
-		}
-	}
-	
 	function handle_pause()
 	{
 		
@@ -267,7 +250,7 @@ class BeatManager extends Entity
 	{
 		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		// we need to reload it if it is already been loaded as a stream
 		var res = Luxe.resources.audio(audio_id);
