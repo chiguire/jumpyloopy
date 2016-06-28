@@ -28,9 +28,6 @@ class CollisionShape extends Polygon
 	
 	public function Update(rate:Float) 
 	{
-		//Keep our collision matching the sprite!
-		this.position = parentSprite.pos.clone();
-		
 		var verts = get_transformedVertices();
 		Luxe.draw.poly({
 			immediate: true,

@@ -14,7 +14,6 @@ import luxe.debug.TraceDebugView;
 class CollectableManager extends Entity
 {
 	public var min_rows : Int = 5;
-	public var unload_group_rows: Int = 5;
 	public var rows_between_groups : Int = 1;
 	public var initial_blank_rows : Int = 1;
 	public var row_height : Float;
@@ -22,24 +21,24 @@ class CollectableManager extends Entity
 	
 	public var group_templates : Array<CollectableGroupData> = new Array();
 	public var existing_groups : Array<CollectableGroup> = new Array();
-
-	public function new(laneArray : Array<Float>, r_height : Float)
+	
+	private var group_i = 0;
+	private var game_state : GameState;
+	
+	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
 		LoadCollectableData();
 		
 		lanes = laneArray;
 		row_height = r_height;
+		group_i = 0;
+		game_state = gs;
 		super();
 	}
 	
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
-		
-		var group : CollectableGroup;	
-		var group_y : Float;		
-		var distance : Float;
-		var test_dist : Float;
 		
 		if (GameState.player_sprite == null)
 		{
@@ -50,51 +49,46 @@ class CollectableManager extends Entity
 		//Wait for the first group to be created.
 		if (existing_groups.length > 0)
 		{	
-			//CREATE
-			//Get the top of the last element in the array and add its height. check if that - player_y is lower than our min rows.
-			group = existing_groups[existing_groups.length - 1];
-			group_y = group.y_pos - (group.GetNumRows() * row_height);		
-			distance = Math.abs(group_y - GameState.player_sprite.pos.y);
-			test_dist = (min_rows * row_height);
-			if (distance < test_dist)
+			//Create - Using Rows.
+			var screen_bottom_row = game_state.get_bottom_y();
+			var screen_top_row = game_state.get_max_tile();
+			
+			var top_y_index = existing_groups[existing_groups.length - 1].y_index + existing_groups[existing_groups.length - 1].GetNumRows();
+			var bottom_y_index = existing_groups[0].y_index + existing_groups[existing_groups.length - 1].GetNumRows();
+			
+			
+			if (bottom_y_index < screen_bottom_row)
 			{
-				trace("Distance: " + distance + " is < than " + test_dist + "Adding new");
-				SpawnCollectableGroup(group_y + (rows_between_groups * row_height));
+				DestoryCollectableGroup(existing_groups[0]);
 			}
 			
-			//DESTROY
-			group = existing_groups[0];
-			group_y = group.y_pos - (group.GetNumRows() * row_height);		
-			distance = Math.abs(GameState.player_sprite.pos.y - group_y);
-			test_dist = (unload_group_rows * row_height);
-			if (group_y > GameState.player_sprite.pos.y && distance > test_dist)
+			if (top_y_index < screen_top_row + min_rows)
 			{
-				trace("Distance: " + distance + " is > than " + test_dist + "Removing");
-				DestoryCollectableGroup(existing_groups.pop());
+				SpawnCollectableGroup(top_y_index + min_rows + rows_between_groups);
 			}
 		}
-		
-		
 	}
 	
-	public function CreateFirstGroup(game_start_y : Float)
+	public function CreateFirstGroup()
 	{
-		SpawnCollectableGroup(game_start_y - (initial_blank_rows * row_height));
+		SpawnCollectableGroup(initial_blank_rows);
 	}
 	
-	private function  SpawnCollectableGroup(y_pos : Float)
+	private function  SpawnCollectableGroup(y_index : Int)
 	{
 		//for now we load at random.
 		var selection = Math.floor(group_templates.length * Math.random());
 		var selected_data = group_templates[selection];
-		var new_group = new CollectableGroup(scene, selected_data, y_pos, this);
-
+		var new_group = new CollectableGroup(scene, "Group_" + group_i, selected_data, y_index, this);
+		
+		group_i++;
 		existing_groups.push(new_group);
 		
 	}
 	
 	private function DestoryCollectableGroup(group : CollectableGroup)
 	{
+		existing_groups.remove(group);
 		group.RemoveCollectables();
 	}
 	
@@ -132,20 +126,21 @@ class CollectableGroupData
 
 class CollectableGroup
 {
-	public var y_pos : Float;
+	public var name : String;
 	public var data : CollectableGroupData;
 	public var collectables : Array<Collectable> = new Array();
+	public var y_index : Int;
 		
 	private var parent : CollectableManager;
-	public function new(scene : Scene, d : CollectableGroupData, y_height : Float, p : CollectableManager)
+	public function new(scene : Scene, n : String, d : CollectableGroupData, y_ind : Int, p : CollectableManager)
 	{
 		data = d;
-		y_pos = y_height;
 		parent = p;
-		
+		name = n;
+		y_index = y_ind;
 		SpawnCollectables(scene);
 		
-		trace("Created new collectabale group. Data:" + data.name + " Rows:" + GetNumRows() + " pos: " + y_pos + ". Player_pos:" + GameState.player_sprite.pos);
+		trace("Created new collectabale group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index + ". Player_pos:" + GameState.player_sprite.pos);
 	}
 	
 	public function SpawnCollectables(scene : Scene)
@@ -158,7 +153,7 @@ class CollectableGroup
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
 					parent.lanes[x+1], 
-					y_pos - (y * parent.row_height)
+					GetYPos() - (y * parent.row_height)
 				);
 				
 				//0 = An empty space!
@@ -181,7 +176,7 @@ class CollectableGroup
 		{
 			c.destroy();
 		}
-		trace("Destroyed collectable group. Data:" + data.name + " Rows:" + GetNumRows() + " pos: " + y_pos);
+		trace("Destroyed collectable group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index);
 	}
 	
 	private function SelectAndCreateCollectable(type : String, scene : Scene, name : String, pos : Vector) : Collectable
@@ -202,6 +197,11 @@ class CollectableGroup
 	private function GetArrayPos(x : Int, y : Int) : Int
 	{
 		return x + (y * (parent.lanes.length - 2));
+	}
+	
+	private function GetYPos()
+	{
+		return y_index * parent.row_height;
 	}
 	
 	public function GetNumRows()
