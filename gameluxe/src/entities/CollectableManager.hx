@@ -15,7 +15,7 @@ class CollectableManager extends Entity
 {
 	public var min_rows : Int = 5;
 	public var rows_between_groups : Int = 1;
-	public var initial_blank_rows : Int = 1;
+	public var initial_blank_rows : Int = 3;
 	public var row_height : Float;
 	public var lanes : Array<Float> = new Array();
 	
@@ -24,6 +24,8 @@ class CollectableManager extends Entity
 	
 	private var group_i = 0;
 	private var game_state : GameState;
+	
+	private var trace_string : String;
 	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
@@ -56,6 +58,12 @@ class CollectableManager extends Entity
 			var top_y_index = existing_groups[existing_groups.length - 1].y_index + existing_groups[existing_groups.length - 1].GetNumRows();
 			var bottom_y_index = existing_groups[0].y_index + existing_groups[existing_groups.length - 1].GetNumRows();
 			
+			var new_trace = "Vals -1:" + screen_bottom_row +" -2:" + screen_top_row +" -3:" + top_y_index +" -4:" + bottom_y_index;
+			if (new_trace != trace_string)
+			{
+				trace_string = new_trace;
+				trace(trace_string);
+			}
 			
 			if (bottom_y_index < screen_bottom_row)
 			{
@@ -64,7 +72,7 @@ class CollectableManager extends Entity
 			
 			if (top_y_index < screen_top_row + min_rows)
 			{
-				SpawnCollectableGroup(top_y_index + min_rows + rows_between_groups);
+				SpawnCollectableGroup(top_y_index + rows_between_groups);
 			}
 		}
 	}
@@ -153,7 +161,7 @@ class CollectableGroup
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
 					parent.lanes[x+1], 
-					GetYPos() - (y * parent.row_height)
+					GetYPos() + (-y * parent.row_height)
 				);
 				
 				//0 = An empty space!
@@ -202,7 +210,7 @@ class CollectableGroup
 	
 	private function GetYPos()
 	{
-		return y_index * parent.row_height;
+		return -y_index * parent.row_height;
 	}
 	
 	public function GetNumRows()
