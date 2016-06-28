@@ -650,8 +650,17 @@ class BeatManager extends Entity
 	public static var bands = [ { low:100, high:500 } ];// , 4000, 10000, 10000, 16000 ];
 	//public static var bands = [ 500, 1500, 4000, 10000, 10000, 16000 ];
 	
+	function reset_audio_fft_params()
+	{
+		multipliers[0] = 4.0;
+		bands[0] = { low:100, high:500 };
+	}
+	
 	public function process_audio_fft()
-	{		
+	{
+		trace(bands);
+		trace(multipliers);
+		
 		var spectrum_provider = new SpectrumProvider(this, 1024, hop_size, true);
 		var spectrum = spectrum_provider.next_spectrum();
 		var prev_spectrum = new Vector<Float>(spectrum.length);
@@ -734,5 +743,8 @@ class BeatManager extends Entity
 		}
 		
 		calculate_beat_pos();
+		
+		// once we are finished, reset these parameters
+		reset_audio_fft_params();
 	}
 }

@@ -1,6 +1,7 @@
 package gamestates;
 
 import data.GameInfo;
+import entities.BeatManager;
 import luxe.Audio.AudioState;
 import luxe.Color;
 import luxe.Parcel;
@@ -10,6 +11,7 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.Actuate;
 import mint.Button;
+import mint.types.Types.TextAlign;
 import snow.types.Types.AudioHandle;
 
 #if (cpp || neko)
@@ -32,6 +34,10 @@ class LevelSelectState extends State
 	/// music preview
 	var music_handle : AudioHandle;
 	var music_volume = 0.0;
+	
+	/// user mode
+	var audio_fn = "";
+	var audio_fft_params_id = "";
 
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -110,6 +116,13 @@ class LevelSelectState extends State
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
 		
+		var title = new mint.Label({
+			parent: Main.canvas, name: 'label',
+			mouse_input:false, x:layout_data.title.pos_x, y:layout_data.title.pos_y, w:Main.global_info.ref_window_size_x, h:100, text_size: 48,
+			align: TextAlign.center, align_vertical: TextAlign.center,
+			text: layout_data.title.text,
+		});
+		
 		var button0 = create_button( layout_data.level_0 );
 		button0.onmouseup.listen(
 			function(e,c) 
@@ -146,21 +159,48 @@ class LevelSelectState extends State
 				trace(result);
 				if (result != null)
 				{
-					var load = snow.api.Promise.all([
-						Luxe.resources.load_audio(result[0], {is_stream:true})
-					]);
-			
-					load.then(function(_)
+					// if we have the audio tweak file
+					audio_fn = result[0];
+					audio_fft_params_id = StringTools.replace(audio_fn, "ogg", "json");
+					
+					// reload resource
+					var json_data = Luxe.resources.json(audio_fft_params_id);
+					if (json_data != null)
 					{
-						var music = Luxe.resources.audio(result[0]);
-						music_handle = Luxe.audio.play(music.source, music_volume, false);
-						
-						Actuate.tween(this, 0.5, {music_volume:1.0});
-					});
+						Luxe.resources.destroy(audio_fft_params_id, true);
+					}
+					
+					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
 				}
 				#end
 			}
 		);
+	}
+	
+	function on_audio_cfg_loaded(e)
+	{
+		trace("cfg file loaded");
+		
+		var json_data = Luxe.resources.json(audio_fft_params_id).asset.json;
+		if (json_data != null)
+		{		
+			BeatManager.bands[0].low = json_data.band[0];
+			BeatManager.bands[0].high = json_data.band[1];
+			BeatManager.multipliers[0] = json_data.peak[0];
+		}
+		
+		Main.beat_manager.load_song(audio_fn);
+		audio_fn = "";
+		audio_fft_params_id = "";
+	}
+	
+	function on_audio_cfg_notfound(e)
+	{
+		trace("cfg file not found");
+		
+		Main.beat_manager.load_song(audio_fn);
+		audio_fn = "";
+		audio_fft_params_id = "";
 	}
 	
 	public function on_audio_analysis_completed(e)

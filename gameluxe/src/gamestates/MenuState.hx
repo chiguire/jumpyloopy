@@ -127,12 +127,12 @@ class MenuState extends State
 		var canvas = Main.canvas;
 		
 		title_text = new Text({
-			text: "Jumpyloopy (please change this)",
+			text: "-Rise-",
 			point_size: 48,
-			color: Color.random(),
+			//color: Color.random(),
 			scene: scene,
 		});
-		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 10);
+		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 100);
 		
 		var button1 = create_button( layout_data.play_button );
 		button1.onmouseup.listen(
