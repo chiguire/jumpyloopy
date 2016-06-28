@@ -222,7 +222,7 @@ class GameState extends State
 			platform_points.push(platform);
 		}
 		
-		collectable_manager = new CollectableManager(lanes, level.beat_height);
+		collectable_manager = new CollectableManager(this, lanes, level.beat_height);
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
@@ -425,7 +425,7 @@ class GameState extends State
 		
 		mouse_platform.type = current_platform_type;
 		
-		collectable_manager.CreateFirstGroup(starting_y);
+		collectable_manager.CreateFirstGroup();
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -652,5 +652,16 @@ class GameState extends State
 				//reset_state();
 			}
 		);
+	}
+	
+		
+	public function get_bottom_y()
+	{
+		return beat_bottom_y;
+	}
+	
+	public function get_max_tile()
+	{
+		return max_tile;
 	}
 }
