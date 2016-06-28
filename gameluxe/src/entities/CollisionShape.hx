@@ -16,6 +16,7 @@ class CollisionShape extends Polygon
 {
 	private var parentSprite : Sprite;
 	private var colliding : Bool;
+	public var destroyed (default,null): Bool;
 	
 	public function new(sprite : Sprite) 
 	{
@@ -24,6 +25,7 @@ class CollisionShape extends Polygon
 		
 		//We use our parent sprite to set the position of the collision each frame.
 		parentSprite = sprite;
+		destroyed = false;
 	}
 	
 	public function Update(rate:Float) 
@@ -85,4 +87,8 @@ class CollisionShape extends Polygon
 		return colliding;
 	}
 	
+	public function set_destroyed()
+	{
+		destroyed = true;
+	}
 }

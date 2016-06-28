@@ -47,6 +47,7 @@ class Collectable extends Sprite
 		
 		events.listen("onCollisionEnter", onCollisionEnter);
 		
+		destroyed = false;
 	}
 	
 	private function onCollisionEnter(player : Avatar):Void 
@@ -73,5 +74,10 @@ class Collectable extends Sprite
 		a.push( new Vector(-halfX, halfY));
 		
 		return a;
+	}
+	
+	override public function ondestroy() {
+		collisionShape.set_destroyed();
+		super.ondestroy();
 	}
 }

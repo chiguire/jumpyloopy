@@ -1,13 +1,18 @@
 {
+  luxe:{
+    window: {
+	  title:'Rise'
+	}
+  },
   project : {
     name : 'rise',
     version : '1.0.0',
-    author : 'luxeengine',
+    author : 'Creative Assembly',
 
     app : {
       icon : 'flow/icons/',
       name : 'rise',
-      package : 'com.luxeengine.empty',
+      package : 'com.creativeassembly.rise',
       main : 'Main',
     },
 

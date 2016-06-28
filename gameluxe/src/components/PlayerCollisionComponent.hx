@@ -35,17 +35,25 @@ class PlayerCollisionComponent extends Component
 		
 		//Update all our shapes.
 		player_collision.Update(dt);
+		collided_shapes = collided_shapes.filter(function(o:CollisionShape) { return !o.destroyed; });
 		for (s in collision_shapes)
 		{
-			s.Update(dt);
+			if (!s.destroyed)
+			{
+				s.Update(dt);
+			}
 		}
 		
 		//Check for player collisions.
 		collided_shapes = CollisionShapeWithShapes(player_collision, collision_shapes);
 		//trace("num shapes collided = " + collided_shapes.length);
+		collided_shapes = collided_shapes.filter(function(o:CollisionShape) { return !o.destroyed; });
 		for (cs in collided_shapes)
 		{
-			cs.onCollisionEnter(player_collision);
+			if (!cs.destroyed)
+			{
+				cs.onCollisionEnter(player_collision);
+			}
 		}
 		
 		super.update(dt);
