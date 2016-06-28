@@ -35,7 +35,7 @@ class Background extends Visual
 	var bg_size_y = 0.0;
 	
 	/// transition_pos (should come from level, data)
-	var transition_pos = 3600;
+	var transition_pos = 1500;
 	var transition_pos_counter = 0.0;
 	var curr_state = 0;
 	
@@ -111,16 +111,31 @@ class Background extends Visual
 		//trace(Main.global_info.ref_window_size_y * (geoms.length - 1));
 	}
 	
+	var speed_mul = 1.0;	
+	override function onkeyup(e:KeyEvent) 
+	{
+		super.onkeyup(e);
+		
+		if (e.keycode == Key.key_d)
+		{
+			speed_mul = 1.0;
+		}
+	}
+	
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
+		
+		if(Luxe.input.keydown(Key.key_d)) {
+            speed_mul = 50;
+        }
 		
 		if ( prev_camera_pos_y != Math.NEGATIVE_INFINITY )
 		{
 			var delta_pos = Luxe.camera.pos.y - prev_camera_pos_y;
 			prev_camera_pos_y = Luxe.camera.pos.y;
 			
-			if(curr_state+1 < tiling_textures.length) transition_pos_counter += -delta_pos;
+			if(curr_state+1 < tiling_textures.length) transition_pos_counter += 10*dt*speed_mul - delta_pos;
 			
 			if ( transition_pos_counter > transition_pos )
 			{			
@@ -133,7 +148,7 @@ class Background extends Visual
 			// move background
 			for (i in 0...geoms.length)
 			{
-				geoms[i].transform.pos.y -= -10*dt + delta_pos;
+				geoms[i].transform.pos.y -= -10*dt*speed_mul + delta_pos;
 			}
 		}
 		
@@ -189,10 +204,5 @@ class Background extends Visual
 			curr_state = 0;
 			//transition_start();
 		}
-	}
-	
-	override function onkeyup(e:KeyEvent) 
-	{
-		
 	}
 }

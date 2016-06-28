@@ -1,12 +1,12 @@
 {
   project : {
-    name : 'jumpyloopy',
+    name : 'rise',
     version : '1.0.0',
     author : 'luxeengine',
 
     app : {
       icon : 'flow/icons/',
-      name : 'jumpyloopy',
+      name : 'rise',
       package : 'com.luxeengine.empty',
       main : 'Main',
     },
