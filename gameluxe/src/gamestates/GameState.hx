@@ -461,7 +461,7 @@ class GameState extends State
 			outside_lanes_left = platform_destination_x < 1;
 			outside_lanes_right = platform_destination_x > 3;
 			
-			if (!outside_lanes_left && !outside_lanes_right)
+			//if (!outside_lanes_left && !outside_lanes_right)
 			{
 				do
 				{
@@ -477,16 +477,33 @@ class GameState extends State
 							pl_dst = null;
 							platform_destination_y -= 2;
 							trace('fell below!'); // TODO: GAME OVER Set a timer here and wait 2 seconds before restart
+							
+							player_sprite.current_lane = 2;
+							platform_destination_x = player_sprite.current_lane;
+							platform_destination_y = beat_bottom_y;
+							
+							Luxe.events.fire("game.unpause");
+							
+							break;
 						}
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
 				//s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
+			/*
 			else
 			{
+				trace('fell out!');
+				
 				// TODO: GAME OVER Set a timer here and wait 2 seconds before restart
+				//player_sprite.current_lane = 2;
+				//platform_destination_x = player_sprite.current_lane;
+				//platform_destination_y = beat_bottom_y;
+				
+				//Luxe.events.fire("game.unpause");
 			}
+			*/
 			
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = Std.int(Math.max(0, platform_destination_y));
