@@ -45,4 +45,16 @@ class Platform extends Sprite
 		visible = (t != NONE);
 		return type = t;
 	}
+	
+	private function select_platform_texture(t : PlatformType) : String
+	{
+		if (t == PlatformType.LEFT)
+			return 'assets/image/platforms/platform_left01.png';
+		if (t == PlatformType.RIGHT)
+			return 'assets/image/platforms/platform_right01.png';
+		if (Math.random() > 0.5)
+			return 'assets/image/platforms/platform_straight01.png';
+
+		return 'assets/image/platforms/platform_straight02.png';
+	}
 }
