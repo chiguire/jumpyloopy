@@ -177,6 +177,7 @@ class CollectableGroup
 	
 	public function RemoveCollectables()
 	{
+		collectables = collectables.filter(function(c:Collectable) { return !c.destroyed; });
 		for (c in collectables)
 		{
 			c.destroy();
