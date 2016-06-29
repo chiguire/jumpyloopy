@@ -157,7 +157,8 @@ class CollectableGroup
 		{
 			for (x in 0 ... (parent.lanes.length - 2))
 			{
-				var i : Int = GetArrayPos(x, y);
+				//Invert y so we go from bottom to top.
+				var i : Int = GetArrayPos(x, GetNumRows() - 1 - y);
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
 					parent.lanes[x+1], 
@@ -196,6 +197,8 @@ class CollectableGroup
 		{
 			case "c":
 				newColl = new Collectable_Coin(scene, name, pos);
+			case "l":
+				newColl = new Collectable_Letter(scene, name, pos);
 			default:
 				newColl = new Collectable_Coin(scene, name, pos);
 		}

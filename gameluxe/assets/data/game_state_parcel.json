@@ -21,6 +21,7 @@
 	"json" : 
 	[
 		{ "id" : "assets/data/pause_panel.json" },
-		{ "id" : "assets/data/background_groups.json" }
+		{ "id" : "assets/data/background_groups.json" },
+		{ "id" : "assets/animation/animation_letter.json" }
 	]
 }
