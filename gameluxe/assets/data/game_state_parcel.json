@@ -2,9 +2,11 @@
 	"textures" : 
 	[ 
 		{ "id" : "assets/image/war-child-logo-home.png" },
-		{ "id" : "assets/image/bg/cave_01_sketch.png" },
-		{ "id" : "assets/image/bg/cave_02_sketch.png" },
-		{ "id" : "assets/image/bg/sky_01_tiling.png" },
+		{ "id" : "assets/image/bg/cave_01_paper.png" },
+		{ "id" : "assets/image/bg/cave_01_paper_transition.png" },
+		{ "id" : "assets/image/bg/cave_02_tiling.png" },
+		{ "id" : "assets/image/bg/sky_01_forest.png" },
+		{ "id" : "assets/image/bg/sky_03_clouds02.png" },
 		{ "id" : "assets/image/bg/space_01_transition.png" },
 		{ "id" : "assets/image/bg/space_02_tiling.png" },
 		{ "id" : "assets/image/bg/end_01_transition.png" },
