@@ -181,6 +181,16 @@ class GameState extends State
 		parcel = null;
 	}
 	
+	function calc_lane_width() : Float
+	{
+		return level_rect.w * 1.25;
+	}
+	
+	function calc_lanes_distance() : Float
+	{
+		return lanes[2] - lanes[1];
+	}
+	
 	override function onenter<T>(d:T)
 	{
 		trace("Entering game");
@@ -189,7 +199,7 @@ class GameState extends State
 		
 		Main.load_parcel(parcel, "assets/data/game_state_parcel.json", on_parcel_loaded);
 		
-		var lane_width = level_rect.w * 1.25;
+		var lane_width = calc_lane_width();
 		
 		lane_start = -0.5 * lane_width / num_all_lanes;
 		lanes = new Array<Float>();
@@ -211,13 +221,15 @@ class GameState extends State
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
 		
+		var platform_size = new Vector(calc_lanes_distance(), 1); // height will be filled later once the texture is loaded
+		
 		for (i in 0...num_internal_lanes * num_peg_levels)
 		{
 			var peg = new PlatformPeg(scene, game_info, i);
 			peg.visible = false;
 			jumping_points.push(peg);
 			
-			var platform = new Platform(scene, game_info, i, NONE);
+			var platform = new Platform({ scene: scene, game_info: game_info, n:i, type:NONE, size:platform_size.clone() });
 			platform.visible = false;
 			platform_points.push(platform);
 		}
@@ -226,7 +238,7 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture("assets/image/aviator_sprite.png"),
+			texture: Luxe.resources.texture("assets/image/aviator_sprite_color.png"),
 			pos: Luxe.screen.mid,
 			size: new Vector(140, 140),
 			scene: scene,
@@ -236,19 +248,19 @@ class GameState extends State
 		
 		absolute_floor = new Sprite({
 			name: 'BottomFloor',
-			texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
-			uv: game_info.spritesheet_elements['ground_cake.png'],
+			//texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
+			//uv: game_info.spritesheet_elements['ground_cake.png'],
 			pos: new Vector(Luxe.screen.width / 2.0, 0),
-			size: new Vector(game_info.spritesheet_elements['ground_cake.png'].w, game_info.spritesheet_elements['ground_cake.png'].h),
+			//size: new Vector(game_info.spritesheet_elements['ground_cake.png'].w, game_info.spritesheet_elements['ground_cake.png'].h),
 			scene: scene,
 		});
 		absolute_floor.visible = false;
 		
 		connect_input();
 		
-		mouse_platform = new Platform(scene, game_info, num_internal_lanes * num_peg_levels + 1, NONE);
-		next_platform = new Platform(scene, game_info, num_internal_lanes * num_peg_levels + 2, NONE);
-		next_platform.pos.set_xy(Luxe.screen.width - 100, 40);
+		mouse_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 1, type:NONE, size:platform_size.clone()});
+		next_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 2, type:NONE, size:platform_size.clone()});
+		//next_platform.pos.set_xy(Luxe.screen.width - 100, 40);
 		
 		mouse_pos = new Vector();
 		
@@ -265,6 +277,11 @@ class GameState extends State
 	{
 		create_pause_panel();
 		create_background_groups();
+		
+		// initialize platform
+		var tex = Luxe.resources.texture('assets/image/platforms/platform_straight02.png');
+		absolute_floor.texture = tex;
+		absolute_floor.size = new Vector( calc_lanes_distance() * num_internal_lanes,  tex.height);
 	}
 	
 	override function update(dt:Float) 
@@ -313,10 +330,42 @@ class GameState extends State
 			}
 		}
 		
+		if (player_sprite.visible && player_out_of_bound())
+		{
+			trace("need player respawn here " + player_sprite.pos.y);
+			
+			// place player
+			beat_n = beat_bottom_y + 2;
+			player_sprite.current_lane = 2;
+			var respawn_pos_x = lanes[player_sprite.current_lane];
+			var respawn_pos_y = -(beat_n) * level.beat_height;
+			player_sprite.respawn(new Vector(respawn_pos_x, respawn_pos_y));
+			
+			// place absolute platform
+			absolute_floor.visible = true;
+			absolute_floor.pos.x = lanes[2];
+			absolute_floor.pos.y = respawn_pos_y;// + absolute_floor.size.y / 2.0;
+			// reset gameplay platform
+			var j = 0;
+			for (i in 0...platform_points.length)
+			{
+				var platform = platform_points[i];
+				platform.type = NONE;
+				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
+				{
+					platform.type = CENTER;
+				}
+				
+				platform.visible = false;
+			}
+			
+			Main.beat_manager.on_player_respawn();
+		}
+		
 		if(background != null) background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
-		var lanes_distance = (lanes[2] - lanes[1]);
+		var lanes_distance = calc_lanes_distance();
 		max_tile = Math.round( (Main.global_info.ref_window_size_y/2.0 - Luxe.camera.pos.y) / level.beat_height);
 		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance * 0.5) / lanes_distance))));
 		beat_index_y = Math.round((starting_y - Luxe.camera.pos.y - mouse_pos.y) / level.beat_height);
@@ -418,7 +467,7 @@ class GameState extends State
 		
 		absolute_floor.visible = true;
 		absolute_floor.pos.x = lanes[2];
-		absolute_floor.pos.y = starting_y + absolute_floor.size.y / 2.0;
+		absolute_floor.pos.y = starting_y;// + absolute_floor.size.y / 2.0;
 		
 		current_platform_type = get_next_platform_type();
 		next_platform_type = get_next_platform_type();
@@ -431,7 +480,11 @@ class GameState extends State
 	function OnPlayerMove( e:BeatEvent )
 	{
 		//var s_debug = 'Player goes from (${player_sprite.current_lane}, $beat_n) to ';
-		var pl_src = get_platform(player_sprite.current_lane, beat_n);
+		var pl_src = null;
+		//if (beat_n >= beat_bottom_y) 
+		{
+			pl_src = get_platform(player_sprite.current_lane, beat_n);
+		}
 		var pl_dst = null;
 		
 		var platform_destination_x = player_sprite.current_lane;
@@ -446,6 +499,11 @@ class GameState extends State
 		if (pl_src == null)
 		{
 			trace('player is standing outside lanes. Game over');
+			
+			// TODO: GAME OVER Set a timer here and wait 2 seconds before restart
+			trace("ply:" + player_sprite.pos.y);
+			trace("bound " + -(beat_bottom_y - 2) * level.beat_height);
+			trace(beat_bottom_y + " n " + beat_n);
 		}
 		else
 		{
@@ -461,7 +519,7 @@ class GameState extends State
 			outside_lanes_left = platform_destination_x < 1;
 			outside_lanes_right = platform_destination_x > 3;
 			
-			//if (!outside_lanes_left && !outside_lanes_right)
+			if (!outside_lanes_left && !outside_lanes_right)
 			{
 				do
 				{
@@ -477,33 +535,18 @@ class GameState extends State
 							pl_dst = null;
 							platform_destination_y -= 2;
 							trace('fell below!'); // TODO: GAME OVER Set a timer here and wait 2 seconds before restart
-							
-							player_sprite.current_lane = 2;
-							platform_destination_x = player_sprite.current_lane;
-							platform_destination_y = beat_bottom_y;
-							
-							Luxe.events.fire("game.unpause");
-							
-							break;
 						}
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
 				//s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
-			/*
 			else
 			{
 				trace('fell out!');
 				
-				// TODO: GAME OVER Set a timer here and wait 2 seconds before restart
-				//player_sprite.current_lane = 2;
-				//platform_destination_x = player_sprite.current_lane;
-				//platform_destination_y = beat_bottom_y;
-				
-				//Luxe.events.fire("game.unpause");
+				platform_destination_y = beat_bottom_y-2;
 			}
-			*/
 			
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = Std.int(Math.max(0, platform_destination_y));
@@ -511,14 +554,31 @@ class GameState extends State
 			//trace(s_debug);
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
-			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height - player_sprite.size.y / 2.0;
+			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;
 		}
+	}
+	
+	function test_internal_platform( pos_x:Float ) : Bool
+	{
+		return pos_x > lanes[0] && pos_x < lanes[num_all_lanes - 1];
+	}
+	
+	function player_out_of_bound() : Bool
+	{
+		return player_sprite.pos.y >= -(beat_bottom_y-2) * level.beat_height;
 	}
 	
 	function get_platform(x:Int, y:Int) : Platform
 	{
-		if (x < 1 || x > 3) return null;
-		if (y < 0) return null;
+		if (x < 1 || x > 3)
+		{
+			trace("fail_x");
+			return null;
+		}
+		if (y < 0)
+		{
+			trace("fail_y"); return null;
+		}
 		var current = (platform_points.length + ((y) * num_internal_lanes + (x - 1))) % platform_points.length;
 		return platform_points[current];
 	}

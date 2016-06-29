@@ -57,7 +57,7 @@ class TrajectoryMovement extends Component
 			pos.set_xy(oldNextPos.x, oldNextPos.y);
 		}
 		
-		var dst_y = nextPos.y - height / 2; // pos.y - parentAvatar.jump_height;
+		var dst_y = nextPos.y;// - height / 2; // pos.y - parentAvatar.jump_height;
 		var apex_y = pos.y - parentAvatar.jump_height * 1.25;		
 		if (!nextPos.equals(pos))
 		{
@@ -109,6 +109,7 @@ class Avatar extends Sprite
 		super(options);
 		
 		this.starting_x = starting_x;
+		transform.origin = new Vector(size.x / 2, size.y);
 		
 		// components
 		gamecamera = new GameCameraComponent({name: "GameCamera"});
@@ -148,12 +149,22 @@ class Avatar extends Sprite
 		
 	}
 	
+	public function respawn( p:Vector)
+	{
+		visible = true;
+		
+		pos.set_xy(p.x, p.y);
+		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
+		
+		Actuate.stop(pos);
+	}
+	
 	function OnLevelStart( e:LevelStartEvent )
 	{		
 		visible = true;
 		gamecamera.set_x(starting_x);
 		
-		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y - size.y / 2);
+		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		trajectory_movement.height = size.y / 2.0;
 		jump_height = e.beat_height;

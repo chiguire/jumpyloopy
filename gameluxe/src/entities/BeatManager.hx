@@ -218,6 +218,12 @@ class BeatManager extends Entity
 		}
 	}
 	
+	public function on_player_respawn()
+	{
+		request_next_beat = false;
+		cooldown_counter = 3.0;
+	}
+	
 	public function on_game_pause(e)
 	{
 		Luxe.audio.pause(music_handle);
