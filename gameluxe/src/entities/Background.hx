@@ -49,6 +49,8 @@ class Background extends Visual
 	public function new(options:VisualOptions) 
 	{
 		super(options);
+		// Background don't have to be Visual, fix this later! [Aik]
+		visible = false;
 		
 		tiling_textures = new Array<Texture>();
 		transition_textures = new Array<Texture>();
