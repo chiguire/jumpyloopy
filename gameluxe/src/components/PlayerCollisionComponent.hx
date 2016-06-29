@@ -20,7 +20,7 @@ class PlayerCollisionComponent extends Component
 	public function SetupPlayerCollision(playerSprite : Sprite) 
 	{
 		trace("Setting up player collision.");
-		player_collision = new CollisionShape(playerSprite);
+		player_collision = new CollisionShape(playerSprite, true);
 		initialised = true;
 	}
 	
