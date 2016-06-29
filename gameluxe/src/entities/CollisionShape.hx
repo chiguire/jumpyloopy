@@ -14,11 +14,12 @@ import luxe.options.DrawOptions.DrawPolygonOptions;
  */
 class CollisionShape extends Polygon
 {
+	private var updatePosition : Bool;
 	private var parentSprite : Sprite;
 	private var colliding : Bool;
 	public var destroyed (default,null): Bool;
 	
-	public function new(sprite : Sprite) 
+	public function new(sprite : Sprite, updatePos : Bool) 
 	{
 		var polyArray : Array<Vector> = buildPolygon(sprite.size);
 		super(sprite.pos.x, sprite.pos.y, polyArray);
@@ -26,10 +27,18 @@ class CollisionShape extends Polygon
 		//We use our parent sprite to set the position of the collision each frame.
 		parentSprite = sprite;
 		destroyed = false;
+		updatePosition = updatePos;
 	}
 	
 	public function Update(rate:Float) 
 	{
+		if (updatePosition)
+		{
+			set_x(parentSprite.pos.x);
+			set_y(parentSprite.pos.y);
+		}
+		
+		/* Uncomment to see collision positions.
 		var verts = get_transformedVertices();
 		Luxe.draw.poly({
 			immediate: true,
@@ -48,6 +57,7 @@ class CollisionShape extends Polygon
 				verts[3]
 			]
 		});
+		*/
 	}
 	
 	public function onCollisionEnter(other : CollisionShape):Void 

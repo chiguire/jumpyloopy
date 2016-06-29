@@ -42,7 +42,7 @@ class Collectable extends Sprite
 		anim.play();
 		
 		//Define collision for the collectable.
-		collisionShape = new CollisionShape(this);
+		collisionShape = new CollisionShape(this, false);
 		GameState.player_sprite.collision.RegisterCollisionEntity(collisionShape);
 		
 		events.listen("onCollisionEnter", onCollisionEnter);
