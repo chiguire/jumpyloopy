@@ -83,7 +83,6 @@ class GameState extends State
 	var beat_index_y : Int;
 	var beat_bottom_y : Int;
 	var beat_start_wrap : Int;
-	var platform_list : Array<Platform>;
 	var mouse_platform : Platform;
 	var next_platform : Platform;
 	var mouse_pos : Vector;
