@@ -199,6 +199,8 @@ class CollectableGroup
 				newColl = new Collectable_Coin(scene, name, pos);
 			case "l":
 				newColl = new Collectable_Letter(scene, name, pos);
+			case "s":
+				newColl = new Collectable_Spike(scene, name, pos);
 			default:
 				newColl = new Collectable_Coin(scene, name, pos);
 		}
