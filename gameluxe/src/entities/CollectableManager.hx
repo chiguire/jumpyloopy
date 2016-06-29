@@ -62,16 +62,17 @@ class CollectableManager extends Entity
 			if (new_trace != trace_string)
 			{
 				trace_string = new_trace;
-				trace(trace_string);
 			}
 			
 			if (bottom_y_index < screen_bottom_row)
 			{
+				trace(trace_string);
 				DestoryCollectableGroup(existing_groups[0]);
 			}
 			
 			if (top_y_index < screen_top_row + min_rows)
 			{
+				trace(trace_string);
 				SpawnCollectableGroup(top_y_index + rows_between_groups);
 			}
 		}

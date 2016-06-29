@@ -1,5 +1,6 @@
 package entities;
 import entities.Avatar;
+import gamestates.GameState;
 import luxe.Scene;
 import luxe.Vector;
 
@@ -17,6 +18,7 @@ class Collectable_Coin extends Collectable
 	override function onCollisionEnter(player:Avatar):Void 
 	{
 		//Do fun stuff.
+		Luxe.events.fire("add_score", {val:25});
 		
 		super.onCollisionEnter(player);
 	}

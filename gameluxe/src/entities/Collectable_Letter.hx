@@ -17,6 +17,7 @@ class Collectable_Letter extends Collectable
 	override function onCollisionEnter(player:Avatar):Void 
 	{
 		//Do fun stuff.
+		Luxe.events.fire("add_score", {val:50});
 		
 		super.onCollisionEnter(player);
 	}

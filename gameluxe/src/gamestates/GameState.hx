@@ -20,6 +20,7 @@ import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
+import mint.Label;
 import mint.Panel;
 import phoenix.Batcher;
 
@@ -34,6 +35,13 @@ import mint.types.Types.TextAlign;
 
 typedef MintTextAlign = mint.types.Types.TextAlign;
 
+typedef StringEvent = {
+      msg : String,
+}
+
+typedef IntEvent = {
+      val : Int,
+}
 /**
  * ...
  * @author 
@@ -95,6 +103,15 @@ class GameState extends State
 	/// pause panel
 	var pause_panel : Panel;
 	
+	//Game over panel.
+	public var is_game_over (default, null) = false;
+	var game_over_panel : Panel;
+	var game_over_score_label : Label;
+	var game_over_death_label : Label;
+	
+	//Score
+	var player_score : Int;
+	
 	var restart_signal = false;
 	var state_change_menu_signal = false;
 	
@@ -129,9 +146,7 @@ class GameState extends State
 	{			
 		if ( e.keycode == Key.escape && is_pause == false)
 		{
-			is_pause = true;
-			activate_pause_panel();
-			Luxe.events.fire("game.pause");
+			pause();
 		}
 		else if ( e.keycode == Key.escape && is_pause == true)
 		{
@@ -143,6 +158,13 @@ class GameState extends State
 			trace("game over");
 			reset_state();
 		}
+	}
+	
+	function pause()
+	{
+		is_pause = true;
+		activate_pause_panel();
+		Luxe.events.fire("game.pause");
 	}
 	
 	function unpause()
@@ -167,6 +189,13 @@ class GameState extends State
 		// reset and remove all tweenign that is current in-flight
 		Actuate.reset();
 		
+		//De-register events.
+		Luxe.events.unlisten("kill_player");
+		Luxe.events.unlisten("add_score");
+		
+		//reset score
+		reset_score();
+		                     
 		Main.beat_manager.leave_game_state();
 		Main.canvas.destroy_children();
 
@@ -236,6 +265,8 @@ class GameState extends State
 		
 		collectable_manager = new CollectableManager(this, lanes, level.beat_height);
 		
+		reset_score();
+		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
 			texture: Luxe.resources.texture("assets/image/aviator_sprite_color.png"),
@@ -276,6 +307,7 @@ class GameState extends State
 	function on_parcel_loaded( p: Parcel )
 	{
 		create_pause_panel();
+		create_game_over_panel();
 		create_background_groups();
 		
 		// initialize platform
@@ -362,7 +394,7 @@ class GameState extends State
 			Main.beat_manager.on_player_respawn();
 		}
 		
-		if(background != null) background.update(dt);
+		if (background != null) background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = calc_lanes_distance();
@@ -474,7 +506,12 @@ class GameState extends State
 		
 		mouse_platform.type = current_platform_type;
 		
+		//Collectable Manager
 		collectable_manager.CreateFirstGroup();
+		
+		//Listen for collectable events.
+		Luxe.events.listen("kill_player", trigger_game_over);
+		Luxe.events.listen("add_score", add_score);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -557,6 +594,7 @@ class GameState extends State
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;
 		}
 	}
+	
 	
 	function test_internal_platform( pos_x:Float ) : Bool
 	{
@@ -723,5 +761,106 @@ class GameState extends State
 	public function get_max_tile()
 	{
 		return max_tile;
+	}
+	
+	//Game Over state - SM	
+	public function create_game_over_panel()
+	{
+		game_over_panel = new mint.Panel({
+			parent: Main.canvas,
+			name: 'game_over_panel',
+			mouse_input: true,
+			x: 465, y: 300, w: 500, h: 400,
+		});
+		game_over_panel.visible = false;
+		
+		var title = new mint.Label({
+			parent: game_over_panel, name: 'label',
+			mouse_input:false, x:0, y:0, w:500, h:100, text_size: 32,
+			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
+			text: "Game Over",
+		});
+
+		game_over_death_label = new mint.Label({
+			parent: game_over_panel, name: 'label',
+			mouse_input:false, x:0, y:50, w:500, h:100, text_size: 32,
+			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
+			text: "You died",
+		});
+		
+		
+		game_over_score_label = new mint.Label({
+			parent: game_over_panel, name: 'label',
+			mouse_input:false, x:0, y:120, w:500, h:100, text_size: 32,
+			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
+			text: "Score: " + get_score(),
+		});
+		
+		var button1 = new mint.Button({
+            parent: game_over_panel,
+            name: 'button',
+            text: "Restart",
+			x: 50, y: 200, w: 400, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button1.onmouseup.listen(
+			function(e,c) 
+			{
+				restart_signal = true;
+			}
+		);
+		
+		var button2 = new mint.Button({
+            parent: game_over_panel,
+            name: 'button',
+            text: "Main Menu",
+			x: 50, y: 200+42, w: 400, h: 32,
+            text_size: 14,
+            options: { label: { color:new Color().rgb(0x9dca63) } }
+        });
+		button2.onmouseup.listen(
+			function(e,c) 
+			{
+				state_change_menu_signal = true;
+			}
+		);
+	}
+	
+	public function activate_game_over_panel()
+	{
+		game_over_panel.visible = true;
+	}
+	
+	public function deactivate_game_over_panel()
+	{
+		game_over_panel.visible = false;
+	}
+	
+	function trigger_game_over(e : StringEvent)
+	{
+		trace("Game Over! Caused by: " + e.msg);
+		pause();
+		
+		game_over_death_label.text =  "You died by " + e.msg;
+		game_over_score_label.text = "Score: " + get_score();
+		activate_game_over_panel();
+	}
+	
+	//High Score - SM
+	public function add_score(e : IntEvent)
+	{
+		trace("Player Scored " + e.val + " points");
+		player_score += e.val;
+	}
+	
+	public function get_score() : Int
+	{
+		return player_score;
+	}
+	
+	public function reset_score()
+	{
+		player_score = 0;
 	}
 }
