@@ -1,17 +1,45 @@
 {
-	"groups":[
-	{
-		"tile_textures": ["assets/image/bg/cave_01_paper.png"
+	"groups":[{
+		"textures": ["assets/image/bg/cave_01_paper.png"
+			, "assets/image/bg/cave_01_paper_transition.png"
 			, "assets/image/bg/cave_02_tiling.png"
-			, "assets/image/bg/sky_03_clouds02.png" 
-			, "assets/image/bg/space_02_tiling.png" 
-			, "assets/image/bg/end_02.png" ],
-		"trans_textures": ["assets/image/bg/cave_01_paper_transition.png"
+			, "assets/image/bg/sky_01_forest_transition.png"
 			, "assets/image/bg/sky_01_forest.png"
+			, "assets/image/bg/sky_03_clouds01.png"
+			, "assets/image/bg/sky_03_clouds02.png"
+			, "assets/image/bg/sky_04_airballon01.png"
+			, "assets/image/bg/sky_04_airballon02.png"
+			, "assets/image/bg/sky_05_islands01.png"
+			, "assets/image/bg/sky_05_islands02.png"
 			, "assets/image/bg/space_01_transition.png"
-			, "assets/image/bg/end_01_transition.png" 
-			, "assets/image/bg/end_02.png" ], 
-		"distances": [0, 1200, 2400, 3600, 99999]    
+			, "assets/image/bg/space_02_tiling.png"
+			, "assets/image/bg/space_03_planet01.png"
+			, "assets/image/bg/space_03_planet02.png"
+			, "assets/image/bg/space_03_planet03.png"
+			, "assets/image/bg/space_02_tiling.png"
+			, "assets/image/bg/end_01_transition.png"
+			, "assets/image/bg/end_02.png"
+		],
+		"distances": [2
+			, 1
+			, 2
+			, 1
+			, 1
+			, 1
+			, 2
+			, 1
+			, 2
+			, 1
+			, 2
+			, 1
+			, 2
+			, 1
+			, 1
+			, 1
+			, 2
+			, 1
+			, 999
+		]
 	}
 	]
 }
