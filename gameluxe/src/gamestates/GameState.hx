@@ -545,6 +545,7 @@ class GameState extends State
 		{
 			var pl_src_type = pl_src.type;
 			
+			//var s_debug = 'jumping from platform (${player_sprite.current_lane}, $beat_n) $pl_src_type to ';
 			// Update all platforms after getting the source type.
 			for (p in platform_points)
 			{
@@ -591,6 +592,16 @@ class GameState extends State
 				
 				platform_destination_y = beat_bottom_y-2;
 			}
+			
+			//if (pl_dst == null)
+			//{
+			//	s_debug += ' the abyss';
+			//}
+			//else
+			//{
+			//	s_debug += ' destination ($platform_destination_x, $platform_destination_y) ${pl_dst.type}';
+			//}
+			//trace(s_debug);
 			
 			player_sprite.current_lane = platform_destination_x;
 			beat_n = Std.int(Math.max(0, platform_destination_y));

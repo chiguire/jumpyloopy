@@ -49,7 +49,7 @@ class TrajectoryMovement extends Component
 	
 	public function doJump(e:BeatEvent)
 	{
-		var T = Math.max(e.interval, 0.4);
+		var T = Math.min(e.interval, 0.4);
 		
 		if (tweening)
 		{
