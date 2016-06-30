@@ -17,7 +17,8 @@ class Collectable_Spike extends Collectable
 	override function onCollisionEnter(player:Avatar):Void 
 	{
 		//Do fun stuff.
-		Luxe.events.fire("kill_player", {msg:"Massive SPIKES!"});
+		// A bit of a game breaker, commenting out for now [Aik]
+		//Luxe.events.fire("kill_player", {msg:"Massive SPIKES!"});
 		super.onCollisionEnter(player);
 	}
 }
