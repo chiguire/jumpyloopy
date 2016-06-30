@@ -22,6 +22,9 @@ typedef PlatformOptions =
 class Platform extends Sprite
 {
 	public var type (default, set) : PlatformType;
+	public var touches : Int;
+	public var initialTouches : Int = 3; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
+	public var eternal : Bool = false;
 	
 	public function new(options : PlatformOptions) 
 	{
@@ -57,6 +60,7 @@ class Platform extends Sprite
 		};
 		*/
 		visible = (t != NONE);
+		touches = initialTouches;
 		
 		var tex = Luxe.resources.texture(select_platform_texture(t));
 		if (tex != null)
@@ -77,5 +81,19 @@ class Platform extends Sprite
 			return 'assets/image/platforms/platform_straight01.png';
 
 		return 'assets/image/platforms/platform_straight02.png';
+	}
+	
+	public function touch()
+	{
+		if (type == NONE || eternal || touches == -1)
+		{
+			return;
+		}
+		
+		touches -= 1;
+		if (touches <= 0)
+		{
+			type = NONE;
+		}
 	}
 }

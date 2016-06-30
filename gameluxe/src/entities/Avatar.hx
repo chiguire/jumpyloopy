@@ -49,7 +49,7 @@ class TrajectoryMovement extends Component
 	
 	public function doJump(e:BeatEvent)
 	{
-		var T = e.interval;
+		var T = Math.max(e.interval, 0.4);
 		
 		if (tweening)
 		{
@@ -67,7 +67,7 @@ class TrajectoryMovement extends Component
 			
 			motionPath.bezier(half_x, apex_y, pos.x, apex_y);
 			motionPath.bezier(full_x, dst_y, full_x, apex_y);
-			Actuate.motionPath(pos, 0.4, {x:motionPath.x, y:motionPath.y})
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y})
 				.onComplete(function(){parentAvatar.OnPlayerLand(); tweening = false; })
 				.ease(luxe.tween.easing.Cubic.easeInOut);
 		}
@@ -76,7 +76,7 @@ class TrajectoryMovement extends Component
 			var motionPath = new MotionPath();
 			motionPath.bezier(pos.x, apex_y, pos.x, apex_y);
 			motionPath.bezier(pos.x, pos.y, pos.x, apex_y);
-			Actuate.motionPath(pos, 0.4, {x:motionPath.x, y:motionPath.y})
+			Actuate.motionPath(pos, T, {x:motionPath.x, y:motionPath.y})
 				.onComplete(function(){ parentAvatar.OnPlayerLand(); tweening = false; })
 				.ease(luxe.tween.easing.Cubic.easeInOut);		
 		}

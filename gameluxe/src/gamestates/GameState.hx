@@ -435,6 +435,10 @@ class GameState extends State
 			platform_current_1.type = NONE;
 			platform_current_2.type = NONE;
 			
+			platform_current_0.eternal = false;
+			platform_current_1.eternal = false;
+			platform_current_2.eternal = false;
+			
 			//trace('Moving ($n) over ($current_0_n, $current_1_n, $current_2_n), new height is ${ platform_current_0.pos.y - num_peg_levels * level.beat_height}');
 			
 			platform_current_0.pos.y = platform_current_0.pos.y - num_peg_levels * level.beat_height;
@@ -483,6 +487,7 @@ class GameState extends State
 			{
 				platform.type = CENTER;
 				platform.visible = false;
+				platform.eternal = true;
 			}
 			
 			j++;
@@ -515,12 +520,7 @@ class GameState extends State
 	
 	function OnPlayerMove( e:BeatEvent )
 	{
-		//var s_debug = 'Player goes from (${player_sprite.current_lane}, $beat_n) to ';
-		var pl_src = null;
-		//if (beat_n >= beat_bottom_y) 
-		{
-			pl_src = get_platform(player_sprite.current_lane, beat_n);
-		}
+		var pl_src = get_platform(player_sprite.current_lane, beat_n);
 		var pl_dst = null;
 		
 		var platform_destination_x = player_sprite.current_lane;
@@ -543,6 +543,14 @@ class GameState extends State
 		}
 		else
 		{
+			var pl_src_type = pl_src.type;
+			
+			// Update all platforms after getting the source type.
+			for (p in platform_points)
+			{
+				p.touch();
+			}
+			
 			platform_destination_x += switch (pl_src.type)
 			{
 				case NONE: 0;
