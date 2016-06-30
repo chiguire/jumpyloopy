@@ -62,16 +62,17 @@ class CollectableManager extends Entity
 			if (new_trace != trace_string)
 			{
 				trace_string = new_trace;
-				trace(trace_string);
 			}
 			
 			if (bottom_y_index < screen_bottom_row)
 			{
+				trace(trace_string);
 				DestoryCollectableGroup(existing_groups[0]);
 			}
 			
 			if (top_y_index < screen_top_row + min_rows)
 			{
+				trace(trace_string);
 				SpawnCollectableGroup(top_y_index + rows_between_groups);
 			}
 		}
@@ -157,7 +158,8 @@ class CollectableGroup
 		{
 			for (x in 0 ... (parent.lanes.length - 2))
 			{
-				var i : Int = GetArrayPos(x, y);
+				//Invert y so we go from bottom to top.
+				var i : Int = GetArrayPos(x, GetNumRows() - 1 - y);
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
 					parent.lanes[x+1], 
@@ -196,6 +198,10 @@ class CollectableGroup
 		{
 			case "c":
 				newColl = new Collectable_Coin(scene, name, pos);
+			case "l":
+				newColl = new Collectable_Letter(scene, name, pos);
+			case "s":
+				newColl = new Collectable_Spike(scene, name, pos);
 			default:
 				newColl = new Collectable_Coin(scene, name, pos);
 		}

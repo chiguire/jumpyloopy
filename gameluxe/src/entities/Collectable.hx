@@ -31,15 +31,18 @@ class Collectable extends Sprite
 		
 		super(options);
 		
-		//Animations
-		anim = new SpriteAnimation({name: "CollectableAnimation"+name });
-		add(anim);
-		
-		var anim_object = Luxe.resources.json(animation_name);
-		anim.add_from_json_object(anim_object.asset.json);
-		
-		anim.animation = "idle";
-		anim.play();
+		if (animation_name != "")
+		{
+			//Animations
+			anim = new SpriteAnimation({name: "CollectableAnimation"+name });
+			add(anim);
+			
+			var anim_object = Luxe.resources.json(animation_name);
+			anim.add_from_json_object(anim_object.asset.json);
+			
+			anim.animation = "idle";
+			anim.play();
+		}
 		
 		//Define collision for the collectable.
 		collisionShape = new CollisionShape(this, false);
