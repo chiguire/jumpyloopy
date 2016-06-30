@@ -551,7 +551,7 @@ class GameState extends State
 				p.touch();
 			}
 			
-			platform_destination_x += switch (pl_src.type)
+			platform_destination_x += switch (pl_src_type)
 			{
 				case NONE: 0;
 				case CENTER: 0;
