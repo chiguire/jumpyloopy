@@ -146,6 +146,7 @@ class Main extends luxe.Game
 			borderless : false
 		};
 		
+		config.window.title = 'Rise';
 #if (web && sample)
 		config.window.width = global_info.ref_window_size_x;// 405;
 		config.window.height = global_info.ref_window_size_y;// 720;
