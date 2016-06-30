@@ -20,6 +20,7 @@ import luxe.States.State;
 import luxe.Input;
 import mint.Control;
 import mint.Button;
+import mint.Image;
 	
 /**
  * ...
@@ -92,6 +93,25 @@ class MenuState extends State
 		//FFT.test_fft();
 	}
 	
+	public static function create_image( data : Dynamic ) : Image
+	{
+		var canvas = Main.canvas;
+		
+		var tex_id = data.texture;
+		var tex = Luxe.resources.texture(tex_id);
+		
+		var width = data.width ? data.width : tex.width;
+		var height = data.height ? data.height : tex.height;
+		
+		var img = new mint.Image({
+                parent: canvas, name: "img",
+                x:data.pos_x - width/2, y:data.pos_y - height/2, w:width, h:height,
+                path: tex_id,
+            });
+		
+		return img;
+	}
+	
 	public static function create_button( button_data : Dynamic ) : Button
 	{
 		var canvas = Main.canvas;
@@ -126,6 +146,7 @@ class MenuState extends State
 		// UI layer
 		var canvas = Main.canvas;
 		
+		/*
 		title_text = new Text({
 			text: "-Rise-",
 			point_size: 48,
@@ -133,6 +154,9 @@ class MenuState extends State
 			scene: scene,
 		});
 		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 100);
+		*/
+		
+		create_image( layout_data.title_img );
 		
 		var button1 = create_button( layout_data.play_button );
 		button1.onmouseup.listen(
