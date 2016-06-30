@@ -1,0 +1,7 @@
+{
+	"textures" : 
+	[ 
+		{ "id" : "assets/image/story/01_mylove.png" }, 
+		{ "id" : "assets/image/bg/cave_01_paper.png" }
+	]
+}

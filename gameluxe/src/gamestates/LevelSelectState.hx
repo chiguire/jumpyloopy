@@ -205,7 +205,7 @@ class LevelSelectState extends State
 	
 	public function on_audio_analysis_completed(e)
 	{
-		change_to = "GameState";
+		change_to = "StoryIntroState";
 	}
 	
 	override public function update(dt:Float) 

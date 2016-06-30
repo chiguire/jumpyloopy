@@ -9,6 +9,7 @@ import gamestates.GameState;
 import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
+import gamestates.StoryIntroState;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Parcel;
@@ -125,6 +126,7 @@ class Main extends luxe.Game
 		
 		machine.add(new MenuState("MenuState", game_info));
 		machine.add(new LevelSelectState("LevelSelect", game_info));
+		machine.add(new StoryIntroState("StoryIntroState", game_info));
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
@@ -156,6 +158,7 @@ class Main extends luxe.Game
 		// preload all parcel description
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
+		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
 		
 
