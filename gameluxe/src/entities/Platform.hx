@@ -19,6 +19,11 @@ typedef PlatformOptions =
 	var n : Int;
 	var type : PlatformType;
 }
+
+typedef PlatformTimeoutEvent = 
+{
+	var pos : Vector;
+}
  
 class Platform extends Sprite
 {
@@ -133,6 +138,7 @@ class Platform extends Sprite
 		if (touches <= 0)
 		{
 			//trace(type);
+			//Luxe.events.fire("platform_time_out", {pos: pos});
 			type = NONE;
 		}
 	}

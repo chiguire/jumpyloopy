@@ -26,7 +26,8 @@ import snow.api.buffers.Uint8Array;
  */
 typedef BeatEvent =
 {
-	interval : Float
+	var interval : Float;
+	var falling: Bool;
 };
 
 typedef BeatManagerOptions =
@@ -44,7 +45,7 @@ typedef BeatManagerDataReadState =
 class BeatManager extends Entity
 {
 	/// game play constants
-	
+	public static var jump_interval = 60 / 200; // 200 bpm
 	
 	//var beat_manager_debug_visual : BeatManagerVisualizer;
 	var beat_manager_game_hud : BeatManagerGameHUD;
@@ -192,7 +193,7 @@ class BeatManager extends Entity
 				for ( i in 0...beat_pos.length )
 				{
 					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-					var in_beat = audio_time - beat_time < 30/200 && audio_time - beat_time > 0.0;
+					var in_beat = audio_time - beat_time < jump_interval/2 && audio_time - beat_time > 0.0;
 					//trace(audio_time - beat_time);
 					
 					if (in_beat && beat_pos[i]!=curr_beat_pos)
@@ -206,10 +207,9 @@ class BeatManager extends Entity
 						
 						if (next_beat_time - audio_time > 0)
 						{
-							//var jump_time = next_beat_time - audio_time;
-							var jump_time = 60 / 200;
-							cooldown_counter = jump_time;
-							Luxe.events.fire("player_move_event", { interval: jump_time }, false );
+							cooldown_counter = jump_interval;
+							beat_manager_game_hud.on_move_event(jump_interval);
+							Luxe.events.fire("player_move_event", { interval: jump_interval, falling: false }, false );
 						}
 						
 						break;

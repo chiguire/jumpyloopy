@@ -134,6 +134,7 @@ class GameState extends State
 		Luxe.events.listen("Level.Start", OnLevelStart );
 		Luxe.events.listen("player_move_event", OnPlayerMove );
 		Luxe.events.listen("player_respawn_end", on_player_respawn_end );
+		Luxe.events.listen("platform_time_out", on_platform_time_out );
 	}
 	
 	
@@ -333,6 +334,15 @@ class GameState extends State
 		}
 	}
 	
+	function on_platform_time_out(e:PlatformTimeoutEvent)
+	{
+		if ( player_sprite.pos.equals( e.pos ) )
+		{
+			trace("player need to fall");
+			Luxe.events.fire("player_move_event", { interval: BeatManager.jump_interval, falling: true }, false );
+		}
+	}
+	
 	override function update(dt:Float) 
 	{
 		// state control
@@ -415,6 +425,16 @@ class GameState extends State
 		}
 		
 		//if (background != null) background.update(dt);
+		
+		// check if the plaform that player currently on still existed
+		for (i in 0...platform_points.length)
+		{
+			var platform = platform_points[i];
+			if (platform.type == NONE)
+			{
+				on_platform_time_out({ pos: platform.pos });
+			}
+		}
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = calc_lanes_distance();
@@ -576,14 +596,21 @@ class GameState extends State
 				p.touch();
 			}
 			
-			platform_destination_x += switch (pl_src_type)
+			if (e.falling == false)
 			{
-				case NONE: 0;
-				case CENTER: 0;
-				case LEFT: -1;
-				case RIGHT: 1;
+				platform_destination_x += switch (pl_src_type)
+				{
+					case NONE: 0;
+					case CENTER: 0;
+					case LEFT: -1;
+					case RIGHT: 1;
+				}
+				platform_destination_y += 1;
 			}
-			platform_destination_y += 1;
+			else
+			{
+				platform_destination_y -= 1;
+			}
 			
 			outside_lanes_left = platform_destination_x < 1;
 			outside_lanes_right = platform_destination_x > 3;
