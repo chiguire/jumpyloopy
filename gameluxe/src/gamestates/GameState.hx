@@ -361,16 +361,19 @@ class GameState extends State
 			}
 		}
 		
-		if (player_sprite.visible && player_out_of_bound())
+		if (player_out_of_bound() && !player_sprite.respawning)
 		{
 			trace("need player respawn here " + player_sprite.pos.y);
+			
+			// caemra feedback
+			Luxe.camera.shake(10.0);
 			
 			// place player
 			beat_n = beat_bottom_y + 2;
 			player_sprite.current_lane = 2;
 			var respawn_pos_x = lanes[player_sprite.current_lane];
 			var respawn_pos_y = -(beat_n) * level.beat_height;
-			player_sprite.respawn(new Vector(respawn_pos_x, respawn_pos_y));
+			player_sprite.respawn_begin(new Vector(respawn_pos_x, respawn_pos_y));
 			
 			// place absolute platform
 			absolute_floor.visible = true;
@@ -390,10 +393,10 @@ class GameState extends State
 				platform.visible = false;
 			}
 			
-			Main.beat_manager.on_player_respawn();
+			Main.beat_manager.on_player_respawn_begin();
 		}
 		
-		if (background != null) background.update(dt);
+		//if (background != null) background.update(dt);
 		
 		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = calc_lanes_distance();
@@ -509,6 +512,9 @@ class GameState extends State
 		next_platform_type = get_next_platform_type();
 		
 		mouse_platform.type = current_platform_type;
+		//[Aik] test platform
+		//mouse_platform.eternal = true;
+		//next_platform.eternal = true;
 		
 		//Collectable Manager
 		collectable_manager.CreateFirstGroup();

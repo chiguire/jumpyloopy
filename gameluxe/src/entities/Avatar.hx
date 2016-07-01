@@ -2,6 +2,7 @@ package entities;
 
 import components.GameCameraComponent;
 import components.PlayerCollisionComponent;
+import components.VisualFlashingComponent;
 import entities.BeatManager.BeatEvent;
 import entities.Level.LevelStartEvent;
 import luxe.Component;
@@ -94,12 +95,16 @@ class Avatar extends Sprite
 	public var anim : SpriteAnimation;
 	public var collision : PlayerCollisionComponent;
 	var gamecamera : GameCameraComponent;
+	var visual_flashing_comp: VisualFlashingComponent;
 	
 	public var starting_x : Float;
 	public var jump_height : Float;
 	public var current_lane : Int;
 	
 	private var debug_animations = false;
+	
+	// respawn (start with true, so the gameplay logic won't effect the Avatar until OnLevelStart)
+	public var respawning (default, null) = true;
 	
 	// event id, stored so we can unlisten
 	var event_id : Array<String>;
@@ -116,11 +121,13 @@ class Avatar extends Sprite
 		trajectory_movement = new TrajectoryMovement( { name:"TrajectoryMovement" } );
 		anim = new SpriteAnimation({name: "PlayerSpriteAnimation" });
 		collision = new PlayerCollisionComponent({name: "PlayerCollision"});
+		visual_flashing_comp = new VisualFlashingComponent({name: "VisualFlashingComponent"});
 		
 		add(gamecamera);
 		add(trajectory_movement);
 		add(anim);
 		add(collision);
+		add(visual_flashing_comp);
 		
 		var anim_object = Luxe.resources.json('assets/animation/animation_jumper.json');
 		anim.add_from_json_object(anim_object.asset.json);
@@ -149,18 +156,39 @@ class Avatar extends Sprite
 		
 	}
 	
-	public function respawn( p:Vector)
+	public function respawn_begin( p:Vector)
 	{
+		respawning = true;
 		visible = true;
 		
-		pos.set_xy(p.x, p.y);
+		// start tweening from bottom of the scene
+		pos.set_xy(p.x, p.y + Main.global_info.ref_window_size_y);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		
+		// stop the current tweening, and start a new one
 		Actuate.stop(pos);
+		Actuate.tween(pos, 3.0, { y:p.y }).onComplete(respawn_end);
+		
+		// start flashing
+		visual_flashing_comp.activate();
+	}
+	
+	public function respawn_end()
+	{
+		respawning = false;
+		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
+		
+		// stop flashing
+		visual_flashing_comp.deactivate();
+		
+		Luxe.events.fire("player_respawn_end");
 	}
 	
 	function OnLevelStart( e:LevelStartEvent )
-	{		
+	{
+		// reset respawn flag, so it will trigger the gameplay
+		respawning = false;
+		
 		visible = true;
 		gamecamera.set_x(starting_x);
 		

@@ -29,7 +29,8 @@ class LevelSelectState extends State
 	var parcel : Parcel;
 	
 	/// deferred state transition
-	var change_to = "";
+	var change_state_signal = false;
+	var next_state = "";
 	
 	/// music preview
 	var music_handle : AudioHandle;
@@ -49,6 +50,9 @@ class LevelSelectState extends State
 	
 	override function onleave<T>(_value:T)
 	{
+		change_state_signal = false;
+		next_state = "";
+		
 		Actuate.reset();
 		Luxe.audio.stop(music_handle);
 		
@@ -128,7 +132,7 @@ class LevelSelectState extends State
 			function(e,c) 
 			{
 				Main.beat_manager.load_song(layout_data.level_0.track);
-				//change_to = "GameState";
+				next_state = "GameState";
 			});
 		
 		var button1 = create_button( layout_data.level_1 );
@@ -136,7 +140,7 @@ class LevelSelectState extends State
 			function(e,c) 
 			{
 				Main.beat_manager.load_song(layout_data.level_1.track);
-				//change_to = "GameState";
+				next_state = "StoryIntroState";
 			});
 		
 		var button2 = MenuState.create_button( layout_data.level_x );
@@ -170,6 +174,7 @@ class LevelSelectState extends State
 						Luxe.resources.destroy(audio_fft_params_id, true);
 					}
 					
+					next_state = "GameState";
 					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
 				}
 				#end
@@ -205,17 +210,16 @@ class LevelSelectState extends State
 	
 	public function on_audio_analysis_completed(e)
 	{
-		change_to = "StoryIntroState";
+		change_state_signal = true;
 	}
 	
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
 		
-		if (change_to != "")
+		if (change_state_signal)
 		{
-			machine.set(change_to);
-			change_to = "";
+			machine.set(next_state);
 		}
 		
 		// fade music in/out if we need to

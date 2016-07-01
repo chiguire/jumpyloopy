@@ -141,6 +141,7 @@ class BeatManager extends Entity
 		game_event_id.push(Luxe.events.listen("Level.Start", on_level_start ));
 		game_event_id.push(Luxe.events.listen("game.pause", on_game_pause ));
 		game_event_id.push(Luxe.events.listen("game.unpause", on_game_unpause ));
+		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
 	}
 	
 	public function leave_game_state()
@@ -218,7 +219,13 @@ class BeatManager extends Entity
 		}
 	}
 	
-	public function on_player_respawn()
+	public function on_player_respawn_begin()
+	{
+		request_next_beat = false;
+		cooldown_counter = 9999.0;
+	}
+	
+	public function on_player_respawn_end(e)
 	{
 		request_next_beat = false;
 		cooldown_counter = 3.0;

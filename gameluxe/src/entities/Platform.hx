@@ -1,5 +1,6 @@
 package entities;
 
+import components.VisualFlashingComponent;
 import data.GameInfo;
 import luxe.Camera;
 import luxe.Scene;
@@ -22,9 +23,11 @@ typedef PlatformOptions =
 class Platform extends Sprite
 {
 	public var type (default, set) : PlatformType;
-	public var touches : Int;
-	public var initialTouches : Int = 3; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
+	public var touches : Float = 0.0;
+	public var initialTouches : Float = 3.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
 	public var eternal : Bool = false;
+	
+	var visual_flashing_comp : VisualFlashingComponent;
 	
 	public function new(options : PlatformOptions) 
 	{
@@ -44,6 +47,9 @@ class Platform extends Sprite
 		//trace(options.name);
 		super(options);
 		
+		visual_flashing_comp = new VisualFlashingComponent();
+		add(visual_flashing_comp);
+		
 		this.type = options.type;
 		//scale.set_xy(0.5, 0.5);
 	}
@@ -59,6 +65,7 @@ class Platform extends Sprite
 			case CENTER: 0;
 		};
 		*/
+		visual_flashing_comp.deactivate();
 		visible = (t != NONE);
 		touches = initialTouches;
 		
@@ -91,9 +98,43 @@ class Platform extends Sprite
 		}
 		
 		touches -= 1;
+		
+		if (touches == 1)
+		{
+			visual_flashing_comp.activate();
+		}
+		
 		if (touches <= 0)
 		{
 			type = NONE;
+			visual_flashing_comp.deactivate();
 		}
+	}
+	
+	override public function update(dt:Float) 
+	{
+		/*
+		super.update(dt);
+		
+		if (type == NONE || eternal || touches == -1)
+		{
+			return;
+		}
+		
+		touches -= dt;
+		
+		if (touches <= 1.5 && !visual_flashing_comp.is_activated())
+		{
+			trace(touches);
+			visual_flashing_comp.activate();
+		}
+		
+		if (touches <= 0)
+		{
+			//trace(type);
+			type = NONE;
+			visual_flashing_comp.deactivate();
+		}
+		*/
 	}
 }
