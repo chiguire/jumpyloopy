@@ -133,6 +133,7 @@ class GameState extends State
 		
 		Luxe.events.listen("Level.Start", OnLevelStart );
 		Luxe.events.listen("player_move_event", OnPlayerMove );
+		Luxe.events.listen("player_respawn_end", on_player_respawn_end );
 	}
 	
 	
@@ -313,6 +314,23 @@ class GameState extends State
 		var tex = Luxe.resources.texture('assets/image/platforms/platform_straight02.png');
 		absolute_floor.texture = tex;
 		absolute_floor.size = new Vector( calc_lanes_distance() * num_internal_lanes,  tex.height);
+	}
+	
+	function on_player_respawn_end(e)
+	{
+		// reset gameplay platform
+		for (i in 0...platform_points.length)
+		{
+			var platform = platform_points[i];
+			if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
+			{
+				platform.type = CENTER;
+				platform.visible = false;
+				platform.eternal = true;
+			}
+			
+			platform.visible = false;
+		}
 	}
 	
 	override function update(dt:Float) 
@@ -513,8 +531,8 @@ class GameState extends State
 		
 		mouse_platform.type = current_platform_type;
 		//[Aik] test platform
-		//mouse_platform.eternal = true;
-		//next_platform.eternal = true;
+		mouse_platform.eternal = true;
+		next_platform.eternal = true;
 		
 		//Collectable Manager
 		collectable_manager.CreateFirstGroup();

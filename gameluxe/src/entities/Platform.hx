@@ -24,7 +24,7 @@ class Platform extends Sprite
 {
 	public var type (default, set) : PlatformType;
 	public var touches : Float = 0.0;
-	public var initialTouches : Float = 3.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
+	public var initialTouches : Float = 5.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
 	public var eternal : Bool = false;
 	
 	var visual_flashing_comp : VisualFlashingComponent;
@@ -92,6 +92,7 @@ class Platform extends Sprite
 	
 	public function touch()
 	{
+		/*
 		if (type == NONE || eternal || touches == -1)
 		{
 			return;
@@ -109,11 +110,11 @@ class Platform extends Sprite
 			type = NONE;
 			visual_flashing_comp.deactivate();
 		}
+		*/
 	}
 	
 	override public function update(dt:Float) 
 	{
-		/*
 		super.update(dt);
 		
 		if (type == NONE || eternal || touches == -1)
@@ -133,8 +134,6 @@ class Platform extends Sprite
 		{
 			//trace(type);
 			type = NONE;
-			visual_flashing_comp.deactivate();
 		}
-		*/
 	}
 }

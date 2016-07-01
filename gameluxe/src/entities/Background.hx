@@ -156,7 +156,7 @@ class Background extends Visual
 			// move background
 			for (i in 0...geoms.length)
 			{
-				geoms[i].transform.pos.y -= Math.fround( -dt * speed_mul + delta_pos);
+				geoms[i].transform.pos.y -= -dt * speed_mul + Math.fround(delta_pos);
 				if (geoms[i].transform.pos.y > Main.global_info.ref_window_size_y)
 				{
 					trace("reset " + i );

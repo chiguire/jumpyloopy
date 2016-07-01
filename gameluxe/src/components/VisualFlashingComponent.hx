@@ -25,7 +25,7 @@ class VisualFlashingComponent extends Component
 	
 	public function is_activated() : Bool
 	{
-		return count > 0;
+		return timer != null;
 	}
 	
 	override public function onadded() 
@@ -57,11 +57,15 @@ class VisualFlashingComponent extends Component
 	public function deactivate()
 	{
 		count = 0;
+		if (timer != null) 
+		{
+			timer.stop();
+			timer = null;
+		}
+		
 		if (parent != null)
 		{
 			parent.visible = true;
 		}
-		
-		if (timer != null) timer.stop();
 	}
 }
