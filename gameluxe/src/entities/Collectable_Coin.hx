@@ -10,9 +10,9 @@ import luxe.Vector;
  */
 class Collectable_Coin extends Collectable
 {
-	public function new(scene : Scene, name : String, position : Vector) 
+	public function new(c_manager : CollectableManager, name : String, position : Vector) 
 	{
-		super(scene, name, 'assets/image/coin-sprite-animation-sprite-sheet.png', 'assets/animation/animation_coin.json', new Vector(40, 40), position);
+		super(c_manager, name, 'assets/image/coin-sprite-animation-sprite-sheet.png', 'assets/animation/animation_coin.json', new Vector(40, 40), position);
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

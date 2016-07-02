@@ -27,6 +27,9 @@ class CollectableManager extends Entity
 	
 	private var trace_string : String;
 	
+	//Hacky implementation of fragments.
+	public var fragment_array : Array<Int> = [0, 0, 0, 0, 0];	
+	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
 		LoadCollectableData();
@@ -85,9 +88,7 @@ class CollectableManager extends Entity
 	
 	private function  SpawnCollectableGroup(y_index : Int)
 	{
-		//for now we load at random.
-		var selection = Math.floor(group_templates.length * Math.random());
-		var selected_data = group_templates[selection];
+		var selected_data = SelectWeightedRandomData();
 		var new_group = new CollectableGroup(scene, "Group_" + group_i, selected_data, y_index, this);
 		
 		group_i++;
@@ -117,15 +118,55 @@ class CollectableManager extends Entity
 		
 		trace(group_templates.length + " group templates loaded.");
 	}
+	
+	private function SelectWeightedRandomData() : CollectableGroupData
+	{
+		var total_weighting : Int = 0;
+		var selected_value : Int;
+		
+		for (i in group_templates)
+		{
+			total_weighting += i.weighting;
+		}
+		
+		selected_value = Math.ceil(total_weighting * Math.random());
+		
+		for (i in group_templates)
+		{
+			trace(i.name + " : weighting= " + i.weighting + " selectedval= " + selected_value);
+			if (selected_value <= i.weighting)
+				return i;
+
+			selected_value -= i.weighting;
+		}
+		
+		return null;
+	}
+	
+	public function CheckFragmentStatus()
+	{
+		for (i in fragment_array)
+		{
+			if (i < 1)
+				return;
+		}
+		
+		for (i in fragment_array)
+		{
+			i -= 1;
+		}
+		
+		Luxe.events.fire("add_multiplier", {val:1});
+	}
 }
 
 class CollectableGroupData
 {
 	public var name : String;
-	public var weighting : Float;
+	public var weighting : Int;
 	public var elements : Array<String> = new Array();
 	
-	public function new(n : String, w : Float, e: Array<String>)
+	public function new(n : String, w : Int, e: Array<String>)
 	{
 		name = n;
 		weighting = w;
@@ -140,11 +181,11 @@ class CollectableGroup
 	public var collectables : Array<Collectable> = new Array();
 	public var y_index : Int;
 		
-	private var parent : CollectableManager;
+	private var c_manager : CollectableManager;
 	public function new(scene : Scene, n : String, d : CollectableGroupData, y_ind : Int, p : CollectableManager)
 	{
 		data = d;
-		parent = p;
+		c_manager = p;
 		name = n;
 		y_index = y_ind;
 		SpawnCollectables(scene);
@@ -156,14 +197,14 @@ class CollectableGroup
 	{
 		for (y in 0 ... GetNumRows())
 		{
-			for (x in 0 ... (parent.lanes.length - 2))
+			for (x in 0 ... (c_manager.lanes.length - 2))
 			{
 				//Invert y so we go from bottom to top.
 				var i : Int = GetArrayPos(x, GetNumRows() - 1 - y);
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
-					parent.lanes[x+1], 
-					GetYPos() + (-y * parent.row_height)
+					c_manager.lanes[x+1], 
+					GetYPos() + ( -y * c_manager.row_height) + (c_manager.row_height / 2) //Adding half a row height offset.
 				);
 				
 				//0 = An empty space!
@@ -197,13 +238,23 @@ class CollectableGroup
 		switch (type) 
 		{
 			case "c":
-				newColl = new Collectable_Coin(scene, name, pos);
+				newColl = new Collectable_Coin(c_manager, name, pos);
 			case "l":
-				newColl = new Collectable_Letter(scene, name, pos);
+				newColl = new Collectable_Letter(c_manager, name, pos);
 			case "s":
-				newColl = new Collectable_Spike(scene, name, pos);
+				newColl = new Collectable_Spike(c_manager, name, pos);
+			case "f1":
+				newColl = new Collectable_Fragment(c_manager, name, pos, 1);
+			case "f2":
+				newColl = new Collectable_Fragment(c_manager, name, pos, 2);
+			case "f3":
+				newColl = new Collectable_Fragment(c_manager, name, pos, 3);
+			case "f4":
+				newColl = new Collectable_Fragment(c_manager, name, pos, 4);
+			case "f5":
+				newColl = new Collectable_Fragment(c_manager, name, pos, 5);
 			default:
-				newColl = new Collectable_Coin(scene, name, pos);
+				newColl = new Collectable_Coin(c_manager, name, pos);
 		}
 		
 		return newColl;
@@ -211,17 +262,17 @@ class CollectableGroup
 	
 	private function GetArrayPos(x : Int, y : Int) : Int
 	{
-		return x + (y * (parent.lanes.length - 2));
+		return x + (y * (c_manager.lanes.length - 2));
 	}
 	
 	private function GetYPos()
 	{
-		return -y_index * parent.row_height;
+		return -y_index * c_manager.row_height;
 	}
 	
 	public function GetNumRows()
 	{
 		//Divide the array by the number of lanes.
-		return Math.ceil(data.elements.length / (parent.lanes.length - 2));
+		return Math.ceil(data.elements.length / (c_manager.lanes.length - 2));
 	}
 }

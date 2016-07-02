@@ -17,8 +17,11 @@ class Collectable extends Sprite
 	public var anim : SpriteAnimation;
 	public var collisionShape : CollisionShape;
 	
-	public function new(scene : Scene, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector) 
+	var c_manager : CollectableManager;
+	
+	public function new(parent_manager : CollectableManager, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector) 
 	{
+		c_manager = parent_manager;
 		//Sort out the sprite.
 		var options : SpriteOptions =
 		{
@@ -26,7 +29,7 @@ class Collectable extends Sprite
 			texture: Luxe.resources.texture(texture_name),
 			pos: position,
 			size: size,
-			scene: scene
+			scene: c_manager.scene
 		};
 		
 		super(options);

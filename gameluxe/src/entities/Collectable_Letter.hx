@@ -9,9 +9,9 @@ import luxe.Vector;
  */
 class Collectable_Letter extends Collectable
 {
-	public function new(scene : Scene, name : String, position : Vector) 
+	public function new(c_manager : CollectableManager, name : String, position : Vector) 
 	{
-		super(scene, name, 'assets/image/collectables/collectable_letter.png', '', new Vector(50, 50), position);
+		super(c_manager, name, "assets/image/collectables/letter_collectible.png", '', new Vector(50, 50), position);
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

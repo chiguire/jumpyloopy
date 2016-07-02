@@ -9,9 +9,9 @@ import luxe.Vector;
  */
 class Collectable_Spike extends Collectable
 {
-	public function new(scene : Scene, name : String, position : Vector) 
+	public function new(c_manager: CollectableManager, name : String, position : Vector) 
 	{
-		super(scene, name, 'assets/image/collectables/collectable_spike.png', '', new Vector(50, 50), position);
+		super(c_manager, name, "assets/image/collectables/spiky_ball.png", '', new Vector(50, 50), position);
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

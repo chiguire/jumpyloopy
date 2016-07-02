@@ -10,6 +10,7 @@ import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
 import entities.PlatformType;
+import entities.Score;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Input.Key;
@@ -35,13 +36,10 @@ import mint.types.Types.TextAlign;
 
 typedef MintTextAlign = mint.types.Types.TextAlign;
 
-typedef StringEvent = {
+typedef GameOverReasonEvent = {
       msg : String,
 }
 
-typedef IntEvent = {
-      val : Int,
-}
 /**
  * ...
  * @author 
@@ -109,7 +107,7 @@ class GameState extends State
 	var game_over_death_label : Label;
 	
 	//Score
-	var player_score : Int;
+	var score_component : entities.Score;
 	
 	var restart_signal = false;
 	var state_change_menu_signal = false;
@@ -192,10 +190,7 @@ class GameState extends State
 		
 		//De-register events.
 		Luxe.events.unlisten("kill_player");
-		Luxe.events.unlisten("add_score");
-		
-		//reset score
-		reset_score();
+		score_component.unregister_listeners();
 		                     
 		Main.beat_manager.leave_game_state();
 		Main.canvas.destroy_children();
@@ -266,7 +261,7 @@ class GameState extends State
 		
 		collectable_manager = new CollectableManager(this, lanes, level.beat_height);
 		
-		reset_score();
+		score_component = new Score();
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
@@ -559,7 +554,7 @@ class GameState extends State
 		
 		//Listen for collectable events.
 		Luxe.events.listen("kill_player", trigger_game_over);
-		Luxe.events.listen("add_score", add_score);
+		score_component.register_listeners();
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -862,7 +857,7 @@ class GameState extends State
 			parent: game_over_panel, name: 'label',
 			mouse_input:false, x:0, y:120, w:500, h:100, text_size: 32,
 			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
-			text: "Score: " + get_score(),
+			text: "Score: " + score_component.get_score(),
 		});
 		
 		var button1 = new mint.Button({
@@ -906,30 +901,13 @@ class GameState extends State
 		game_over_panel.visible = false;
 	}
 	
-	function trigger_game_over(e : StringEvent)
+	function trigger_game_over(e : GameOverReasonEvent)
 	{
 		trace("Game Over! Caused by: " + e.msg);
 		pause();
 		
 		game_over_death_label.text =  "You died by " + e.msg;
-		game_over_score_label.text = "Score: " + get_score();
+		game_over_score_label.text = "Score: " + score_component.get_score();
 		activate_game_over_panel();
-	}
-	
-	//High Score - SM
-	public function add_score(e : IntEvent)
-	{
-		trace("Player Scored " + e.val + " points");
-		player_score += e.val;
-	}
-	
-	public function get_score() : Int
-	{
-		return player_score;
-	}
-	
-	public function reset_score()
-	{
-		player_score = 0;
 	}
 }
