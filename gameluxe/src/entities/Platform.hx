@@ -29,7 +29,7 @@ class Platform extends Sprite
 {
 	public var type (default, set) : PlatformType;
 	public var touches : Float = 0.0;
-	public var initialTouches : Float = 5.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
+	public var initialTouches = 0.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
 	public var eternal : Bool = false;
 	
 	var visual_flashing_comp : VisualFlashingComponent;
@@ -51,6 +51,8 @@ class Platform extends Sprite
 		*/
 		//trace(options.name);
 		super(options);
+		
+		initialTouches = Main.global_info.platform_lifetime;
 		
 		visual_flashing_comp = new VisualFlashingComponent();
 		add(visual_flashing_comp);

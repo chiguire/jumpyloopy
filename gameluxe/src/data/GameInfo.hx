@@ -15,6 +15,7 @@ typedef GlobalGameInfo =
 	var window_size_y : Int;
 	var fullscreen : Bool;
 	var borderless : Bool;
+	var platform_lifetime : Float;
 };
 
 typedef GameInfo =
