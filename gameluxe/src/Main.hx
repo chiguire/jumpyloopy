@@ -116,7 +116,6 @@ class Main extends luxe.Game
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
 		game_info = {
-			spritesheet_elements: create_spritesheet_elements(),
 			score_list: create_score_list(),
 			music_volume: if (Math.isNaN(music_volume)) 0.5 else music_volume,
 			effects_volume: if (Math.isNaN(effects_volume)) 0.8 else effects_volume,
@@ -175,8 +174,6 @@ class Main extends luxe.Game
 		//////////////////
 		
 		// placeholder
-		config.preload.textures.push({id:'assets/image/spritesheet_jumper.png'});
-        config.preload.texts.push({id:'assets/image/spritesheet_jumper.xml'});
 		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
 		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
 
@@ -185,21 +182,6 @@ class Main extends luxe.Game
         return config;
 
     } //config
-	
-	private function create_spritesheet_elements()
-	{
-		var spritesheet_txt : String = Luxe.resources.text('assets/image/spritesheet_jumper.xml').asset.text;
-		var spritesheet_xml = new Fast(Xml.parse(spritesheet_txt).firstElement());
-		var result = new SpritesheetElements();
-		for (xml in spritesheet_xml.nodes.SubTexture)
-		{
-			result.set(xml.att.name, new Rectangle(
-				Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y),
-				Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height)));
-		}
-		
-		return result;
-	}
 	
 	private function create_score_list()
 	{
