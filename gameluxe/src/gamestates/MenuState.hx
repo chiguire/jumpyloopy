@@ -156,7 +156,7 @@ class MenuState extends State
 		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 100);
 		*/
 		
-		create_image( layout_data.title_img );
+		//create_image( layout_data.title_img );
 		
 		var button1 = create_button( layout_data.play_button );
 		button1.onmouseup.listen(

@@ -11,6 +11,7 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.Actuate;
 import mint.Button;
+import mint.Label;
 import mint.types.Types.TextAlign;
 import snow.types.Types.AudioHandle;
 
@@ -39,6 +40,9 @@ class LevelSelectState extends State
 	/// user mode
 	var audio_fn = "";
 	var audio_fft_params_id = "";
+	
+	/// panel text
+	var desc_label : Label;
 
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -79,13 +83,16 @@ class LevelSelectState extends State
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
-	function create_button( desc: Dynamic) : Button
+	function create_button( desc: Dynamic, layout_data: Dynamic ) : Button
 	{
 		var button = MenuState.create_button( desc );
 		
 		button.onmouseenter.listen(
 			function(e, c)
 			{
+				// update track description
+				desc_label.text = layout_data.desc_table[desc.desc_id];
+				
 				if (Luxe.audio.state_of(music_handle) == AudioState.as_playing)
 				{
 					return;
@@ -120,14 +127,18 @@ class LevelSelectState extends State
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
 		
+		
+		MenuState.create_image(layout_data.background);
+		/*
 		var title = new mint.Label({
 			parent: Main.canvas, name: 'label',
 			mouse_input:false, x:layout_data.title.pos_x, y:layout_data.title.pos_y, w:Main.global_info.ref_window_size_x, h:100, text_size: 48,
 			align: TextAlign.center, align_vertical: TextAlign.center,
 			text: layout_data.title.text,
 		});
+		*/
 		
-		var button0 = create_button( layout_data.level_0 );
+		var button0 = create_button( layout_data.level_0, layout_data );
 		button0.onmouseup.listen(
 			function(e,c) 
 			{
@@ -135,7 +146,7 @@ class LevelSelectState extends State
 				next_state = "GameState";
 			});
 		
-		var button1 = create_button( layout_data.level_1 );
+		var button1 = create_button( layout_data.level_1, layout_data );
 		button1.onmouseup.listen(
 			function(e,c) 
 			{
@@ -180,6 +191,29 @@ class LevelSelectState extends State
 				#end
 			}
 		);
+		
+		button2.onmouseenter.listen(
+			function(e, c)
+			{
+				// update track description
+				desc_label.text = layout_data.desc_table[layout_data.level_x.desc_id];
+			});
+		
+		
+		// description panel
+		var panel = new mint.Panel({
+			parent: Main.canvas,
+			name: 'panel',
+			mouse_input: false,
+			x: 710, y: 250, w: 225, h: 400,
+		});
+		
+		desc_label = new mint.Label({
+			parent: panel, name: 'label',
+			mouse_input:false, x:0, y:25, w:225, h:400, //text_size: 32,
+			align: TextAlign.center, align_vertical: TextAlign.top,
+			text: "",
+		});
 	}
 	
 	function on_audio_cfg_loaded(e)

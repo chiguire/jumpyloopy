@@ -1,9 +1,9 @@
 {
-	"background": { "pos_x": 720, "pos_y": 450, "width": 563, "height": 900 },
+	"background": { "pos_x": 720, "pos_y": 450, "width": 500, "height": 900 },
 	"title": { "text": "Rise", "pos_x": 720, "pos_y": 50 },
 	"title_img": { "texture": "assets/image/rise_logo.png", "pos_x": 720, "pos_y": 160, "width":256, "height":256 },
-	"play_button": { "text": "Play", "pos_x": 720, "pos_y": 325, "width":128, "height":32},
-	"score_button": { "text": "Score", "pos_x": 720, "pos_y": 365, "width":128, "height":32},
-	"credits_button": { "text": "Credits", "pos_x": 720, "pos_y": 405, "width":128, "height":32},
-	"warchild_img": {"pos_x": 720, "pos_y": 650}
+	"play_button": { "text": "Play", "pos_x": 720, "pos_y": 425, "width":128, "height":32},
+	"score_button": { "text": "Score", "pos_x": 720, "pos_y": 465, "width":128, "height":32},
+	"credits_button": { "text": "Credits", "pos_x": 720, "pos_y": 505, "width":128, "height":32},
+	"warchild_img": {"pos_x": 720, "pos_y": 770}
 }
