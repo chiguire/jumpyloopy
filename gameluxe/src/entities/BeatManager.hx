@@ -97,6 +97,7 @@ class BeatManager extends Entity
 	
 	// event id, stored so we can unlisten
 	var game_event_id : Array<String>;
+	var audio_handler : AudioHandle -> Void;
 	
 	public function new(?_options:BeatManagerOptions) 
 	{
@@ -159,6 +160,12 @@ class BeatManager extends Entity
 		for (i in 0...game_event_id.length)
 		{
 			var res = Luxe.events.unlisten(game_event_id[i]);
+		}
+		
+		if (audio_handler != null)
+		{
+			var res = Luxe.audio.off(ae_end, audio_handler);
+			trace(res);
 		}
 	}
 	
@@ -268,10 +275,12 @@ class BeatManager extends Entity
 		{				
 			music_handle = Luxe.audio.play(music.source);
 			
-			Luxe.audio.on(ae_end, function(handle : AudioHandle) {
+			audio_handler = function(handle : AudioHandle) {
 				trace("audio is finished, move to the ending state");
 				Luxe.events.fire("audio_track_finished");
-			});
+			};
+			
+			Luxe.audio.on(ae_end, audio_handler);
 		}
 	}
 	
