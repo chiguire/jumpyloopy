@@ -37,7 +37,11 @@ import mint.types.Types.TextAlign;
 typedef MintTextAlign = mint.types.Types.TextAlign;
 
 typedef GameOverReasonEvent = {
-      msg : String,
+	msg : String,
+}
+
+typedef GameStateOnEnterData = {
+	@:optional var play_audio_loop : Bool; 
 }
 
 /**
@@ -227,6 +231,8 @@ class GameState extends State
 		var restart_signal = false;
 		var state_change_menu_signal = false;
 		
+		var on_enter_data = cast d;
+		
 		Main.load_parcel(parcel, "assets/data/game_state_parcel.json", on_parcel_loaded);
 		
 		var lane_width = calc_lane_width();
@@ -245,6 +251,7 @@ class GameState extends State
 		scene = new Scene("GameScene");
 		
 		Main.beat_manager.enter_game_state();
+		Main.beat_manager.play_audio_loop = (on_enter_data != null) ? on_enter_data.play_audio_loop : true;
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 						
