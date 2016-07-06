@@ -27,6 +27,8 @@ typedef PlatformTimeoutEvent =
  
 class Platform extends Sprite
 {
+	static public var max_size (default, null) : Vector = new Vector(164, 123);
+	
 	public var type (default, set) : PlatformType;
 	public var touches : Float = 0.0;
 	public var initialTouches = 0.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.

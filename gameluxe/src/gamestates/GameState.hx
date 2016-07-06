@@ -310,6 +310,7 @@ class GameState extends State
 		
 		next_platforms = new Array<Platform>();
 		
+		var platform_scale = 0.7;
 		for (i in 0...5)
 		{
 			next_platforms.push(new Platform({
@@ -318,23 +319,25 @@ class GameState extends State
 				n:num_internal_lanes * num_peg_levels + 2 + i, 
 				type: CENTER, 
 				batcher: Main.batcher_ui,
-				pos: new Vector(970 + 20, 200 + 10 + i * 125),
-				size: platform_size.clone(),
-				origin: new Vector(0, 0),
+				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * platform_scale),
+				size: Platform.max_size,
+				origin: new Vector(0,0),
 				depth: 10 + i,
 			}));
+			next_platforms[next_platforms.length - 1].scale.set_xy(0.7, 0.7);
 			next_platforms[next_platforms.length - 1].eternal = true;
 		}
 		last_next_platform_index = next_platforms.length - 1;
 		
-		//list_of_platforms_bg = new Sprite({
-		//	pos: new Vector(970,200),
-		//	origin: new Vector(0, 0),
-		//	name: 'list_of_platforms_bg',
-		//	scene:scene,
-		//	texture: Luxe.resources.texture("assets/image/ui/list_of_platforms.png"),
-		//	batcher: Main.batcher_ui,
-		//});
+		list_of_platforms_bg = new Sprite({
+			pos: new Vector(970,200),
+			origin: new Vector(0, 0),
+			name: 'list_of_platforms_bg',
+			scene:scene,
+			texture: Luxe.resources.texture("assets/image/ui/list_of_platforms.png"),
+			batcher: Main.batcher_ui,
+			depth: 20,
+		});
 		
 		mouse_pos = new Vector();
 		
@@ -401,7 +404,7 @@ class GameState extends State
 		}
 		
 		
-		if (level.can_put_platforms)
+		if (level.can_put_platforms && !player_sprite.respawning)
 		{
 			if (Luxe.input.inputpressed("put_platform"))
 			{
@@ -478,11 +481,11 @@ class GameState extends State
 			}
 		}
 		
-		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((Luxe.camera.pos.x + mouse_pos.x) / (lanes[2] - lanes[1])))));
+		//mouse_index_x = Std.int(Math.max(1, Math.min(3, Math.fround((mouse_pos.x) / (lanes[2] - lanes[1])))));
 		var lanes_distance = calc_lanes_distance();
 		max_tile = Math.round( (Main.global_info.ref_window_size_y/2.0 - Luxe.camera.pos.y) / level.beat_height);
-		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((Luxe.camera.pos.x + mouse_pos.x + lanes_distance * 0.5) / lanes_distance))));
-		beat_index_y = Math.round((starting_y - Luxe.camera.pos.y - mouse_pos.y) / level.beat_height);
+		mouse_index_x = Std.int(Math.min(3, Math.max(1, Math.round((mouse_pos.x  + lanes_distance * 0.5) / lanes_distance))));
+		beat_index_y = Math.round((starting_y - mouse_pos.y) / level.beat_height);
 		mouse_index_y = Std.int(Math.max(beat_index_y, 0));
 		var old_beat_bottom_y = beat_bottom_y;
 		beat_bottom_y = Math.round((starting_y - Luxe.camera.pos.y - Main.global_info.ref_window_size_y) / level.beat_height);
@@ -546,6 +549,8 @@ class GameState extends State
 	override function onmousemove(event:MouseEvent)
 	{
 		mouse_pos.set_xy(event.x, event.y);
+		var w = Luxe.camera.screen_point_to_world(mouse_pos);
+		mouse_pos.set_xy(w.x, w.y);
 	}
 	
 	function OnLevelStart( e:LevelStartEvent )
@@ -769,9 +774,25 @@ class GameState extends State
 		
 		mouse_platform.type = current_platform_type;
 		
-		for (i in 0...next_platforms.length)
+		var color = new Color(1, 1, 1, 1);
+		next_platforms[next_platforms.length - 1].color = color;
+		Actuate.tween(color, 0.1, { a: 0 }, true).onComplete(function ()
 		{
-			next_platforms[i].type = next_platform_types[i];
+			next_platforms[next_platforms.length - 1].type = next_platform_types[next_platform_types.length - 1];
+			color.a = 1;
+			
+		});
+		
+		for (i in 0...next_platforms.length - 1)
+		{
+			//next_platforms[i].type = next_platform_types[i];
+			var starting_pos_y = next_platforms[i].pos.y;
+			var final_pos_y = starting_pos_y + Platform.max_size.y * next_platforms[i].scale.y;
+			Actuate.tween(next_platforms[i].pos, 0.1, { y: final_pos_y }, true).onComplete(function ()
+			{
+				next_platforms[i].pos.y = starting_pos_y;
+				next_platforms[i].type = next_platform_types[i];
+			});
 		}
 	}
 	
