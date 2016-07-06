@@ -168,6 +168,7 @@ class Main extends luxe.Game
 		config.preload.textures.push({id:"assets/image/bg/space_01_transition.png"});
 		config.preload.textures.push({id:"assets/image/bg/space_02_tiling.png"});
 		
+		config.preload.textures.push({id:"assets/image/ui/UI_03_alpha.png"});
 		config.preload.textures.push({id:"assets/image/aviator_sprite_color.png"});
 		config.preload.textures.push({id:"assets/image/platforms/peg.png"});
 		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});

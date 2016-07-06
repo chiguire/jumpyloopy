@@ -82,7 +82,6 @@ class GameState extends State
 	var beat_bottom_y : Int;
 	var beat_start_wrap : Int;
 	var mouse_platform : Platform;
-	var next_platform : Platform;
 	var mouse_pos : Vector;
 	var mouse_index_x : Int;
 	var mouse_index_y : Int;
@@ -90,7 +89,9 @@ class GameState extends State
 	var starting_y : Float;
 	
 	var current_platform_type : PlatformType;
-	var next_platform_type : PlatformType;
+	var next_platform_types : Array<PlatformType>;
+	var next_platforms : Array<Platform>;
+	var last_next_platform_index : Int;
 	
 	/// Text
 	var processing_text : Text;
@@ -105,6 +106,10 @@ class GameState extends State
 	var game_over_panel : Panel;
 	var game_over_score_label : Label;
 	var game_over_death_label : Label;
+	
+	// UI
+	var ui_bg : Sprite;
+	var list_of_platforms_bg : Sprite;
 	
 	//Score
 	var score_component : entities.Score;
@@ -286,8 +291,43 @@ class GameState extends State
 		connect_input();
 		
 		mouse_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 1, type:NONE, size:platform_size.clone()});
-		next_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 2, type:NONE, size:platform_size.clone()});
-		//next_platform.pos.set_xy(Luxe.screen.width - 100, 40);
+		
+		ui_bg = new Sprite({
+			pos: new Vector(0, 0),
+			origin: new Vector(0,0),
+			name: 'ui_bg',
+			scene:scene,
+			texture: Luxe.resources.texture("assets/image/ui/UI_03_alpha.png"),
+			batcher: Main.batcher_ui,
+		});
+		
+		next_platforms = new Array<Platform>();
+		
+		for (i in 0...5)
+		{
+			next_platforms.push(new Platform({
+				scene: scene, 
+				game_info: game_info, 
+				n:num_internal_lanes * num_peg_levels + 2 + i, 
+				type: CENTER, 
+				batcher: Main.batcher_ui,
+				pos: new Vector(970 + 20, 200 + 10 + i * 125),
+				size: platform_size.clone(),
+				origin: new Vector(0, 0),
+				depth: 10 + i,
+			}));
+			next_platforms[next_platforms.length - 1].eternal = true;
+		}
+		last_next_platform_index = next_platforms.length - 1;
+		
+		//list_of_platforms_bg = new Sprite({
+		//	pos: new Vector(970,200),
+		//	origin: new Vector(0, 0),
+		//	name: 'list_of_platforms_bg',
+		//	scene:scene,
+		//	texture: Luxe.resources.texture("assets/image/ui/list_of_platforms.png"),
+		//	batcher: Main.batcher_ui,
+		//});
 		
 		mouse_pos = new Vector();
 		
@@ -443,9 +483,6 @@ class GameState extends State
 		var mouse_platform_y = (starting_y - mouse_index_y * level.beat_height);
 		mouse_platform.pos.set_xy(mouse_platform_x, mouse_platform_y);
 		
-		next_platform.pos.set_xy(level_rect.x + level_rect.w + 20, Luxe.camera.pos.y + 40);
-		
-		
 		if (beat_bottom_y >= beat_start_wrap && beat_bottom_y > old_beat_bottom_y)
 		{
 			var n = beat_bottom_y - beat_start_wrap;
@@ -481,6 +518,8 @@ class GameState extends State
 			platform_current_1.pos.y = platform_current_1.pos.y - num_peg_levels * level.beat_height;
 			platform_current_2.pos.y = platform_current_2.pos.y - num_peg_levels * level.beat_height;
 		}
+		
+		//trace('texture size is (${ui_bg.size.x}, ${ui_bg.size.y}), origin is (${ui_bg.origin.x}, ${ui_bg.origin.y})');
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
 		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
@@ -542,12 +581,28 @@ class GameState extends State
 		absolute_floor.pos.y = starting_y;// + absolute_floor.size.y / 2.0;
 		
 		current_platform_type = get_next_platform_type();
-		next_platform_type = get_next_platform_type();
+		
+		if (next_platform_types == null)
+		{
+			next_platform_types = new Array<PlatformType>();
+		}
+		
+		for (i in 0...next_platform_types.length)
+		{
+			next_platform_types.pop();
+		}
+		
+		for (i in 0...next_platforms.length)
+		{
+			var next_pl = get_next_platform_type();
+			next_platform_types.push(next_pl);
+			next_platforms[i].type = next_pl;
+			next_platforms[i].eternal = true;
+		}
 		
 		mouse_platform.type = current_platform_type;
 		//[Aik] test platform
 		mouse_platform.eternal = true;
-		next_platform.eternal = true;
 		
 		//Collectable Manager
 		collectable_manager.CreateFirstGroup();
@@ -702,26 +757,55 @@ class GameState extends State
 		
 		pl.type = current_platform_type;
 		
-		current_platform_type = next_platform_type;
-		next_platform_type = get_next_platform_type();
+		current_platform_type = next_platform_types.pop();
+		next_platform_types.unshift(get_next_platform_type());
 		
 		mouse_platform.type = current_platform_type;
-		next_platform.type = next_platform_type;
+		
+		for (i in 0...next_platforms.length)
+		{
+			next_platforms[i].type = next_platform_types[i];
+		}
 	}
 	
 	function switch_platform()
 	{
 		var t = current_platform_type;
-		current_platform_type = next_platform_type;
-		next_platform_type = t;
+		current_platform_type = next_platform_types[last_next_platform_index];
+		next_platform_types[last_next_platform_index] = t;
 		
 		mouse_platform.type = current_platform_type;
-		next_platform.type = next_platform_type;
+		next_platforms[last_next_platform_index].type = next_platform_types[last_next_platform_index];
 	}
+	
+	var random_next_platforms : Array<PlatformType>;
+	var random_next_platforms_index : Int;
 	
 	function get_next_platform_type() : PlatformType
 	{
-		return Type.createEnumIndex(PlatformType, Luxe.utils.random.int(1, Type.getEnumConstructs(PlatformType).length));
+		if (random_next_platforms == null)
+		{
+			random_next_platforms = new Array<PlatformType>();
+			random_next_platforms.push(CENTER);
+			random_next_platforms.push(CENTER);
+			random_next_platforms.push(LEFT);
+			random_next_platforms.push(RIGHT);
+			
+			random_next_platforms_index = 0;
+			
+			shuffle(random_next_platforms);
+		}
+		
+		var platform_type = random_next_platforms[random_next_platforms_index];
+		
+		random_next_platforms_index = (random_next_platforms_index + 1) % random_next_platforms.length;
+		
+		if (random_next_platforms_index % random_next_platforms.length == 0)
+		{
+			shuffle(random_next_platforms);
+		}
+		
+		return platform_type;
 	}
 	
 	function activate_pause_panel()
@@ -909,5 +993,30 @@ class GameState extends State
 		game_over_death_label.text =  "You died by " + e.msg;
 		game_over_score_label.text = "Score: " + score_component.get_score();
 		activate_game_over_panel();
+	}
+	
+	private function shuffle(a:Array<PlatformType>)
+	{
+		if (a.length < 2)
+		{
+			return;
+		}
+		
+		var times = 3;
+		for (k in 0...times)
+		{
+			for (i in 0...a.length)
+			{
+				for (j in (i+1)...a.length)
+				{
+					if (Luxe.utils.random.bool())
+					{
+						var t = a[i];
+						a[i] = a[j];
+						a[j] = t;
+					}
+				}
+			}
+		}
 	}
 }
