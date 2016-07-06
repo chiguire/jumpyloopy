@@ -45,7 +45,7 @@ class BeatManagerGameHUD extends Component
 		
 		num_bars_disp = Std.int(display_interval * BeatManager.num_samples_one_second / BeatManager.instant_interval);
 		
-		outer_bound = new Vector( Main.global_info.ref_window_size_y / Main.ref_window_aspect(), 0.1 * Main.global_info.ref_window_size_y );
+		outer_bound = new Vector( 500, 0.1 * Main.global_info.ref_window_size_y );
 		inner_bound = new Vector( 0.95 * outer_bound.x, 0.95 * outer_bound.y );
 		
 		bar_size = new Vector( inner_bound.x / num_bars_disp, inner_bound.y );

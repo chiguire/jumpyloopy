@@ -142,6 +142,7 @@ class GameState extends State
 		Luxe.events.listen("player_move_event", OnPlayerMove );
 		Luxe.events.listen("player_respawn_end", on_player_respawn_end );
 		Luxe.events.listen("platform_time_out", on_platform_time_out );
+		Luxe.events.listen("audio_track_finished", on_audio_track_finished );
 	}
 	
 	
@@ -250,8 +251,8 @@ class GameState extends State
 		
 		scene = new Scene("GameScene");
 		
-		Main.beat_manager.enter_game_state();
 		Main.beat_manager.play_audio_loop = (on_enter_data != null) ? on_enter_data.play_audio_loop : true;
+		Main.beat_manager.enter_game_state();
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
 						
@@ -347,6 +348,23 @@ class GameState extends State
 			color: new Color(120/255.0, 120/255.0, 120/255.0),
 			point_size: 18,
 			scene: scene,
+		});
+	}
+	
+	function on_audio_track_finished(e)
+	{
+		var black_sprite = new Sprite({
+			pos: Main.mid_screen_pos(),
+			size : new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
+			color: new Color(0, 0, 0, 0),
+			batcher: Main.batcher_ui,
+			scene: scene,
+			depth: 99
+		});
+		
+		Actuate.tween(black_sprite.color, 3.0, {a:1}).onComplete(function() {
+			trace("fading to black completed, change state");
+			machine.set("ScoreState");
 		});
 	}
 	

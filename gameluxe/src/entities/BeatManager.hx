@@ -97,6 +97,7 @@ class BeatManager extends Entity
 	
 	// event id, stored so we can unlisten
 	var game_event_id : Array<String>;
+	var audio_handler : AudioHandle -> Void;
 	
 	public function new(?_options:BeatManagerOptions) 
 	{
@@ -143,14 +144,7 @@ class BeatManager extends Entity
 		game_event_id.push(Luxe.events.listen("Level.Start", on_level_start ));
 		game_event_id.push(Luxe.events.listen("game.pause", on_game_pause ));
 		game_event_id.push(Luxe.events.listen("game.unpause", on_game_unpause ));
-		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
-		
-		if (music_handle!= null && play_audio_loop == false)
-		{
-			Luxe.audio.on(ae_end, function(handle : AudioHandle) {
-				trace("audio is finished, move to the ending state");
-			});
-		}
+		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));		
 	}
 	
 	public function leave_game_state()
@@ -166,6 +160,12 @@ class BeatManager extends Entity
 		for (i in 0...game_event_id.length)
 		{
 			var res = Luxe.events.unlisten(game_event_id[i]);
+		}
+		
+		if (audio_handler != null)
+		{
+			var res = Luxe.audio.off(ae_end, audio_handler);
+			trace(res);
 		}
 	}
 	
@@ -274,6 +274,13 @@ class BeatManager extends Entity
 		else
 		{				
 			music_handle = Luxe.audio.play(music.source);
+			
+			audio_handler = function(handle : AudioHandle) {
+				trace("audio is finished, move to the ending state");
+				Luxe.events.fire("audio_track_finished");
+			};
+			
+			Luxe.audio.on(ae_end, audio_handler);
 		}
 	}
 	
@@ -304,7 +311,8 @@ class BeatManager extends Entity
 		load.then(function(_) {
 			
 			music = Luxe.resources.audio(audio_id);
-			music_handle = Luxe.audio.loop(music.source, 1.0, true);
+			music_handle = Luxe.audio.play(music.source, 1.0, true);
+			Luxe.audio.stop(music_handle);
 			
 			trace("Format: " + music.source.data.format);
 			trace("Channels: " + music.source.data.channels);
