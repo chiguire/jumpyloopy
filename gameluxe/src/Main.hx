@@ -51,6 +51,11 @@ class Main extends luxe.Game
 	/// Beat Manager
 	public static var beat_manager (default, null) : BeatManager;
 	
+	public static function mid_screen_pos() : Vector
+	{
+		return new Vector(global_info.ref_window_size_x / 2, global_info.ref_window_size_y / 2); 
+	}
+	
 	public static function ref_window_aspect() : Float
 	{
 		return global_info.ref_window_size_x / global_info.ref_window_size_y;
