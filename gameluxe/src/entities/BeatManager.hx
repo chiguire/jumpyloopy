@@ -46,6 +46,7 @@ class BeatManager extends Entity
 {
 	/// game play constants
 	public static var jump_interval = 60 / 200; // 200 bpm
+	public var play_audio_loop = true;
 	
 	//var beat_manager_debug_visual : BeatManagerVisualizer;
 	var beat_manager_game_hud : BeatManagerGameHUD;
@@ -143,6 +144,13 @@ class BeatManager extends Entity
 		game_event_id.push(Luxe.events.listen("game.pause", on_game_pause ));
 		game_event_id.push(Luxe.events.listen("game.unpause", on_game_unpause ));
 		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
+		
+		if (music_handle!= null && play_audio_loop == false)
+		{
+			Luxe.audio.on(ae_end, function(handle : AudioHandle) {
+				trace("audio is finished, move to the ending state");
+			});
+		}
 	}
 	
 	public function leave_game_state()
@@ -171,11 +179,20 @@ class BeatManager extends Entity
 		if (music != null && Luxe.audio.state_of(music_handle) == AudioState.as_playing)
 		{
 			var audio_time = Luxe.audio.position_of(music_handle);
-			audio_pos = audio_time / music.source.duration();
+			var audio_duration = music.source.duration();
 			
 			// update display
 			//beat_manager_debug_visual.update_display(audio_time);
 			beat_manager_game_hud.update_display(audio_time);
+			
+			// we are in arcade mode, the game will be finished when the song is finished
+			var time_left = audio_duration - audio_time;
+			var fadeout_interval = 5.0;
+			if ( play_audio_loop == false && time_left < fadeout_interval )
+			{
+				var vol = time_left / fadeout_interval;
+				Luxe.audio.volume(music_handle, vol);
+			}
 			
 			if (cooldown_counter <= 0.0)
 			{
@@ -250,7 +267,14 @@ class BeatManager extends Entity
 	
 	function on_level_start( e )
 	{
-		music_handle = Luxe.audio.loop(music.source);
+		if (play_audio_loop)
+		{
+			music_handle = Luxe.audio.loop(music.source);
+		}
+		else
+		{				
+			music_handle = Luxe.audio.play(music.source);
+		}
 	}
 	
 	@:generic

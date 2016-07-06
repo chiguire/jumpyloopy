@@ -2,6 +2,7 @@ package gamestates;
 
 import data.GameInfo;
 import entities.BeatManager;
+import gamestates.GameState.GameStateOnEnterData;
 import luxe.Audio.AudioState;
 import luxe.Color;
 import luxe.Parcel;
@@ -32,6 +33,7 @@ class LevelSelectState extends State
 	/// deferred state transition
 	var change_state_signal = false;
 	var next_state = "";
+	var game_state_on_enter_data : GameStateOnEnterData;
 	
 	/// music preview
 	var music_handle : AudioHandle;
@@ -186,6 +188,7 @@ class LevelSelectState extends State
 					}
 					
 					next_state = "GameState";
+					game_state_on_enter_data = { play_audio_loop: false };
 					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
 				}
 				#end
@@ -253,7 +256,7 @@ class LevelSelectState extends State
 		
 		if (change_state_signal)
 		{
-			machine.set(next_state);
+			machine.set(next_state, game_state_on_enter_data);
 		}
 		
 		// fade music in/out if we need to
