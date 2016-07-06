@@ -355,17 +355,17 @@ class GameState extends State
 	function on_player_respawn_end(e)
 	{
 		// reset gameplay platform
-		for (i in 0...platform_points.length)
+		for (pl in platform_points)
 		{
-			var platform = platform_points[i];
-			if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
-			{
-				platform.type = CENTER;
-				platform.visible = false;
-				platform.eternal = true;
-			}
-			
-			platform.visible = false;
+			pl.type = NONE;
+			pl.eternal = false;
+		}
+		
+		for (pl in [get_platform(1, beat_n), get_platform(2, beat_n), get_platform(3, beat_n)])
+		{
+			pl.type = CENTER;
+			pl.visible = false;
+			pl.eternal = true;
 		}
 	}
 	
