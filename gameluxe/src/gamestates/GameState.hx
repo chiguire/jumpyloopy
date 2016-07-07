@@ -24,6 +24,7 @@ import luxe.tween.easing.Back;
 import mint.Label;
 import mint.Panel;
 import phoenix.Batcher;
+import ui.MintLabelPanel;
 
 import luxe.tween.Actuate;
 import luxe.Vector;
@@ -114,6 +115,7 @@ class GameState extends State
 	// UI
 	var ui_bg : Sprite;
 	var list_of_platforms_bg : Sprite;
+	var ui_distance_panel : MintLabelPanel;
 	
 	//Score
 	var score_component : entities.Score;
@@ -307,6 +309,11 @@ class GameState extends State
 			scene:scene,
 			texture: Luxe.resources.texture("assets/image/ui/UI_03_alpha.png"),
 			batcher: Main.batcher_ui,
+		});
+		
+		ui_distance_panel = new MintLabelPanel({
+			x: 305, y: 55, w: 125, h: 65, 
+			text: "Distance Traveled"
 		});
 		
 		next_platforms = new Array<Platform>();
@@ -548,6 +555,10 @@ class GameState extends State
 		
 		debug_text.pos.y = Luxe.camera.pos.y + 10;
 		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
+		
+		// update UI elements
+		var travelled_distance = Std.int(player_sprite.travelled_distance);
+		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 	}
 	
 	private function connect_input()
@@ -754,12 +765,13 @@ class GameState extends State
 	{
 		if (x < 1 || x > 3)
 		{
-			trace("fail_x");
+			//trace("fail_x");
 			return null;
 		}
 		if (y < 0)
 		{
-			trace("fail_y"); return null;
+			//trace("fail_y");
+			return null;
 		}
 		var current = (platform_points.length + ((y) * num_internal_lanes + (x - 1))) % platform_points.length;
 		return platform_points[current];
@@ -771,7 +783,7 @@ class GameState extends State
 		
 		if (pl == null)
 		{
-			trace('null platform');
+			//trace('null platform');
 			return;
 		}
 		

@@ -13,6 +13,7 @@ import luxe.States.State;
 import luxe.tween.Actuate;
 import mint.Button;
 import mint.Label;
+import mint.render.luxe.Panel;
 import mint.types.Types.TextAlign;
 import snow.types.Types.AudioHandle;
 
@@ -210,6 +211,7 @@ class LevelSelectState extends State
 			mouse_input: false,
 			x: 710, y: 250, w: 225, h: 400,
 		});
+		cast(panel.renderer, Panel).color.a = 0.5;
 		
 		desc_label = new mint.Label({
 			parent: panel, name: 'label',

@@ -98,10 +98,14 @@ class Avatar extends Sprite
 	var visual_flashing_comp: VisualFlashingComponent;
 	
 	public var starting_x : Float;
+	public var starting_y  = 0.0;
 	public var jump_height : Float;
 	public var current_lane : Int;
 	
 	private var debug_animations = false;
+	
+	// some player stat during the game
+	public var travelled_distance = -1.0;
 	
 	// respawn (start with true, so the gameplay logic won't effect the Avatar until OnLevelStart)
 	public var respawning (default, null) = true;
@@ -153,7 +157,7 @@ class Avatar extends Sprite
 	
 	override function update(dt:Float)
 	{
-		
+		travelled_distance = Math.max(-(pos.y - starting_y), 0);
 	}
 	
 	public function respawn_begin( p:Vector)
@@ -186,13 +190,16 @@ class Avatar extends Sprite
 	
 	function OnLevelStart( e:LevelStartEvent )
 	{
+		travelled_distance = 0;
+		
 		// reset respawn flag, so it will trigger the gameplay
 		respawning = false;
 		
 		visible = true;
 		gamecamera.set_x(starting_x);
 		
-		pos.set_xy(starting_x /*e.pos.x*/, e.pos.y);
+		starting_y = e.pos.y;
+		pos.set_xy(starting_x /*e.pos.x*/, starting_y);
 		trajectory_movement.nextPos.set_xy(pos.x, pos.y);
 		trajectory_movement.height = size.y / 2.0;
 		jump_height = e.beat_height;
