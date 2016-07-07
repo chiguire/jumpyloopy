@@ -143,7 +143,7 @@ class Background extends Visual
 		super.update(dt);
 		
 		if(Luxe.input.keydown(Key.key_d)) {
-            speed_mul = 100;
+            speed_mul = 250;
         }
 		
 		if ( prev_camera_pos_y != Math.NEGATIVE_INFINITY )
