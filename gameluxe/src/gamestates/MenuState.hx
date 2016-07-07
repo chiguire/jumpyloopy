@@ -197,7 +197,7 @@ class MenuState extends State
 			{
 				var renderer = cast(warchild_img.renderer, mint.render.luxe.Image);
 				var hsl = renderer.visual.color.toColorHSL();
-				hsl.l *= 1.1;
+				hsl.l *= 1.5;
 				renderer.visual.color.fromColorHSL(hsl);
 			}
 		);
@@ -207,7 +207,7 @@ class MenuState extends State
 			{
 				var renderer = cast(warchild_img.renderer, mint.render.luxe.Image);
 				var hsl = renderer.visual.color.toColorHSL();
-				hsl.l /= 1.1;
+				hsl.l /= 1.5;
 				renderer.visual.color.fromColorHSL(hsl);
 			}
 		);

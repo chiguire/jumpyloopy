@@ -19,6 +19,9 @@ class Collectable extends Sprite
 	
 	var c_manager : CollectableManager;
 	
+	// event id, stored so we can unlisten
+	var event_id : Array<String>;
+	
 	public function new(parent_manager : CollectableManager, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector) 
 	{
 		c_manager = parent_manager;
@@ -51,7 +54,8 @@ class Collectable extends Sprite
 		collisionShape = new CollisionShape(this, false);
 		GameState.player_sprite.collision.RegisterCollisionEntity(collisionShape);
 		
-		events.listen("onCollisionEnter", onCollisionEnter);
+		event_id = new Array<String>();
+		event_id.push(events.listen("onCollisionEnter", onCollisionEnter));
 		
 		destroyed = false;
 	}
@@ -82,7 +86,14 @@ class Collectable extends Sprite
 		return a;
 	}
 	
-	override public function ondestroy() {
+	override public function ondestroy() 
+	{
+		// events
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
+		
 		collisionShape.set_destroyed();
 		super.ondestroy();
 	}

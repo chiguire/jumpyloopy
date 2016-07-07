@@ -105,7 +105,8 @@ class Avatar extends Sprite
 	private var debug_animations = false;
 	
 	// some player stat during the game
-	public var travelled_distance = -1.0;
+	public var travelled_distance  (default, null) = 0.0;
+	public var num_lives = 3;
 	
 	// respawn (start with true, so the gameplay logic won't effect the Avatar until OnLevelStart)
 	public var respawning (default, null) = true;
@@ -157,7 +158,7 @@ class Avatar extends Sprite
 	
 	override function update(dt:Float)
 	{
-		travelled_distance = Math.max(-(pos.y - starting_y), 0);
+		travelled_distance = -(pos.y - starting_y);
 	}
 	
 	public function respawn_begin( p:Vector)

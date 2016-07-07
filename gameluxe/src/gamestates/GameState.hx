@@ -6,6 +6,7 @@ import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
 import entities.CollectableManager;
+import entities.DamageFeedback;
 import entities.Level;
 import entities.Platform;
 import entities.PlatformPeg;
@@ -52,7 +53,7 @@ typedef GameStateOnEnterData = {
 class GameState extends State
 {	
 	private var game_info : GameInfo;
-	private var scene : Scene;
+	public var scene : Scene;
 	
 	private var level: Level;
 	
@@ -116,12 +117,17 @@ class GameState extends State
 	var ui_bg : Sprite;
 	var list_of_platforms_bg : Sprite;
 	var ui_distance_panel : MintLabelPanel;
+	var ui_hp_remaining : MintLabelPanel;
+	var ui_score : MintLabelPanel;
 	
-	//Score
+	// Score
 	var score_component : entities.Score;
 	
 	var restart_signal = false;
 	var state_change_menu_signal = false;
+	
+	// Damage
+	var damage_feedback : DamageFeedback;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -145,6 +151,9 @@ class GameState extends State
 		Luxe.events.listen("player_respawn_end", on_player_respawn_end );
 		Luxe.events.listen("platform_time_out", on_platform_time_out );
 		Luxe.events.listen("audio_track_finished", on_audio_track_finished );
+		
+		Luxe.events.listen("player_damage", on_player_damage);
+		Luxe.events.listen("kill_player", trigger_game_over);
 	}
 	
 	
@@ -164,11 +173,13 @@ class GameState extends State
 			unpause();
 		}
 		
+		/*
 		if ( e.keycode == Key.key_o)
 		{
 			trace("game over");
 			reset_state();
 		}
+		*/
 	}
 	
 	function pause()
@@ -201,7 +212,6 @@ class GameState extends State
 		Actuate.reset();
 		
 		//De-register events.
-		Luxe.events.unlisten("kill_player");
 		score_component.unregister_listeners();
 		                     
 		Main.beat_manager.leave_game_state();
@@ -316,6 +326,17 @@ class GameState extends State
 			text: "Distance Traveled"
 		});
 		
+		ui_score = new MintLabelPanel({
+			x: 305, y: 180, w: 125, h: 65, 
+			text: "Score"
+		});
+		
+		ui_hp_remaining = new MintLabelPanel({
+			x: 305, y: 300, w: 125, h: 85, 
+			text: "Lives",
+			text_size: 24
+		});
+		
 		next_platforms = new Array<Platform>();
 		
 		var platform_scale = 0.7;
@@ -349,12 +370,26 @@ class GameState extends State
 		
 		mouse_pos = new Vector();
 		
+		/*
 		debug_text = new Text({
 			pos: new Vector(10, 10),
 			text: "",
 			color: new Color(120/255.0, 120/255.0, 120/255.0),
 			point_size: 18,
 			scene: scene,
+		});
+		*/
+		
+		damage_feedback = new DamageFeedback(scene);
+	}
+	
+	function on_player_damage(e)
+	{
+		Luxe.camera.shake(10.0);
+		
+		damage_feedback.visual_flashing_comp.activate();
+		Luxe.timer.schedule(0.3, function(){
+			damage_feedback.visual_flashing_comp.deactivate();
 		});
 	}
 	
@@ -463,8 +498,15 @@ class GameState extends State
 		{
 			trace("need player respawn here " + player_sprite.pos.y);
 			
-			// caemra feedback
-			Luxe.camera.shake(10.0);
+			player_sprite.num_lives -= 1;
+			if (player_sprite.num_lives <= 0)
+			{
+				// this will finish the game
+				on_audio_track_finished({});
+			}
+			
+			// damage feedback
+			Luxe.events.fire("player_damage");
 			
 			// place player
 			beat_n = beat_bottom_y + 2;
@@ -493,8 +535,6 @@ class GameState extends State
 			
 			Main.beat_manager.on_player_respawn_begin();
 		}
-		
-		//if (background != null) background.update(dt);
 		
 		// check if the plaform that player currently on still existed
 		for (i in 0...platform_points.length)
@@ -556,12 +596,17 @@ class GameState extends State
 		
 		//trace('texture size is (${ui_bg.size.x}, ${ui_bg.size.y}), origin is (${ui_bg.origin.x}, ${ui_bg.origin.y})');
 		
-		debug_text.pos.y = Luxe.camera.pos.y + 10;
-		debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
+		//debug_text.pos.y = Luxe.camera.pos.y + 10;
+		//debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 		
 		// update UI elements
 		var travelled_distance = Std.int(player_sprite.travelled_distance);
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
+		
+		var score = score_component.get_score();
+		ui_score.set_text('score\n${score}');
+		
+		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
 	}
 	
 	private function connect_input()
@@ -649,7 +694,6 @@ class GameState extends State
 		collectable_manager.CreateFirstGroup();
 		
 		//Listen for collectable events.
-		Luxe.events.listen("kill_player", trigger_game_over);
 		score_component.register_listeners();
 	}
 	

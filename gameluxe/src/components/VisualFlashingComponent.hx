@@ -16,6 +16,7 @@ class VisualFlashingComponent extends Component
 	var count = 0;
 	// flashing speed, tweakable
 	var speed = 0.05;
+	var saved_visible_state = false;
 	
 	public function new(?_options:ComponentOptions) 
 	{
@@ -33,6 +34,7 @@ class VisualFlashingComponent extends Component
 		super.onadded();
 		
 		parent = cast(entity, Visual);
+		saved_visible_state = parent.visible;
 	}
 	
 	override public function onremoved() 
@@ -44,7 +46,7 @@ class VisualFlashingComponent extends Component
 	
 	public function activate()
 	{
-		if (parent != null)
+		if (parent != null && timer == null)
 		{
 			count = 0;
 			timer = Luxe.timer.schedule(speed, function(){
@@ -65,7 +67,7 @@ class VisualFlashingComponent extends Component
 		
 		if (parent != null)
 		{
-			parent.visible = true;
+			parent.visible = saved_visible_state;
 		}
 	}
 }

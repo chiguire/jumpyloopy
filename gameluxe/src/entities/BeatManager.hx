@@ -15,6 +15,7 @@ import luxe.Input.Key;
 import luxe.Input.KeyEvent;
 import luxe.options.EntityOptions;
 import luxe.resource.Resource.AudioResource;
+import luxe.tween.Actuate;
 import phoenix.Batcher;
 import snow.api.Promise;
 import snow.api.buffers.Int16Array;
@@ -47,6 +48,7 @@ class BeatManager extends Entity
 	/// game play constants
 	public static var jump_interval = 60 / 200; // 200 bpm
 	public var play_audio_loop = true;
+	var pitch_shake = 1.0; // used for player damage indication
 	
 	//var beat_manager_debug_visual : BeatManagerVisualizer;
 	var beat_manager_game_hud : BeatManagerGameHUD;
@@ -134,6 +136,7 @@ class BeatManager extends Entity
 	
 	public function enter_game_state()
 	{
+		pitch_shake = 1.0;
 		cooldown_counter = 0;
 		curr_beat_pos = 0;
 		
@@ -144,7 +147,8 @@ class BeatManager extends Entity
 		game_event_id.push(Luxe.events.listen("Level.Start", on_level_start ));
 		game_event_id.push(Luxe.events.listen("game.pause", on_game_pause ));
 		game_event_id.push(Luxe.events.listen("game.unpause", on_game_unpause ));
-		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));		
+		game_event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
+		game_event_id.push(Luxe.events.listen("player_damage", on_player_damage ));
 	}
 	
 	public function leave_game_state()
@@ -234,6 +238,23 @@ class BeatManager extends Entity
 				}	
 			}
 		}
+	}
+	
+	public function on_player_damage(e)
+	{
+		//pitch = Luxe.audio.pitch_of(music_handle);
+		//trace(pitch);
+		
+		// make some random noise
+		var tween = Actuate.tween(this, 0.1, {pitch_shake: 0.75}).reflect().repeat(3);
+		tween.onUpdate( function(){
+			Luxe.audio.pitch(music_handle, pitch_shake); 
+		});
+		// reset pitch on complete
+		tween.onComplete( function(){
+			pitch_shake = 1.0;
+			Luxe.audio.pitch(music_handle, pitch_shake); 
+		});
 	}
 	
 	public function on_player_respawn_begin()

@@ -51,6 +51,11 @@ class Main extends luxe.Game
 	/// Beat Manager
 	public static var beat_manager (default, null) : BeatManager;
 	
+	public static function gameplay_area_size() : Vector
+	{
+		return new Vector( 500, 900 );
+	}
+	
 	public static function mid_screen_pos() : Vector
 	{
 		return new Vector(global_info.ref_window_size_x / 2, global_info.ref_window_size_y / 2); 
@@ -183,6 +188,7 @@ class Main extends luxe.Game
 		// placeholder
 		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
 		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
+		config.preload.jsons.push({id:"assets/animation/animation_spiky_ball.json"});
 
 		config.preload.jsons.push({id:"assets/collectable_groups/collectable_groups.json"});
 		

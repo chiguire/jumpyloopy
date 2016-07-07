@@ -38,7 +38,10 @@ class CollectableManager extends Entity
 		row_height = r_height;
 		group_i = 0;
 		game_state = gs;
-		super();
+		
+		super({
+			scene : game_state.scene
+		});
 	}
 	
 	override public function update(dt:Float) 
@@ -109,8 +112,9 @@ class CollectableManager extends Entity
 		
 		group_templates = new Array();
 		
-		for (n in array)
+		for (i in 0...array.length)
 		{
+			var n = array[i];
 			var new_template = new CollectableGroupData(n.name, n.weighting, n.elements);
 			group_templates.push(new_template);
 			trace(n);
