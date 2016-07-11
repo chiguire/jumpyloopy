@@ -328,7 +328,7 @@ class GameState extends State
 		ui_hp_remaining = new MintLabelPanel({
 			x: 305, y: 300, w: 125, h: 85, 
 			text: "Lives",
-			text_size: 24
+			text_size: 32
 		});
 		
 		next_platforms = new Array<Platform>();

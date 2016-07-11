@@ -15,5 +15,10 @@
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },
 		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"}
+	],
+	
+	"fonts" : 
+	[
+		{ "id" : "assets/image/font/later_on.fnt" }
 	]
 }
