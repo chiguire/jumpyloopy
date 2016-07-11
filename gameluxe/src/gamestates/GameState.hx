@@ -58,8 +58,8 @@ class GameState extends State
 	private var level: Level;
 	
 	var parcel : Parcel;
-
-	//private var sky_sprite : Sprite;
+	
+	var fader_overlay_sprite : Sprite;
 	var background_groups : Array<BackgroundGroup>;
 	var background : Background;
 
@@ -248,6 +248,9 @@ class GameState extends State
 		
 		Main.load_parcel(parcel, "assets/data/game_state_parcel.json", on_parcel_loaded);
 		
+		scene = new Scene("GameScene");
+		fader_overlay_sprite = Main.create_transition_sprite(scene);
+				
 		var lane_width = calc_lane_width();
 		
 		lane_start = -0.5 * lane_width / num_all_lanes;
@@ -260,8 +263,6 @@ class GameState extends State
 		
 		lanes[0] -= lane_width / num_all_lanes;
 		lanes[4] += lane_width / num_all_lanes;
-		
-		scene = new Scene("GameScene");
 		
 		Main.beat_manager.play_audio_loop = (on_enter_data != null) ? on_enter_data.play_audio_loop : true;
 		Main.beat_manager.enter_game_state();
@@ -312,14 +313,7 @@ class GameState extends State
 		
 		mouse_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 1, type:NONE, size:platform_size.clone()});
 		
-		ui_bg = new Sprite({
-			pos: new Vector(0, 0),
-			origin: new Vector(0,0),
-			name: 'ui_bg',
-			scene:scene,
-			texture: Luxe.resources.texture("assets/image/ui/UI_03_alpha.png"),
-			batcher: Main.batcher_ui,
-		});
+		ui_bg = Main.create_background(scene);
 		
 		ui_distance_panel = new MintLabelPanel({
 			x: 305, y: 55, w: 125, h: 65, 
@@ -355,6 +349,7 @@ class GameState extends State
 			}));
 			next_platforms[next_platforms.length - 1].scale.set_xy(0.7, 0.7);
 			next_platforms[next_platforms.length - 1].eternal = true;
+			next_platforms[next_platforms.length - 1].visible = false;
 		}
 		last_next_platform_index = next_platforms.length - 1;
 		
@@ -366,6 +361,7 @@ class GameState extends State
 			texture: Luxe.resources.texture("assets/image/ui/list_of_platforms.png"),
 			batcher: Main.batcher_ui,
 			depth: 20,
+			visible: false,
 		});
 		
 		mouse_pos = new Vector();
@@ -395,17 +391,9 @@ class GameState extends State
 	
 	function on_audio_track_finished(e)
 	{
-		var black_sprite = new Sprite({
-			pos: Main.mid_screen_pos(),
-			size : new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
-			color: new Color(0, 0, 0, 0),
-			batcher: Main.batcher_ui,
-			scene: scene,
-			depth: 99
-		});
-		
-		Actuate.tween(black_sprite.color, 3.0, {a:1}).onComplete(function() {
-			trace("fading to black completed, change state");
+		fader_overlay_sprite.visible = true;
+		fader_overlay_sprite.color.a = 0;
+		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
 			machine.set("ScoreState");
 		});
 	}
@@ -415,6 +403,14 @@ class GameState extends State
 		create_pause_panel();
 		create_game_over_panel();
 		create_background_groups();
+		
+		fader_overlay_sprite.visible = true;
+		fader_overlay_sprite.color.a = 1;
+		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:0}).onComplete(function() {
+			fader_overlay_sprite.visible = false;			
+			// fire level.start
+			level.OnAudioLoad({});
+		});
 		
 		// initialize platform
 		var tex = Luxe.resources.texture('assets/image/platforms/platform_straight02.png');
@@ -600,7 +596,7 @@ class GameState extends State
 		//debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 		
 		// update UI elements
-		var travelled_distance = Std.int(player_sprite.travelled_distance);
+		var travelled_distance = Std.int(player_sprite.travelled_distance * 0.01);
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
@@ -684,6 +680,7 @@ class GameState extends State
 			next_platform_types.push(next_pl);
 			next_platforms[i].type = next_pl;
 			next_platforms[i].eternal = true;
+			//next_platforms[i].visible = true;
 		}
 		
 		mouse_platform.type = current_platform_type;
@@ -695,6 +692,9 @@ class GameState extends State
 		
 		//Listen for collectable events.
 		score_component.register_listeners();
+		
+		
+		list_of_platforms_bg.visible = true;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )

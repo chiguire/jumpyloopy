@@ -114,9 +114,6 @@ class Level extends Entity
 		});
 		countdown_text.visible = false;
 		can_put_platforms = false;
-		
-		OnAudioLoad({});
-		Luxe.events.fire("Level.Init", {}, false );
 	}
 	
 	override public function update(dt:Float)

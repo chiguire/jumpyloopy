@@ -33,7 +33,7 @@ class MenuState extends State
 	private var scene : Scene;
 	private var title_text : Text;
 	
-	var frontend_parcel : Parcel;
+	var parcel : Parcel;
 	
 	var change_to = "";
 	
@@ -67,7 +67,7 @@ class MenuState extends State
 		scene = null;
 		title_text = null;
 		
-		frontend_parcel = null;
+		parcel = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -75,16 +75,7 @@ class MenuState extends State
 		trace("Entering menu");
 		
 		// load parcels
-		frontend_parcel = new Parcel();
-		frontend_parcel.from_json(Luxe.resources.json("assets/data/frontend_parcel.json").asset.json);
-		
-		var progress = new ParcelProgress({
-            parcel      : frontend_parcel,
-            background  : new Color(1,1,1,0.85),
-            oncomplete  : on_loaded
-        });
-		
-		frontend_parcel.load();
+		Main.load_parcel(parcel, "assets/data/frontend_parcel.json", on_loaded);
 				
 		scene = new Scene("MenuScene");
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
@@ -136,6 +127,8 @@ class MenuState extends State
 		//trace(layout_data);
 		
 		// Background Layer
+		Main.create_background(scene);
+		
 		var background1 = new Sprite({
 			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
 			pos: new Vector(layout_data.background.pos_x, layout_data.background.pos_y),

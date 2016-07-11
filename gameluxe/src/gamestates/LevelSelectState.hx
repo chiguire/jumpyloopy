@@ -7,6 +7,7 @@ import luxe.Audio.AudioState;
 import luxe.Color;
 import luxe.Parcel;
 import luxe.ParcelProgress;
+import luxe.Scene;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
@@ -30,6 +31,7 @@ class LevelSelectState extends State
 	var game_info : GameInfo;
 	
 	var parcel : Parcel;
+	var scene : Scene;
 	
 	/// deferred state transition
 	var change_state_signal = false;
@@ -64,6 +66,10 @@ class LevelSelectState extends State
 		Luxe.audio.stop(music_handle);
 		
 		Main.canvas.destroy_children();		
+		
+		scene.empty();
+		scene.destroy();
+		scene = null;
 		parcel = null;
 	}
 	
@@ -72,16 +78,8 @@ class LevelSelectState extends State
 		trace("Entering level select");
 		
 		// load parcels
-		parcel = new Parcel();
-		parcel.from_json(Luxe.resources.json("assets/data/level_select_parcel.json").asset.json);
-		
-		var progress = new ParcelProgress({
-            parcel      : parcel,
-            background  : new Color(0,0,0,0.85),
-            oncomplete  : on_loaded
-        });
-		
-		parcel.load();
+		Main.load_parcel(parcel, "assets/data/level_select_parcel.json", on_loaded);
+		scene = new Scene();
 		
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
@@ -130,6 +128,7 @@ class LevelSelectState extends State
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
 		
+		Main.create_background(scene);
 		
 		MenuState.create_image(layout_data.background);
 		/*

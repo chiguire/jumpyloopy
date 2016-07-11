@@ -1,0 +1,19 @@
+{
+	"textures" : 
+	[ 
+		{ "id" : "assets/image/war-child-logo-home.png" },
+		{ "id" : "assets/image/ui/UI_03_alpha.png" },
+		{ "id" : "assets/image/ui/list_of_platforms.png" },
+		{ "id" : "assets/image/aviator_sprite_color.png" },
+		{ "id" : "assets/image/platforms/peg.png" },
+		{ "id" : "assets/image/coin-sprite-animation-sprite-sheet.png", "_comment" : "placeholder, need to be removed"}
+	],
+	
+	"json" : 
+	[
+		{ "id" : "assets/animation/animation_jumper.json" },
+		{ "id" : "assets/animation/animation_spiky_ball.json" },
+		{ "id" : "assets/collectable_groups/collectable_groups.json" },
+		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"}
+	]
+}

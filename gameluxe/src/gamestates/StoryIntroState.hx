@@ -49,28 +49,34 @@ class StoryIntroState extends State
 	}
 	
 	function on_parcel_loaded( p: Parcel )
-	{
-		var mid_pos = new Vector(Main.global_info.ref_window_size_x - Main.global_info.ref_window_size_x / 2, Main.global_info.ref_window_size_y / 2);
-		
+	{		
 		var background = new Sprite({
 			texture: Luxe.resources.texture("assets/image/bg/cave_01_paper.png"),
-			pos: mid_pos,
+			pos: Main.mid_screen_pos(),
 			//size: new Vector(layout_data.background.width, layout_data.background.height),
 			scene: scene,
 		});
 		
 		var sprite = new Sprite({
 			texture: Luxe.resources.texture("assets/image/story/01_mylove.png"),
-			pos: mid_pos,
+			pos: Main.mid_screen_pos(),
 			//size: new Vector(layout_data.background.width, layout_data.background.height),
 			scene: scene,
 		});
 		sprite.color.a = 0;
 		
-		Actuate.tween(sprite.color, 1.0, {a:1.0}).onComplete( function() { 
-			Luxe.timer.schedule( 3.0, function() {
-				Actuate.tween(sprite.color, 1.0, {a:0.0}).onComplete( function() { machine.set("GameState"); });
+		
+		Main.simple_fade_in(background, function(){
+			Actuate.tween(sprite.color, 1.0, {a:1.0}).onComplete( function() { 
+				Luxe.timer.schedule( 3.0, function() {
+				Actuate.tween(sprite.color, 1.0, {a:0.0}).onComplete( function() {
+						Main.simple_fade_out(background, function(){
+							machine.set("GameState");
+						});
+					});
+				});
 			});
 		});
+		
 	}
 }

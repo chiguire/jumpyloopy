@@ -14,12 +14,15 @@ import luxe.Camera;
 import luxe.Color;
 import luxe.Parcel;
 import luxe.ParcelProgress;
+import luxe.Scene;
 import luxe.Screen.WindowEvent;
+import luxe.Sprite;
 import luxe.States;
 import haxe.xml.Fast;
 import luxe.Rectangle;
 import luxe.Input;
 import luxe.Vector;
+import luxe.tween.Actuate;
 import mint.Canvas;
 import mint.focus.Focus;
 import mint.layout.margins.Margins;
@@ -83,6 +86,54 @@ class Main extends luxe.Game
 		parcel.load();
 	}
 	
+	// common background sprite
+	public static function create_background( scene : Scene) : Sprite
+	{
+		var bg = new Sprite({
+			pos: mid_screen_pos(),
+			size: new Vector(global_info.ref_window_size_x, global_info.ref_window_size_y),
+			name: 'ui_bg',
+			scene: scene,
+			texture: Luxe.resources.texture("assets/image/ui/UI_03_alpha.png"),
+			batcher: Main.batcher_ui,
+		});
+		return bg;
+	}
+	
+	public static function create_transition_sprite( scene : Scene ) : Sprite
+	{
+		var s = new Sprite({
+			pos: Main.mid_screen_pos(),
+			size : new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
+			color: new Color(0, 0, 0, 1),
+			batcher: Main.batcher_ui,
+			scene: scene,
+			depth: 99
+		});
+		
+		return s;
+	}
+	
+	public static function simple_fade_in( spr : Sprite, on_complete : Void -> Void )
+	{
+		spr.visible = true;
+		spr.color.a = 0;
+		Actuate.tween(spr.color, 3.0, {a:1}).onComplete(function() {	
+			on_complete();
+		});
+	}
+	
+	public static function simple_fade_out( spr : Sprite, on_complete : Void -> Void )
+	{
+		spr.visible = true;
+		spr.color.a = 1;
+		Actuate.tween(spr.color, 3.0, {a:0}).onComplete(function() {
+			spr.visible = false;
+			on_complete();
+		});
+	}
+	
+	
 	override function ready() 
 	{
 		//app.debug.visible = true;
@@ -140,7 +191,10 @@ class Main extends luxe.Game
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
 		
-		machine.set("MenuState");
+		var parcel = new Parcel();
+		Main.load_parcel(parcel, "assets/data/common_parcel.json", function(p:Parcel){
+			machine.set("MenuState");
+		});
 	}
 
 	override function config(config:luxe.GameConfig) 
@@ -167,30 +221,11 @@ class Main extends luxe.Game
 #end
 	
 		// preload all parcel description
+		config.preload.jsons.push({id:"assets/data/common_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/frontend_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
-		
-
-		// move to parcel
-		config.preload.textures.push({id:"assets/image/bg/sky_01_tiling.png"});
-		config.preload.textures.push({id:"assets/image/bg/space_01_transition.png"});
-		config.preload.textures.push({id:"assets/image/bg/space_02_tiling.png"});
-		
-		config.preload.textures.push({id:"assets/image/ui/UI_03_alpha.png"});
-		config.preload.textures.push({id:"assets/image/ui/list_of_platforms.png"});
-		config.preload.textures.push({id:"assets/image/aviator_sprite_color.png"});
-		config.preload.textures.push({id:"assets/image/platforms/peg.png"});
-		config.preload.jsons.push({id:"assets/animation/animation_jumper.json"});
-		//////////////////
-		
-		// placeholder
-		config.preload.textures.push({id: 'assets/image/coin-sprite-animation-sprite-sheet.png'});
-		config.preload.jsons.push({id:"assets/animation/animation_coin.json"});
-		config.preload.jsons.push({id:"assets/animation/animation_spiky_ball.json"});
-
-		config.preload.jsons.push({id:"assets/collectable_groups/collectable_groups.json"});
 		
         return config;
 
