@@ -94,7 +94,7 @@ class Avatar extends Sprite
 	public var trajectory_movement : TrajectoryMovement;
 	public var anim : SpriteAnimation;
 	public var collision : PlayerCollisionComponent;
-	var gamecamera : GameCameraComponent;
+	public var gamecamera : GameCameraComponent;
 	var visual_flashing_comp: VisualFlashingComponent;
 	
 	public var starting_x : Float;

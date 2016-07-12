@@ -2,6 +2,7 @@ package gamestates;
 
 import data.BackgroundGroup;
 import data.GameInfo;
+import components.GameCameraComponent;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
@@ -703,6 +704,9 @@ class GameState extends State
 		
 		
 		list_of_platforms_bg.visible = true;
+		
+		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
+		
 	}
 	
 	function OnPlayerMove( e:BeatEvent )

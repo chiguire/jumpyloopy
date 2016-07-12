@@ -10,7 +10,7 @@ import luxe.options.ComponentOptions;
 class GameCameraComponent extends Component
 {
 	private var _x : Float;
-	private var _highest_y : Float;
+	public var _highest_y : Float;
 	
 	public function new(?_options:ComponentOptions) 
 	{
