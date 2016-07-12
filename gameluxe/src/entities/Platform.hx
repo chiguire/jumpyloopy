@@ -33,6 +33,7 @@ class Platform extends Sprite
 	public var touches : Float = 0.0;
 	public var initialTouches = 0.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
 	public var eternal : Bool = false;
+	public var stepped_on_by_player : Bool = false;
 	
 	var visual_flashing_comp : VisualFlashingComponent;
 	
@@ -99,29 +100,6 @@ class Platform extends Sprite
 		return 'assets/image/platforms/platform_straight02.png';
 	}
 	
-	public function touch()
-	{
-		/*
-		if (type == NONE || eternal || touches == -1)
-		{
-			return;
-		}
-		
-		touches -= 1;
-		
-		if (touches == 1)
-		{
-			visual_flashing_comp.activate();
-		}
-		
-		if (touches <= 0)
-		{
-			type = NONE;
-			visual_flashing_comp.deactivate();
-		}
-		*/
-	}
-	
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
@@ -144,6 +122,7 @@ class Platform extends Sprite
 			//trace(type);
 			//Luxe.events.fire("platform_time_out", {pos: pos});
 			type = NONE;
+			stepped_on_by_player = false;
 		}
 	}
 }

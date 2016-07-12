@@ -130,6 +130,10 @@ class GameState extends State
 	// Damage
 	var damage_feedback : DamageFeedback;
 	
+	// Path multiplier
+	var path_multiplier : Int;
+	var highest_path_multiplier : Int;
+	
 	public function new(_name:String, game_info : GameInfo) 
 	{
 		super({name: _name});
@@ -434,6 +438,7 @@ class GameState extends State
 		{
 			pl.type = NONE;
 			pl.eternal = false;
+			pl.stepped_on_by_player = false;
 		}
 		
 		for (pl in [get_platform(1, beat_n), get_platform(2, beat_n), get_platform(3, beat_n)])
@@ -441,6 +446,7 @@ class GameState extends State
 			pl.type = CENTER;
 			pl.visible = false;
 			pl.eternal = true;
+			pl.stepped_on_by_player = true;
 		}
 	}
 	
@@ -530,6 +536,7 @@ class GameState extends State
 			{
 				var platform = platform_points[i];
 				platform.type = NONE;
+				platform.stepped_on_by_player = false;
 				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
 				{
 					platform.type = CENTER;
@@ -591,6 +598,10 @@ class GameState extends State
 			platform_current_0.eternal = false;
 			platform_current_1.eternal = false;
 			platform_current_2.eternal = false;
+			
+			platform_current_0.stepped_on_by_player = false;
+			platform_current_1.stepped_on_by_player = false;
+			platform_current_2.stepped_on_by_player = false;
 			
 			//trace('Moving ($n) over ($current_0_n, $current_1_n, $current_2_n), new height is ${ platform_current_0.pos.y - num_peg_levels * level.beat_height}');
 			
@@ -707,6 +718,8 @@ class GameState extends State
 		
 		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
 		
+		path_multiplier = 0;
+		highest_path_multiplier = 1;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -737,11 +750,6 @@ class GameState extends State
 			var pl_src_type = pl_src.type;
 			
 			//var s_debug = 'jumping from platform (${player_sprite.current_lane}, $beat_n) $pl_src_type to ';
-			// Update all platforms after getting the source type.
-			for (p in platform_points)
-			{
-				p.touch();
-			}
 			
 			if (e.falling == false)
 			{
@@ -782,6 +790,27 @@ class GameState extends State
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
+				if (pl_dst != null)
+				{
+					if (pl_dst.stepped_on_by_player)
+					{
+						path_multiplier = 0;
+						
+						// Reset stepped on by player for all platforms
+						for (pl in platform_points)
+						{
+							pl.stepped_on_by_player = false;
+						}
+						pl_dst.stepped_on_by_player = true;
+					}
+					else
+					{
+						pl_dst.stepped_on_by_player = true;
+						path_multiplier++;
+						highest_path_multiplier = Std.int(Math.max(highest_path_multiplier, path_multiplier));
+					}
+					trace('path multiplier is $path_multiplier, highest path multiplier is $highest_path_multiplier');
+				}
 				//s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
 			else
