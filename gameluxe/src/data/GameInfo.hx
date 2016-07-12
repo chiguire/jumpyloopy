@@ -24,3 +24,15 @@ typedef GameInfo =
 	effects_volume : VolumeUnit,
 	?current_score : Int,
 };
+
+/// user data
+typedef UserDataHeader = 
+{
+	var version : Float;
+};
+
+typedef UserDataV1 = 
+{
+	> UserDataHeader,
+	var total_score : Int;
+};

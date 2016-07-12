@@ -10,6 +10,7 @@ import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import gamestates.StoryIntroState;
+import haxe.io.Bytes;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Parcel;
@@ -28,6 +29,8 @@ import mint.focus.Focus;
 import mint.layout.margins.Margins;
 import mint.render.luxe.LuxeMintRender;
 import phoenix.Batcher;
+import sys.FileSystem;
+import sys.io.File;
 import ui.AutoCanvas;
 
 class Main extends luxe.Game 
@@ -263,4 +266,24 @@ class Main extends luxe.Game
         trace('window resized : ${e.x} / ${e.y}');
 		//canvas.set_size(e.x, e.y);
     }
+	
+	override function onkeyup(e:KeyEvent) 
+	{
+		var user_fn = "user.bin";
+		
+		if (e.keycode == Key.key_l)
+		{
+			// test loading user data
+			if (FileSystem.exists(user_fn))
+			{
+				
+			}
+			else
+			{
+				//UserDataHeader hdr;
+				//var bytes : Bytes = 
+				//File.saveBytes(user_fn);
+			}
+		}
+	}
 }
