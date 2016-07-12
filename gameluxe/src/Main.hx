@@ -10,6 +10,8 @@ import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import gamestates.StoryIntroState;
+import haxe.Serializer;
+import haxe.Unserializer;
 import haxe.io.Bytes;
 import luxe.Camera;
 import luxe.Color;
@@ -36,6 +38,7 @@ import ui.AutoCanvas;
 class Main extends luxe.Game 
 {
 	public static var global_info : GlobalGameInfo;
+	public static var user_data : UserDataV1;
 	
 	private var game_info : GameInfo;
 	private var machine : States;
@@ -202,6 +205,10 @@ class Main extends luxe.Game
 
 	override function config(config:luxe.GameConfig) 
 	{
+		user_data = {
+			total_score : 0
+		}
+		
 		global_info = 
 		{
 			ref_window_size_x : config.user.ref_window_size[0] ? config.user.ref_window_size[0] : 1440,
@@ -276,13 +283,24 @@ class Main extends luxe.Game
 			// test loading user data
 			if (FileSystem.exists(user_fn))
 			{
+				var fin = File.read(user_fn);
+				var bytes_data = fin.readAll();
 				
+				var unserializer = new Unserializer(bytes_data.toString());
+				trace(unserializer.unserialize());
+				trace(unserializer.unserialize());
 			}
 			else
 			{
-				//UserDataHeader hdr;
-				//var bytes : Bytes = 
-				//File.saveBytes(user_fn);
+				var userdata_header : UserDataHeader = {version : 1.0 } ;
+				user_data.total_score += 1000;
+				var serializer = new Serializer();
+				serializer.serialize(userdata_header);
+				serializer.serialize(user_data);
+				
+				var bytes_data = Bytes.ofString(serializer.toString());
+				
+				File.saveBytes(user_fn, bytes_data);
 			}
 		}
 	}

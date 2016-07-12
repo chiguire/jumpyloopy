@@ -33,6 +33,5 @@ typedef UserDataHeader =
 
 typedef UserDataV1 = 
 {
-	> UserDataHeader,
 	var total_score : Int;
 };
