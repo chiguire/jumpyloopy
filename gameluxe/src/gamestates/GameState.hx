@@ -311,7 +311,14 @@ class GameState extends State
 		
 		connect_input();
 		
-		mouse_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 1, type:NONE, size:platform_size.clone()});
+		mouse_platform = new Platform({
+			scene: scene, 
+			game_info: game_info, 
+			n:num_internal_lanes * num_peg_levels + 1, 
+			type:NONE, 
+			size:platform_size.clone(),
+			color: new Color(1.0, 1.0, 1.0, 0.5)
+		});
 		
 		ui_bg = Main.create_background(scene);
 		
@@ -334,7 +341,8 @@ class GameState extends State
 		next_platforms = new Array<Platform>();
 		
 		var platform_scale = 0.7;
-		for (i in 0...5)
+		var distance_scale = 0.93;
+		for (i in 0...4)
 		{
 			next_platforms.push(new Platform({
 				scene: scene, 
@@ -342,12 +350,12 @@ class GameState extends State
 				n:num_internal_lanes * num_peg_levels + 2 + i, 
 				type: CENTER, 
 				batcher: Main.batcher_ui,
-				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * platform_scale),
+				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * distance_scale),
 				size: Platform.max_size,
 				origin: new Vector(0,0),
 				depth: 10 + i,
 			}));
-			next_platforms[next_platforms.length - 1].scale.set_xy(0.7, 0.7);
+			next_platforms[next_platforms.length - 1].scale.set_xy(platform_scale, platform_scale);
 			next_platforms[next_platforms.length - 1].eternal = true;
 			next_platforms[next_platforms.length - 1].visible = false;
 		}
