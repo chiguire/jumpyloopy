@@ -20,7 +20,11 @@ class Collectable_Spike extends Collectable
 		// A bit of a game breaker, commenting out for now [Aik]
 		//Luxe.events.fire("kill_player", {msg:"Massive SPIKES!"});
 		
-		Luxe.events.fire("add_score", {val: -50});
+		var val = -50;
+		
+		Luxe.events.fire("add_score", {val:val});
+		create_score_popping(val);
+		
 		Luxe.events.fire("player_damage", {});
 		
 		super.onCollisionEnter(player);
