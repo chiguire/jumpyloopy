@@ -605,7 +605,7 @@ class GameState extends State
 		//debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 		
 		// update UI elements
-		var travelled_distance = Std.int(player_sprite.travelled_distance * 0.01);
+		var travelled_distance = beat_n;
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
