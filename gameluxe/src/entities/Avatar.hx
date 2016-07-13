@@ -94,7 +94,7 @@ class Avatar extends Sprite
 	public var trajectory_movement : TrajectoryMovement;
 	public var anim : SpriteAnimation;
 	public var collision : PlayerCollisionComponent;
-	var gamecamera : GameCameraComponent;
+	public var gamecamera : GameCameraComponent;
 	var visual_flashing_comp: VisualFlashingComponent;
 	
 	public var starting_x : Float;
@@ -105,7 +105,6 @@ class Avatar extends Sprite
 	private var debug_animations = false;
 	
 	// some player stat during the game
-	public var travelled_distance  (default, null) = 0.0;
 	public var num_lives = 3;
 	
 	// respawn (start with true, so the gameplay logic won't effect the Avatar until OnLevelStart)
@@ -156,11 +155,6 @@ class Avatar extends Sprite
 		super.ondestroy();
 	}
 	
-	override function update(dt:Float)
-	{
-		travelled_distance = -(pos.y - starting_y);
-	}
-	
 	public function respawn_begin( p:Vector)
 	{
 		respawning = true;
@@ -191,8 +185,6 @@ class Avatar extends Sprite
 	
 	function OnLevelStart( e:LevelStartEvent )
 	{
-		travelled_distance = 0;
-		
 		// reset respawn flag, so it will trigger the gameplay
 		respawning = false;
 		

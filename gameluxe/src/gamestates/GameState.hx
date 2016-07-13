@@ -2,6 +2,7 @@ package gamestates;
 
 import data.BackgroundGroup;
 import data.GameInfo;
+import components.GameCameraComponent;
 import entities.Avatar;
 import entities.Background;
 import entities.BeatManager;
@@ -128,6 +129,10 @@ class GameState extends State
 	
 	// Damage
 	var damage_feedback : DamageFeedback;
+	
+	// Path multiplier
+	var path_multiplier : Int;
+	var highest_path_multiplier : Int;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -311,7 +316,14 @@ class GameState extends State
 		
 		connect_input();
 		
-		mouse_platform = new Platform({ scene: scene, game_info: game_info, n:num_internal_lanes * num_peg_levels + 1, type:NONE, size:platform_size.clone()});
+		mouse_platform = new Platform({
+			scene: scene, 
+			game_info: game_info, 
+			n:num_internal_lanes * num_peg_levels + 1, 
+			type:NONE, 
+			size:platform_size.clone(),
+			color: new Color(1.0, 1.0, 1.0, 0.5)
+		});
 		
 		ui_bg = Main.create_background(scene);
 		
@@ -334,7 +346,8 @@ class GameState extends State
 		next_platforms = new Array<Platform>();
 		
 		var platform_scale = 0.7;
-		for (i in 0...5)
+		var distance_scale = 0.93;
+		for (i in 0...4)
 		{
 			next_platforms.push(new Platform({
 				scene: scene, 
@@ -342,12 +355,12 @@ class GameState extends State
 				n:num_internal_lanes * num_peg_levels + 2 + i, 
 				type: CENTER, 
 				batcher: Main.batcher_ui,
-				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * platform_scale),
+				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * distance_scale),
 				size: Platform.max_size,
 				origin: new Vector(0,0),
 				depth: 10 + i,
 			}));
-			next_platforms[next_platforms.length - 1].scale.set_xy(0.7, 0.7);
+			next_platforms[next_platforms.length - 1].scale.set_xy(platform_scale, platform_scale);
 			next_platforms[next_platforms.length - 1].eternal = true;
 			next_platforms[next_platforms.length - 1].visible = false;
 		}
@@ -425,6 +438,7 @@ class GameState extends State
 		{
 			pl.type = NONE;
 			pl.eternal = false;
+			pl.stepped_on_by_player = false;
 		}
 		
 		for (pl in [get_platform(1, beat_n), get_platform(2, beat_n), get_platform(3, beat_n)])
@@ -432,6 +446,7 @@ class GameState extends State
 			pl.type = CENTER;
 			pl.visible = false;
 			pl.eternal = true;
+			pl.stepped_on_by_player = true;
 		}
 	}
 	
@@ -521,6 +536,7 @@ class GameState extends State
 			{
 				var platform = platform_points[i];
 				platform.type = NONE;
+				platform.stepped_on_by_player = false;
 				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
 				{
 					platform.type = CENTER;
@@ -583,6 +599,10 @@ class GameState extends State
 			platform_current_1.eternal = false;
 			platform_current_2.eternal = false;
 			
+			platform_current_0.stepped_on_by_player = false;
+			platform_current_1.stepped_on_by_player = false;
+			platform_current_2.stepped_on_by_player = false;
+			
 			//trace('Moving ($n) over ($current_0_n, $current_1_n, $current_2_n), new height is ${ platform_current_0.pos.y - num_peg_levels * level.beat_height}');
 			
 			platform_current_0.pos.y = platform_current_0.pos.y - num_peg_levels * level.beat_height;
@@ -596,7 +616,7 @@ class GameState extends State
 		//debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 		
 		// update UI elements
-		var travelled_distance = Std.int(player_sprite.travelled_distance * 0.01);
+		var travelled_distance = beat_n;
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
@@ -695,6 +715,11 @@ class GameState extends State
 		
 		
 		list_of_platforms_bg.visible = true;
+		
+		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
+		
+		path_multiplier = 0;
+		highest_path_multiplier = 1;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -725,11 +750,6 @@ class GameState extends State
 			var pl_src_type = pl_src.type;
 			
 			//var s_debug = 'jumping from platform (${player_sprite.current_lane}, $beat_n) $pl_src_type to ';
-			// Update all platforms after getting the source type.
-			for (p in platform_points)
-			{
-				p.touch();
-			}
 			
 			if (e.falling == false)
 			{
@@ -770,6 +790,27 @@ class GameState extends State
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
 				
+				if (pl_dst != null)
+				{
+					if (pl_dst.stepped_on_by_player)
+					{
+						path_multiplier = 0;
+						
+						// Reset stepped on by player for all platforms
+						for (pl in platform_points)
+						{
+							pl.stepped_on_by_player = false;
+						}
+						pl_dst.stepped_on_by_player = true;
+					}
+					else
+					{
+						pl_dst.stepped_on_by_player = true;
+						path_multiplier++;
+						highest_path_multiplier = Std.int(Math.max(highest_path_multiplier, path_multiplier));
+					}
+					trace('path multiplier is $path_multiplier, highest path multiplier is $highest_path_multiplier');
+				}
 				//s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
 			else
