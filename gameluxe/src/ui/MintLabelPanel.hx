@@ -43,7 +43,7 @@ class MintLabelPanel
 		});
 		
 		var renderer = cast(label.renderer, mint.render.luxe.Label);
-		var font = Luxe.resources.font("assets/image/font/later_on.fnt");
+		var font = Luxe.resources.font(Main.rise_font_id);
 		renderer.text.font = font;
 	}
 	

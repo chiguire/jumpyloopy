@@ -163,8 +163,8 @@ class MenuState extends State
 		button2.onmouseup.listen(
 			function(e,c) 
 			{
-				//change_to = "ScoreState";
-				sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
+				change_to = "ScoreState";
+				//sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
 			}
 		);
 		

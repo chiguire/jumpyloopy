@@ -45,6 +45,8 @@ class Main extends luxe.Game
 		
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
+	public static var rise_font_id = "assets/image/font/later_on.fnt";
+	
 	/// Camera
 	public static var batcher_bg : Batcher;
 	public static var camera_bg : Camera;
