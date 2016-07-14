@@ -7,6 +7,7 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Input;
 import mint.types.Types.TextAlign;
+import ui.MintLabel;
 import ui.MintLabelPanel;
 
 /**
@@ -66,8 +67,30 @@ class ScoreState extends State
 	{
 		Main.create_background(scene);
 		
+		var name = ["Score", "Distance", "Time"];
+		var val = ["200", "5432", "0:04:01"];
+		
+		for (i in 0...name.length)
+		{
+			new MintLabel({
+				parent: Main.canvas,
+				mouse_input:false, x:495, y:200 + i*72, w:450, h:72, text_size: 48,
+				align: TextAlign.left, align_vertical: TextAlign.center,
+				text: name[i],
+			});
+			
+			new MintLabel({
+				parent: Main.canvas,
+				mouse_input:false, x:495, y:200 + i*72, w:450, h:72, text_size: 48,
+				align: TextAlign.right, align_vertical: TextAlign.center,
+				text: val[i],
+			});
+		}
+				
+		
+		/*
 		var panel = new MintLabelPanel({
-			x: 720-225, y: 200, w: 450, h: 600, 
+			x: 495, y: 200, w: 450, h: 600, 
 			text: "-Your Score-\n\n
 				Score\t\t\t\t\t200\n
 				Distance\t\t\t\t\t225\n
@@ -77,5 +100,6 @@ class ScoreState extends State
 				Total PlayTime\t\t\t\t\t10:11:44\n\n\n
 				Thanks For Playing!\nPress Esc to go back to the Main Menu"
 		});
+		*/
 	}
 }

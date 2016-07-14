@@ -18,7 +18,7 @@ class MintLabel extends Label
 	{
 		super(_options);
 		
-		var renderer = cast(label.renderer, mint.render.luxe.Label);
+		var renderer = cast(renderer, mint.render.luxe.Label);
 		var font = Luxe.resources.font(Main.rise_font_id);
 		renderer.text.font = font;
 	}
