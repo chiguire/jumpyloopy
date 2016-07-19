@@ -158,6 +158,7 @@ class GameState extends State
 		Luxe.events.listen("audio_track_finished", on_audio_track_finished );
 		
 		Luxe.events.listen("player_damage", on_player_damage);
+		Luxe.events.listen("player_heal", on_player_heal);
 		Luxe.events.listen("kill_player", trigger_game_over);
 	}
 	
@@ -394,12 +395,28 @@ class GameState extends State
 	
 	function on_player_damage(e)
 	{
+		//Remove a life
+		player_sprite.num_lives -= 1;
+		if (player_sprite.num_lives <= 0)
+		{
+			// this will finish the game
+			on_audio_track_finished({});
+		}
+			
 		Luxe.camera.shake(10.0);
 		
 		damage_feedback.visual_flashing_comp.activate();
 		Luxe.timer.schedule(0.3, function(){
 			damage_feedback.visual_flashing_comp.deactivate();
 		});
+		
+		//Reset the player
+		reset_player();
+	}
+	
+	function on_player_heal(e)
+	{
+		player_sprite.num_lives += 1;
 	}
 	
 	function on_audio_track_finished(e)
@@ -508,44 +525,9 @@ class GameState extends State
 		if (player_out_of_bound() && !player_sprite.respawning)
 		{
 			trace("need player respawn here " + player_sprite.pos.y);
-			
-			player_sprite.num_lives -= 1;
-			if (player_sprite.num_lives <= 0)
-			{
-				// this will finish the game
-				on_audio_track_finished({});
-			}
-			
-			// damage feedback
+
+			// remove health, reset and damage feedback
 			Luxe.events.fire("player_damage");
-			
-			// place player
-			beat_n = beat_bottom_y + 2;
-			player_sprite.current_lane = 2;
-			var respawn_pos_x = lanes[player_sprite.current_lane];
-			var respawn_pos_y = -(beat_n) * level.beat_height;
-			player_sprite.respawn_begin(new Vector(respawn_pos_x, respawn_pos_y));
-			
-			// place absolute platform
-			absolute_floor.visible = true;
-			absolute_floor.pos.x = lanes[2];
-			absolute_floor.pos.y = respawn_pos_y;// + absolute_floor.size.y / 2.0;
-			// reset gameplay platform
-			var j = 0;
-			for (i in 0...platform_points.length)
-			{
-				var platform = platform_points[i];
-				platform.type = NONE;
-				platform.stepped_on_by_player = false;
-				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
-				{
-					platform.type = CENTER;
-				}
-				
-				platform.visible = false;
-			}
-			
-			Main.beat_manager.on_player_respawn_begin();
 		}
 		
 		// check if the plaform that player currently on still existed
@@ -1161,5 +1143,36 @@ class GameState extends State
 				}
 			}
 		}
+	}
+	
+	function reset_player()
+	{
+		// place player
+		beat_n = beat_bottom_y + 2;
+		player_sprite.current_lane = 2;
+		var respawn_pos_x = lanes[player_sprite.current_lane];
+		var respawn_pos_y = -(beat_n) * level.beat_height;
+		player_sprite.respawn_begin(new Vector(respawn_pos_x, respawn_pos_y));
+		
+		// place absolute platform
+		absolute_floor.visible = true;
+		absolute_floor.pos.x = lanes[2];
+		absolute_floor.pos.y = respawn_pos_y;// + absolute_floor.size.y / 2.0;
+		// reset gameplay platform
+		var j = 0;
+		for (i in 0...platform_points.length)
+		{
+			var platform = platform_points[i];
+			platform.type = NONE;
+			platform.stepped_on_by_player = false;
+			if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
+			{
+				platform.type = CENTER;
+			}
+			
+			platform.visible = false;
+		}
+		
+		Main.beat_manager.on_player_respawn_begin();
 	}
 }

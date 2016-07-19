@@ -32,7 +32,7 @@ class CollectableManager extends Entity
 	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
-		LoadCollectableData();
+		LoadCollectableData('assets/collectable_groups/collectable_groups.json');
 		
 		lanes = laneArray;
 		row_height = r_height;
@@ -105,9 +105,9 @@ class CollectableManager extends Entity
 		group.RemoveCollectables();
 	}
 	
-	private function LoadCollectableData()
+	private function LoadCollectableData(group_name : String)
 	{
-		var resource = Luxe.resources.json('assets/collectable_groups/collectable_groups.json');
+		var resource = Luxe.resources.json(group_name);
 		var array : Array<Dynamic> = resource.asset.json.groups;
 		
 		group_templates = new Array();
@@ -257,6 +257,8 @@ class CollectableGroup
 				newColl = new Collectable_Fragment(c_manager, name, pos, 4);
 			case "f5":
 				newColl = new Collectable_Fragment(c_manager, name, pos, 5);
+			case "h" :
+				newColl = new Collectable_Heart(c_manager, name, pos);
 			default:
 				newColl = new Collectable_Coin(c_manager, name, pos);
 		}
