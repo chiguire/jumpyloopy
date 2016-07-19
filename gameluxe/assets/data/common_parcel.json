@@ -9,7 +9,11 @@
 		{ "id" : "assets/image/coin-sprite-animation-sprite-sheet.png", "_comment" : "placeholder, need to be removed"},
 		{ "id" : "assets/image/splash/ca.png" },
 		{ "id" : "assets/image/splash/warchild.png" },
-		{ "id" : "assets/image/splash/audio.png" }
+		{ "id" : "assets/image/splash/audio.png" },
+		{ "id" : "assets/image/platforms/platform_left01_anim.png" },
+		{ "id" : "assets/image/platforms/platform_right01_anim.png" },
+		{ "id" : "assets/image/platforms/platform_straight01_anim.png" },
+		{ "id" : "assets/image/platforms/platform_straight02_anim.png" }
 	],
 	
 	"json" : 
@@ -17,7 +21,9 @@
 		{ "id" : "assets/animation/animation_jumper.json" },
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },
-		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"}
+		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"},
+		{ "id" : "assets/animation/animation_platform_5.json" },
+		{ "id" : "assets/animation/animation_platform_6.json" }
 	],
 	
 	"fonts" : 
