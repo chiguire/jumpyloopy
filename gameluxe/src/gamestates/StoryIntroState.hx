@@ -71,7 +71,8 @@ class StoryIntroState extends State
 				Luxe.timer.schedule( 3.0, function() {
 				Actuate.tween(sprite.color, 1.0, {a:0.0}).onComplete( function() {
 						Main.simple_fade_out(background, function(){
-							machine.set("GameState");
+							var game_state_on_enter_data = { is_story_mode: true };
+							machine.set("GameState", game_state_on_enter_data);
 						});
 					});
 				});

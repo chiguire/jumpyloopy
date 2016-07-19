@@ -29,14 +29,15 @@ class CollectableManager extends Entity
 	private var group_i = 0;
 	private var game_state : GameState;
 	
-	private var trace_string : String;
+	public var story_coll_index : Int = 0;
+	public var story_fragment_spawn_pct : Array<Float> = new Array();
+	public var story_fragment_array : Array<Bool> = new Array();
 	
-	//Hacky implementation of fragments.
-	public var fragment_array : Array<Int> = [0, 0, 0, 0, 0];	
+	private var trace_string : String;	
 	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
-		LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
+		//LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
 
 		lanes = laneArray;
 		row_height = r_height;
@@ -44,6 +45,21 @@ class CollectableManager extends Entity
 		game_state = gs;
 		
 		rotation_random = new Random(Math.random());
+		
+		//Set up the story mode fragments here for convenience.
+		
+		if (gs.is_story_mode)
+		{
+			var pct_step = 0.1;
+			var current_pct = 0.05;
+			for (i in 0...10)
+			{
+				story_fragment_spawn_pct.push(current_pct);
+				story_fragment_array.push(false);
+				
+				current_pct += pct_step;
+			}
+		}
 		
 		super({
 			scene : game_state.scene
@@ -53,6 +69,12 @@ class CollectableManager extends Entity
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
+		
+		if (group_templates.length < 1)
+		{
+			trace("No Collectable Templates Loaded");
+			return;
+		}
 		
 		if (GameState.player_sprite == null)
 		{
@@ -97,7 +119,28 @@ class CollectableManager extends Entity
 	
 	private function  SpawnCollectableGroup(y_index : Int)
 	{
-		var selected_data = SelectWeightedRandomData();
+		var selected_data : CollectableGroupData;
+		
+		//For story mode, we want to spawn one of 10 special groups when the player reaches set levels.
+		if (game_state.is_story_mode)
+		{
+			var level_percent = game_state.get_percent_through_level();
+			if (level_percent > story_fragment_spawn_pct[story_coll_index])
+			{
+				trace("Story Mode Reached : " + level_percent);
+				story_coll_index++;
+				selected_data = SelectNamedGroup("story_" + story_coll_index);
+			}
+			else
+			{
+				selected_data = SelectWeightedRandomData();
+			}
+		}
+		else
+		{
+			selected_data = SelectWeightedRandomData();
+		}
+		
 		var new_group = new CollectableGroup(scene, "Group_" + group_i, selected_data, y_index, this);
 		
 		group_i++;
@@ -111,7 +154,7 @@ class CollectableManager extends Entity
 		group.RemoveCollectables();
 	}
 	
-	private function LoadCollectableData(group_name : String, seed : Float)
+	public function LoadCollectableData(group_name : String, seed : Float)
 	{
 		var resource = Luxe.resources.json(group_name);
 		var array : Array<Dynamic> = resource.asset.json.groups;
@@ -145,7 +188,7 @@ class CollectableManager extends Entity
 		
 		for (i in group_templates)
 		{
-			trace(i.name + " : weighting= " + i.weighting + " selectedval= " + selected_value);
+			//trace(i.name + " : weighting= " + i.weighting + " selectedval= " + selected_value);
 			if (selected_value <= i.weighting)
 				return i;
 
@@ -155,20 +198,16 @@ class CollectableManager extends Entity
 		return null;
 	}
 	
-	public function CheckFragmentStatus()
+	private function SelectNamedGroup(name : String) : CollectableGroupData
 	{
-		for (i in fragment_array)
+		for (i in group_templates)
 		{
-			if (i < 1)
-				return;
+			//trace(i.name);
+			if (name <= i.name)
+				return i;
 		}
 		
-		for (i in fragment_array)
-		{
-			i -= 1;
-		}
-		
-		Luxe.events.fire("add_multiplier", {val:1});
+		return null;
 	}
 }
 
@@ -255,16 +294,8 @@ class CollectableGroup
 				newColl = new Collectable_Letter(c_manager, name, pos);
 			case "s":
 				newColl = new Collectable_Spike(c_manager, name, pos);
-			case "f1":
-				newColl = new Collectable_Fragment(c_manager, name, pos, 1);
-			case "f2":
-				newColl = new Collectable_Fragment(c_manager, name, pos, 2);
-			case "f3":
-				newColl = new Collectable_Fragment(c_manager, name, pos, 3);
-			case "f4":
-				newColl = new Collectable_Fragment(c_manager, name, pos, 4);
-			case "f5":
-				newColl = new Collectable_Fragment(c_manager, name, pos, 5);
+			case "f":
+				newColl = new Collectable_Fragment(c_manager, name, pos, c_manager.story_coll_index);
 			case "h" :
 				newColl = new Collectable_Heart(c_manager, name, pos);
 			default:

@@ -21,7 +21,7 @@
 		{ "id" : "assets/animation/animation_jumper.json" },
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },
-		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"},
+		{ "id" : "assets/collectable_groups/story_mode_collectables.json" },
 		{ "id" : "assets/animation/animation_platform_5.json" },
 		{ "id" : "assets/animation/animation_platform_6.json" }
 	],
