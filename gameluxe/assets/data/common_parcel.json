@@ -14,7 +14,7 @@
 		{ "id" : "assets/image/platforms/platform_left01_anim.png" },
 		{ "id" : "assets/image/platforms/platform_right01_anim.png" },
 		{ "id" : "assets/image/platforms/platform_straight01_anim.png" },
-		{ "id" : "assets/image/platforms/platform_straight02_anim.png" }
+		{ "id" : "assets/image/platforms/platform_straight02_anim.png" },
 		{ "id" : "assets/image/splash/audio.png" },
 		{ "id" : "assets/image/paper-top.png" }
 	],
