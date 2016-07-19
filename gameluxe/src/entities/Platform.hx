@@ -94,7 +94,7 @@ class Platform extends Sprite
 		return switch (t)
 		{
 			case LEFT:      'assets/image/platforms/platform_left01_anim.png';
-			case RIGHT:     'assets/image/platforms/platform_right01_anim.png';
+			case RIGHT:     'assets/image/platforms/platform_rightt01_anim.png';
 			case CENTER(n): 'assets/image/platforms/platform_straight0${n}_anim.png';
 			default:        '';
 		};
