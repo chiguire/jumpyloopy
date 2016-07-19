@@ -48,6 +48,8 @@ class SplashState extends State
 	{
 		trace("Exiting Credits");
 		
+		Actuate.reset();
+		
 		warchild.destroy();
 		ca.destroy();
 		audio.destroy();

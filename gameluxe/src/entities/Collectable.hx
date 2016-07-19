@@ -99,23 +99,4 @@ class Collectable extends Sprite
 		collisionShape.set_destroyed();
 		super.ondestroy();
 	}
-	
-	function create_score_popping( val : Int )
-	{
-		var s = val > 0 ? "+" : "-"; 
-		s += Std.string(val);
-		
-		var txt_obj = new Text({
-			font: Luxe.resources.font("assets/image/font/later_on.fnt"),
-			text: s,
-			point_size: 48,
-			pos: pos.clone(),
-			scene: c_manager.scene,
-		});
-		txt_obj.pos.x -= txt_obj.geom.text_width / 2;
-		
-		Actuate.tween(txt_obj.pos, 2, {y : pos.y - 96 }).onComplete( function(){
-			txt_obj.destroy();
-		});
-	}
 }

@@ -20,7 +20,6 @@ class Collectable_Letter extends Collectable
 		var val = 50;
 		
 		Luxe.events.fire("add_score", {val:val});
-		create_score_popping(val);
 		
 		super.onCollisionEnter(player);
 	}

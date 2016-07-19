@@ -13,8 +13,8 @@ typedef ScoreEvent = {
 
 class Score extends Entity
 {
-	var current_score : Int;
-	var current_multiplier : Int;
+	public var current_score (default,null): Int;
+	public var current_multiplier (default,null): Int;
 	
 	// event id, stored so we can unlisten
 	var event_id : Array<String>;
@@ -23,7 +23,7 @@ class Score extends Entity
 	{
 		super();
 		reset_score();
-		reset_multiplier();
+		reset_multiplier(null);
 	}
 	
 		//High Score - SM
@@ -48,7 +48,7 @@ class Score extends Entity
 	public function add_multiplier(e : ScoreEvent)
 	{
 		trace("Player Multiplier increased!");
-		current_multiplier *= 2;
+		current_multiplier += 1;
 	}
 	
 	public function get_multiplier() : Int
@@ -56,7 +56,7 @@ class Score extends Entity
 		return current_multiplier;
 	}
 	
-	public function reset_multiplier()
+	public function reset_multiplier(e : ScoreEvent)
 	{
 		current_multiplier = 1;
 	}
@@ -67,6 +67,7 @@ class Score extends Entity
 		event_id = new Array<String>();
 		event_id.push(Luxe.events.listen("add_score", add_score));
 		event_id.push(Luxe.events.listen("add_multiplier", add_multiplier));
+		event_id.push(Luxe.events.listen("reset_multiplier", reset_multiplier));
 	}
 	
 	public function unregister_listeners()
