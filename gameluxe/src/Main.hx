@@ -9,6 +9,7 @@ import gamestates.GameState;
 import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
+import gamestates.StoryEndingState;
 import gamestates.StoryIntroState;
 import gamestates.SplashState;
 import haxe.Serializer;
@@ -47,6 +48,7 @@ class Main extends luxe.Game
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
 	public static var rise_font_id = "assets/image/font/later_on.fnt";
+	public static var letter_font_id = "assets/image/font/jenna_sue.fnt";
 	
 	/// Camera
 	public static var batcher_bg : Batcher;
@@ -96,14 +98,16 @@ class Main extends luxe.Game
 	}
 	
 	// common background sprite
-	public static function create_background( scene : Scene) : Sprite
+	public static function create_background( scene : Scene, ?background_id : String) : Sprite
 	{
+		var bg_id = (background_id != null) ? background_id : "assets/image/ui/UI_menus_background.png";
+		
 		var bg = new Sprite({
 			pos: mid_screen_pos(),
 			size: new Vector(global_info.ref_window_size_x, global_info.ref_window_size_y),
 			name: 'ui_bg',
 			scene: scene,
-			texture: Luxe.resources.texture("assets/image/ui/UI_03_alpha.png"),
+			texture: Luxe.resources.texture(bg_id),
 			batcher: Main.batcher_ui,
 		});
 		return bg;
@@ -196,6 +200,7 @@ class Main extends luxe.Game
 		machine.add(new MenuState("MenuState", game_info));
 		machine.add(new LevelSelectState("LevelSelect", game_info));
 		machine.add(new StoryIntroState("StoryIntroState", game_info));
+		machine.add(new StoryEndingState("StoryEndingState", game_info));
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));

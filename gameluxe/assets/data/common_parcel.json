@@ -3,13 +3,15 @@
 	[ 
 		{ "id" : "assets/image/war-child-logo-home.png" },
 		{ "id" : "assets/image/ui/UI_03_alpha.png" },
+		{ "id" : "assets/image/ui/UI_menus_background.png" },
 		{ "id" : "assets/image/ui/list_of_platforms.png" },
 		{ "id" : "assets/image/aviator_sprite_color.png" },
 		{ "id" : "assets/image/platforms/peg.png" },
 		{ "id" : "assets/image/coin-sprite-animation-sprite-sheet.png", "_comment" : "placeholder, need to be removed"},
 		{ "id" : "assets/image/splash/ca.png" },
 		{ "id" : "assets/image/splash/warchild.png" },
-		{ "id" : "assets/image/splash/audio.png" }
+		{ "id" : "assets/image/splash/audio.png" },
+		{ "id" : "assets/image/paper-top.png" }
 	],
 	
 	"json" : 
@@ -22,6 +24,7 @@
 	
 	"fonts" : 
 	[
-		{ "id" : "assets/image/font/later_on.fnt" }
+		{ "id" : "assets/image/font/later_on.fnt" },
+		{ "id" : "assets/image/font/jenna_sue.fnt" }
 	]
 }

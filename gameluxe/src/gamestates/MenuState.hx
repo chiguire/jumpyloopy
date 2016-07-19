@@ -163,6 +163,7 @@ class MenuState extends State
 			function(e,c) 
 			{
 				change_to = "ScoreState";
+				change_to = "StoryEndingState";
 				//sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
 			}
 		);
