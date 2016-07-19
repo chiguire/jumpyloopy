@@ -12,6 +12,12 @@
         "loop": "false",
         "speed": "20"
 	},
+	"prejump" : {
+		"frame_size":{ "x":"140", "y":"140" },
+        "frameset": ["5-6"],
+        "loop": "false",
+        "speed": "20"
+	},
 	"jump" : {
         "frame_size":{ "x":"140", "y":"140" },
         "frameset": ["5-10"],

@@ -9,6 +9,7 @@ import luxe.Vector;
 import luxe.components.sprite.SpriteAnimation;
 import luxe.options.SpriteOptions;
 import luxe.tween.Actuate;
+import luxe.utils.Random;
 
 /**
  * ...
@@ -27,6 +28,9 @@ class Collectable extends Sprite
 	public function new(parent_manager : CollectableManager, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector) 
 	{
 		c_manager = parent_manager;
+		
+		var rot = parent_manager.rotation_random.float(-25, 25);
+		
 		//Sort out the sprite.
 		var options : SpriteOptions =
 		{
@@ -34,6 +38,7 @@ class Collectable extends Sprite
 			texture: Luxe.resources.texture(texture_name),
 			pos: position,
 			size: size,
+			rotation_z: rot,
 			scene: c_manager.scene
 		};
 		
