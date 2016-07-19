@@ -628,7 +628,7 @@ class GameState extends State
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
-		ui_score.set_text('score\n${score}');
+		ui_score.set_text('Score\n${score}');
 		
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
 	}
