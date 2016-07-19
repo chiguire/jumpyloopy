@@ -528,37 +528,6 @@ class GameState extends State
 
 			// remove health, reset and damage feedback
 			Luxe.events.fire("player_damage");
-<<<<<<< .merge_file_a13100
-=======
-			
-			// place player
-			beat_n = beat_bottom_y + 2;
-			player_sprite.current_lane = 2;
-			var respawn_pos_x = lanes[player_sprite.current_lane];
-			var respawn_pos_y = -(beat_n) * level.beat_height;
-			player_sprite.respawn_begin(new Vector(respawn_pos_x, respawn_pos_y));
-			
-			// place absolute platform
-			absolute_floor.visible = true;
-			absolute_floor.pos.x = lanes[2];
-			absolute_floor.pos.y = respawn_pos_y;// + absolute_floor.size.y / 2.0;
-			// reset gameplay platform
-			var j = 0;
-			for (i in 0...platform_points.length)
-			{
-				var platform = platform_points[i];
-				platform.type = NONE;
-				platform.stepped_on_by_player = false;
-				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
-				{
-					platform.type = CENTER(Platform.get_random_center_type());
-				}
-				
-				platform.visible = false;
-			}
-			
-			Main.beat_manager.on_player_respawn_begin();
->>>>>>> .merge_file_a09868
 		}
 		
 		// check if the plaform that player currently on still existed
@@ -1198,7 +1167,7 @@ class GameState extends State
 			platform.stepped_on_by_player = false;
 			if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
 			{
-				platform.type = CENTER;
+				platform.type = PlatformType.CENTER(1);
 			}
 			
 			platform.visible = false;
