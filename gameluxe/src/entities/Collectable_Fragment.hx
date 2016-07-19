@@ -23,7 +23,7 @@ class Collectable_Fragment extends Collectable
 		//Do fun stuff.
 		//Add to our parent's fragment array.
 		c_manager.story_fragment_array[fragment_index - 1] = true;
-		
+		trace("Fragment Collected : " + fragment_index);
 		super.onCollisionEnter(player);
 	}
 	

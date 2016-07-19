@@ -501,14 +501,14 @@ class GameState extends State
 		// reset gameplay platform
 		for (pl in platform_points)
 		{
-			pl.type = NONE;
+			pl.set_type(NONE, true);
 			pl.eternal = false;
 			pl.stepped_on_by_player = false;
 		}
 		
 		for (pl in [get_platform(1, beat_n), get_platform(2, beat_n), get_platform(3, beat_n)])
 		{
-			pl.type = CENTER(Platform.get_random_center_type());
+			pl.set_type(CENTER(Platform.get_random_center_type()), true);
 			pl.visible = false;
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
@@ -556,17 +556,17 @@ class GameState extends State
 			if (Luxe.input.keypressed(Key.key_1))
 			{
 				current_platform_type = LEFT;
-				mouse_platform.type = current_platform_type;
+				mouse_platform.set_type(current_platform_type, true);
 			}
 			else if (Luxe.input.keypressed(Key.key_2))
 			{
 				current_platform_type = CENTER(Platform.get_random_center_type());
-				mouse_platform.type = current_platform_type;
+				mouse_platform.set_type(current_platform_type, true);
 			}
 			else if (Luxe.input.keypressed(Key.key_3))
 			{
 				current_platform_type = RIGHT;
-				mouse_platform.type = current_platform_type;
+				mouse_platform.set_type(current_platform_type, true);
 			}
 		}
 		
@@ -621,9 +621,9 @@ class GameState extends State
 			var platform_current_1 = platform_points[current_1_n];
 			var platform_current_2 = platform_points[current_2_n];
 			
-			platform_current_0.type = NONE;
-			platform_current_1.type = NONE;
-			platform_current_2.type = NONE;
+			platform_current_0.set_type(NONE, true);
+			platform_current_1.set_type(NONE, true);
+			platform_current_2.set_type(NONE, true);
 			
 			platform_current_0.eternal = false;
 			platform_current_1.eternal = false;
@@ -692,7 +692,7 @@ class GameState extends State
 
 			if (first_line)
 			{
-				platform.type = CENTER(Platform.get_random_center_type());
+				platform.set_type(CENTER(Platform.get_random_center_type()), true);
 				platform.visible = false;
 				platform.eternal = true;
 			}
@@ -728,12 +728,12 @@ class GameState extends State
 		{
 			var next_pl = get_next_platform_type();
 			next_platform_types.push(next_pl);
-			next_platforms[i].type = next_pl;
+			next_platforms[i].set_type(next_pl, true);
 			next_platforms[i].eternal = true;
 			//next_platforms[i].visible = true;
 		}
 		
-		mouse_platform.type = current_platform_type;
+		mouse_platform.set_type(current_platform_type, true);
 		//[Aik] test platform
 		mouse_platform.eternal = true;
 		
@@ -907,18 +907,18 @@ class GameState extends State
 			return;
 		}
 		
-		pl.type = current_platform_type;
+		pl.set_type(current_platform_type, false);
 		
 		current_platform_type = next_platform_types.pop();
 		next_platform_types.unshift(get_next_platform_type());
 		
-		mouse_platform.type = current_platform_type;
+		mouse_platform.set_type(current_platform_type, true);
 		
 		var color = new Color(1, 1, 1, 1);
 		next_platforms[next_platforms.length - 1].color = color;
 		Actuate.tween(color, 0.1, { a: 0 }, true).onComplete(function ()
 		{
-			next_platforms[next_platforms.length - 1].type = next_platform_types[next_platform_types.length - 1];
+			next_platforms[next_platforms.length - 1].set_type(next_platform_types[next_platform_types.length - 1], true);
 			color.a = 1;
 			
 		});
@@ -931,7 +931,7 @@ class GameState extends State
 			Actuate.tween(next_platforms[i].pos, 0.1, { y: final_pos_y }, true).onComplete(function ()
 			{
 				next_platforms[i].pos.y = starting_pos_y;
-				next_platforms[i].type = next_platform_types[i];
+				next_platforms[i].set_type(next_platform_types[i], true);
 			});
 		}
 	}
@@ -942,8 +942,8 @@ class GameState extends State
 		current_platform_type = next_platform_types[last_next_platform_index];
 		next_platform_types[last_next_platform_index] = t;
 		
-		mouse_platform.type = current_platform_type;
-		next_platforms[last_next_platform_index].type = next_platform_types[last_next_platform_index];
+		mouse_platform.set_type(current_platform_type, true);
+		next_platforms[last_next_platform_index].set_type(next_platform_types[last_next_platform_index], true);
 	}
 	
 	var random_next_platforms : Array<PlatformType>;
@@ -1206,11 +1206,11 @@ class GameState extends State
 		for (i in 0...platform_points.length)
 		{
 			var platform = platform_points[i];
-			platform.type = NONE;
+			platform.set_type(NONE, true);
 			platform.stepped_on_by_player = false;
 			if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
 			{
-				platform.type = PlatformType.CENTER(1);
+				platform.set_type(PlatformType.CENTER(Platform.get_random_center_type()), true);
 			}
 			
 			platform.visible = false;
