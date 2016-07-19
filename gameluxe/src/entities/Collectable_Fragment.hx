@@ -22,11 +22,8 @@ class Collectable_Fragment extends Collectable
 	{
 		//Do fun stuff.
 		//Add to our parent's fragment array.
-		c_manager.fragment_array[fragment_index - 1] += 1;
-		
-		//If we've filled out an array doing this then we can add multipliers! Yay!
-		c_manager.CheckFragmentStatus();
-		
+		c_manager.story_fragment_array[fragment_index - 1] = true;
+		trace("Fragment Collected : " + fragment_index);
 		super.onCollisionEnter(player);
 	}
 	
@@ -39,7 +36,7 @@ class Collectable_Fragment extends Collectable
 			case 3: return "assets/image/collectables/letter_chunk_03.png";
 			case 4: return "assets/image/collectables/letter_chunk_04.png";
 			case 5: return "assets/image/collectables/letter_chunk_05.png";
-			default: return "";
+			default: return "assets/image/collectables/letter_chunk_01.png";
 		}
 	}
 }

@@ -81,6 +81,8 @@ class LevelSelectState extends State
 		Main.load_parcel(parcel, "assets/data/level_select_parcel.json", on_loaded);
 		scene = new Scene();
 		
+		Main.create_background(scene);
+		
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
@@ -127,8 +129,6 @@ class LevelSelectState extends State
 	{
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
-		
-		Main.create_background(scene);
 		
 		MenuState.create_image(layout_data.background);
 		/*
@@ -202,7 +202,20 @@ class LevelSelectState extends State
 				desc_label.text = layout_data.desc_table[layout_data.level_x.desc_id];
 			});
 		
-		
+		var button_back = MenuState.create_button( layout_data.back );
+		button_back.onmouseup.listen(
+			function(e,c) 
+			{
+				next_state = "MenuState";
+				change_state_signal = true;
+			});
+		button_back.onmouseenter.listen(
+			function(e, c)
+			{
+				// update track description
+				desc_label.text = layout_data.desc_table[layout_data.back.desc_id];
+			});
+			
 		// description panel
 		var panel = new mint.Panel({
 			parent: Main.canvas,

@@ -7,6 +7,7 @@ import luxe.Scene;
 import luxe.options.SpriteOptions;
 import luxe.Sprite;
 import luxe.Vector;
+import luxe.components.sprite.SpriteAnimation;
 
 /**
  * ...
@@ -28,8 +29,10 @@ typedef PlatformTimeoutEvent =
 class Platform extends Sprite
 {
 	static public var max_size (default, null) : Vector = new Vector(164, 123);
+
+	public var anim : SpriteAnimation;
 	
-	public var type (default, set) : PlatformType;
+	public var type (default,null): PlatformType;
 	public var touches : Float = 0.0;
 	public var initialTouches = 0.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
 	public var eternal : Bool = false;
@@ -40,19 +43,7 @@ class Platform extends Sprite
 	public function new(options : PlatformOptions) 
 	{
 		options.name = 'Platform'+options.n;
-		/*
-		var options : SpriteOptions =
-		{
-			name: 'Platform${n}',
-			//texture: Luxe.resources.texture('assets/image/spritesheet_jumper.png'),
-			//uv: game_info.spritesheet_elements['ground_grass_small.png'],
-			pos: Luxe.screen.mid,
-			//size: new Vector(game_info.spritesheet_elements['ground_grass_small.png'].w, game_info.spritesheet_elements['ground_grass_small.png'].h),
-			
-			scene: scene,
-		};
-		*/
-		//trace(options.name);
+		
 		super(options);
 		
 		initialTouches = Main.global_info.platform_lifetime;
@@ -60,21 +51,12 @@ class Platform extends Sprite
 		visual_flashing_comp = new VisualFlashingComponent();
 		add(visual_flashing_comp);
 		
-		this.type = options.type;
+		set_type(options.type, true);
 		//scale.set_xy(0.5, 0.5);
 	}
 	
-	public function set_type(t:PlatformType)
+	public function set_type(t:PlatformType, skip_animation_to_end:Bool)
 	{
-		/*
-		rotation_z = switch (t)
-		{
-			case NONE: 0;
-			case LEFT: -45;
-			case RIGHT: 45;
-			case CENTER: 0;
-		};
-		*/
 		visual_flashing_comp.deactivate();
 		visible = (t != NONE);
 		touches = initialTouches;
@@ -83,19 +65,50 @@ class Platform extends Sprite
 		if (tex != null)
 		{
 			texture = tex;
-			size.y = texture.height;
+			size.set_xy(max_size.x, max_size.y);
+		}
+		
+		if (anim != null)
+		{
+			remove("PlatformAnimation" + name);
+		}
+		
+		var animation_name = select_platform_animation(t);
+		if (animation_name != "")
+		{
+			//Animations
+			anim = new SpriteAnimation({name: "PlatformAnimation"+name });
+			add(anim);
+			
+			var anim_object = Luxe.resources.json(animation_name);
+			anim.add_from_json_object(anim_object.asset.json);
+			
+			anim.animation = if (skip_animation_to_end) "skip" else "play";
+			anim.play();
 		}
 		return type = t;
 	}
 	
-	private function select_platform_texture(t : PlatformType) : String
+	private static function select_platform_texture(t : PlatformType) : String
 	{
 		return switch (t)
 		{
-			case LEFT: 'assets/image/platforms/platform_left01.png';
-			case RIGHT: 'assets/image/platforms/platform_right01.png';
-			case CENTER(n): 'assets/image/platforms/platform_straight0$n.png';
-			default: '';
+			case LEFT:      'assets/image/platforms/platform_left01_anim.png';
+			case RIGHT:     'assets/image/platforms/platform_rightt01_anim.png';
+			case CENTER(n): 'assets/image/platforms/platform_straight0${n}_anim.png';
+			default:        '';
+		};
+	}
+	
+	private static function select_platform_animation(t : PlatformType) : String
+	{
+		return switch (t)
+		{
+			case LEFT:      'assets/animation/animation_platform_6.json';
+			case RIGHT:     'assets/animation/animation_platform_6.json';
+			case CENTER(1): 'assets/animation/animation_platform_6.json';
+			case CENTER(2): 'assets/animation/animation_platform_5.json';
+			default:        '';
 		};
 	}
 	
