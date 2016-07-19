@@ -15,10 +15,7 @@
 		{ "id" : "assets/image/splash/ca.png" },
 		{ "id" : "assets/image/splash/warchild.png" },
 		{ "id" : "assets/image/splash/audio.png" },
-		{ "id" : "assets/image/platforms/platform_left01_anim.png" },
-		{ "id" : "assets/image/platforms/platform_right01_anim.png" },
-		{ "id" : "assets/image/platforms/platform_straight01_anim.png" },
-		{ "id" : "assets/image/platforms/platform_straight02_anim.png" },
+		{ "id" : "assets/image/platforms/platform_anim.png" },
 		{ "id" : "assets/image/splash/audio.png" },
 		{ "id" : "assets/image/bg/cave_01_paper.png" },
 		{ "id" : "assets/image/paper-top.png" }
@@ -31,8 +28,7 @@
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },
 		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"},
 		{ "id" : "assets/collectable_groups/story_mode_collectables.json" },
-		{ "id" : "assets/animation/animation_platform_5.json" },
-		{ "id" : "assets/animation/animation_platform_6.json" }
+		{ "id" : "assets/animation/animation_platform.json" }
 	],
 	
 	"fonts" : 

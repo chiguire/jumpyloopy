@@ -475,6 +475,7 @@ class GameState extends State
 		
 		if (pl != null)
 		{
+			trace('Touching platform at (${player_sprite.current_lane}, $beat_n)');
 			pl.touch();
 		}
 	}

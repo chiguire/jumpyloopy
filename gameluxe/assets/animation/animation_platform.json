@@ -1,0 +1,55 @@
+{
+    "platform_left01_play" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["1-6"],
+        "loop": "false",
+        "speed": "20"
+    },
+	"platform_left01_skip" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["6"],
+        "loop": "false",
+        "speed": "20"
+    },
+	
+	"platform_right01_play" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["7-12"],
+        "loop": "false",
+        "speed": "20"
+    },
+	"platform_right01_skip" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["12"],
+        "loop": "false",
+        "speed": "20"
+    },
+	
+	"platform_straight01_play" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["13-18"],
+        "loop": "false",
+        "speed": "20"
+    },
+	"platform_straight01_skip" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["18"],
+        "loop": "false",
+        "speed": "20"
+    },
+	
+	"platform_straight02_play" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["19-23"],
+        "loop": "false",
+        "speed": "20"
+    },
+	"platform_straight02_skip" : {
+        "frame_size":{ "x":"164", "y":"123" },
+        "frameset": ["23"],
+        "loop": "false",
+        "speed": "20"
+    }
+	
+	
+}
