@@ -81,6 +81,8 @@ class LevelSelectState extends State
 		Main.load_parcel(parcel, "assets/data/level_select_parcel.json", on_loaded);
 		scene = new Scene();
 		
+		Main.create_background(scene);
+		
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
@@ -127,8 +129,6 @@ class LevelSelectState extends State
 	{
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
-		
-		Main.create_background(scene);
 		
 		MenuState.create_image(layout_data.background);
 		/*
