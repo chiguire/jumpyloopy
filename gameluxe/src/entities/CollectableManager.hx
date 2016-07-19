@@ -6,6 +6,7 @@ import luxe.Entity;
 import luxe.Scene;
 import luxe.Vector;
 import luxe.debug.TraceDebugView;
+import luxe.utils.Random;
 
 /**
  * ...
@@ -22,6 +23,9 @@ class CollectableManager extends Entity
 	public var group_templates : Array<CollectableGroupData> = new Array();
 	public var existing_groups : Array<CollectableGroup> = new Array();
 	
+	public var collectable_spawn_random : Random;
+	public var rotation_random : Random;
+	
 	private var group_i = 0;
 	private var game_state : GameState;
 	
@@ -32,12 +36,14 @@ class CollectableManager extends Entity
 	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
 	{	
-		LoadCollectableData('assets/collectable_groups/collectable_groups.json');
-		
+		LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
+
 		lanes = laneArray;
 		row_height = r_height;
 		group_i = 0;
 		game_state = gs;
+		
+		rotation_random = new Random(Math.random());
 		
 		super({
 			scene : game_state.scene
@@ -105,10 +111,12 @@ class CollectableManager extends Entity
 		group.RemoveCollectables();
 	}
 	
-	private function LoadCollectableData(group_name : String)
+	private function LoadCollectableData(group_name : String, seed : Float)
 	{
 		var resource = Luxe.resources.json(group_name);
 		var array : Array<Dynamic> = resource.asset.json.groups;
+		
+		collectable_spawn_random = new Random(seed);
 		
 		group_templates = new Array();
 		
@@ -133,7 +141,7 @@ class CollectableManager extends Entity
 			total_weighting += i.weighting;
 		}
 		
-		selected_value = Math.ceil(total_weighting * Math.random());
+		selected_value = collectable_spawn_random.int(total_weighting);
 		
 		for (i in group_templates)
 		{
