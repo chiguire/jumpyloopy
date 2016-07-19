@@ -140,6 +140,7 @@ class Avatar extends Sprite
 		event_id = new Array<String>();
 		event_id.push(Luxe.events.listen("Level.Start", OnLevelStart ));
 		event_id.push(Luxe.events.listen("player_move_event", OnPlayerMove ));
+		event_id.push(Luxe.events.listen("bm_prebeat_event", OnPlayerPreJump));
 		
 		//trace(event_id);
 	}
@@ -201,6 +202,12 @@ class Avatar extends Sprite
 		
 		//Register player collision.
 		collision.SetupPlayerCollision(this);
+	}
+	
+	function OnPlayerPreJump(e)
+	{
+		anim.animation = 'prejump';
+		anim.play();
 	}
 	
 	function OnPlayerMove( e:BeatEvent )

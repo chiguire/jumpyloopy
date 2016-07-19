@@ -42,6 +42,13 @@ typedef BeatManagerDataReadState =
 	var data_offset : Int;
 	var num_loops : Int;
 };
+
+enum BMUpdateState
+{
+	Idle;
+	PreBeat;
+	InBeat;
+}
  
 class BeatManager extends Entity
 {
@@ -138,7 +145,8 @@ class BeatManager extends Entity
 	{
 		pitch_shake = 1.0;
 		cooldown_counter = 0;
-		curr_beat_pos = 0;
+		curr_beat_idx = -1;
+		curr_update_state = BMUpdateState.Idle;
 		
 		attach_visual();
 		
@@ -154,7 +162,8 @@ class BeatManager extends Entity
 	public function leave_game_state()
 	{
 		cooldown_counter = 0;
-		curr_beat_pos = 0;
+		curr_beat_idx = -1;
+		curr_update_state = BMUpdateState.Idle;
 		
 		Luxe.audio.stop(music_handle);
 		
@@ -176,7 +185,11 @@ class BeatManager extends Entity
 	var request_next_beat = false;
 	var cooldown_counter = 0.0;
 	var next_beat_time = 0.0;
-	var curr_beat_pos = 0;
+	var curr_beat_idx = -1;
+	
+	var curr_update_state = BMUpdateState.Idle;
+	
+	var prebeat_counter = 0.0;
 	
 	override function update(dt:Float)
 	{		
@@ -198,46 +211,82 @@ class BeatManager extends Entity
 				Luxe.audio.volume(music_handle, vol);
 			}
 			
-			if (cooldown_counter <= 0.0)
+			switch(curr_update_state)
 			{
-				request_next_beat = true;
-				cooldown_counter = 0;
-			}
-			else
-			{
-				cooldown_counter -= dt;
-			}
-			
-			// search for the closest beat
-			if (request_next_beat)
-			{
-				for ( i in 0...beat_pos.length )
-				{
-					var beat_time = beat_pos[i] * 1024.0 / 44100.0;
-					var in_beat = audio_time - beat_time < jump_interval/2 && audio_time - beat_time > 0.0;
-					//trace(audio_time - beat_time);
-					
-					if (in_beat && beat_pos[i]!=curr_beat_pos)
+				case BMUpdateState.Idle :
 					{
-						request_next_beat = false;
-						curr_beat_pos = beat_pos[i];
-						//trace("beat " + beat_pos[i]);
-						
-						var next_beat_pos = (i+1) % beat_pos.length;
-						next_beat_time = beat_pos[next_beat_pos] * 1024.0 / 44100.0;
-						
-						if (next_beat_time - audio_time > 0)
+						if (cooldown_counter <= 0.0)
 						{
-							cooldown_counter = jump_interval;
-							beat_manager_game_hud.on_move_event(jump_interval);
-							Luxe.events.fire("player_move_event", { interval: jump_interval, falling: false }, false );
+							request_next_beat = true;
+							cooldown_counter = 0;
+						}
+						else
+						{
+							cooldown_counter -= dt;
 						}
 						
-						break;
+						if (search_next_beat(audio_time) == true)
+						{
+							curr_update_state = BMUpdateState.PreBeat;
+							prebeat_counter = jump_interval * 0.25;
+							Luxe.events.fire("bm_prebeat_event", {}, false );
+						}
 					}
-				}	
+					
+				case BMUpdateState.PreBeat :
+					{
+						if (prebeat_counter <= 0.0)
+						{
+							curr_update_state = BMUpdateState.InBeat;
+							prebeat_counter = 0;
+						}
+						else
+						{
+							prebeat_counter -= dt;
+						}
+						
+					}
+				case BMUpdateState.InBeat :
+					{
+						cooldown_counter = jump_interval;
+						beat_manager_game_hud.on_move_event(jump_interval);
+						Luxe.events.fire("player_move_event", { interval: jump_interval, falling: false }, false );
+						
+						curr_update_state = BMUpdateState.Idle;
+					}
 			}
 		}
+	}
+	
+	public function search_next_beat( audio_time : Float ) : Bool
+	{
+		// search for the closest beat
+		if (request_next_beat)
+		{
+			// handle looping condition
+			if (curr_beat_idx+1 >= beat_pos.length)
+			{
+				curr_beat_idx = -1;
+			}
+			
+			var beg_idx = Std.int(Math.max(curr_beat_idx, 0));
+			trace(beg_idx);
+			for ( i in beg_idx...beat_pos.length )
+			{
+				var beat_time = beat_pos[i] * 1024.0 / 44100.0;
+				var activate_prebeat = Math.abs(audio_time - beat_time) < jump_interval * 0.5;
+				
+				if (activate_prebeat && i!=curr_beat_idx)
+				{
+					request_next_beat = false;
+					curr_beat_idx = i;
+					
+					return true;
+				}
+			}	
+		}
+		
+		return false;
 	}
 	
 	public function on_player_damage(e)
@@ -261,12 +310,14 @@ class BeatManager extends Entity
 	{
 		request_next_beat = false;
 		cooldown_counter = 9999.0;
+		curr_update_state = BMUpdateState.Idle;
 	}
 	
 	public function on_player_respawn_end(e)
 	{
 		request_next_beat = false;
 		cooldown_counter = 3.0;
+		curr_update_state = BMUpdateState.Idle;
 	}
 	
 	public function on_game_pause(e)
@@ -274,6 +325,7 @@ class BeatManager extends Entity
 		Luxe.audio.pause(music_handle);
 		request_next_beat = false;
 		cooldown_counter = 3.0;
+		curr_update_state = BMUpdateState.Idle;
 	}
 	
 	public function on_game_unpause(e)
@@ -315,7 +367,7 @@ class BeatManager extends Entity
 	{
 		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		//var audio_name = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		// we need to reload it if it is already been loaded as a stream
 		var res = Luxe.resources.audio(audio_id);
