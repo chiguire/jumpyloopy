@@ -1,6 +1,6 @@
 {
 	"groups":[
-	{"name":"story_01",
+	{"name":"story_1",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -8,7 +8,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_02",
+	{"name":"story_2",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -16,7 +16,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_03",
+	{"name":"story_3",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -24,7 +24,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_04",
+	{"name":"story_4",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -32,7 +32,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_05",
+	{"name":"story_5",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -40,7 +40,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_06",
+	{"name":"story_6",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -48,7 +48,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_07",
+	{"name":"story_7",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -56,7 +56,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_08",
+	{"name":"story_8",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -64,7 +64,7 @@
 		"0","0","0"
 		]
 	},
-	{"name":"story_09",
+	{"name":"story_9",
 		"weighting":"0",
 		"elements":[
 		"0","0","0",
@@ -77,6 +77,14 @@
 		"elements":[
 		"0","0","0",
 		"0","f","0",
+		"0","0","0"
+		]
+	},
+	{"name":"generic",
+		"weighting":"1",
+		"elements":[
+		"0","0","0",
+		"0","0","0",
 		"0","0","0"
 		]
 	}

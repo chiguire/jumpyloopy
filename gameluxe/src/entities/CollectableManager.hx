@@ -50,8 +50,8 @@ class CollectableManager extends Entity
 		
 		if (gs.is_story_mode)
 		{
-			var pct_step = 0.1;
-			var current_pct = 0.05;
+			var pct_step = 0.075;
+			var current_pct = 0.1;
 			for (i in 0...10)
 			{
 				story_fragment_spawn_pct.push(current_pct);
@@ -141,11 +141,13 @@ class CollectableManager extends Entity
 			selected_data = SelectWeightedRandomData();
 		}
 		
-		var new_group = new CollectableGroup(scene, "Group_" + group_i, selected_data, y_index, this);
-		
-		group_i++;
-		existing_groups.push(new_group);
-		
+		if (selected_data != null)
+		{
+			var new_group = new CollectableGroup(scene, "Group_" + group_i, selected_data, y_index, this);
+			
+			group_i++;
+			existing_groups.push(new_group);
+		}
 	}
 	
 	private function DestoryCollectableGroup(group : CollectableGroup)
@@ -168,7 +170,7 @@ class CollectableManager extends Entity
 			var n = array[i];
 			var new_template = new CollectableGroupData(n.name, n.weighting, n.elements);
 			group_templates.push(new_template);
-			trace(n);
+			trace("Loaded: " + n);
 		}
 		
 		trace(group_templates.length + " group templates loaded.");
@@ -179,20 +181,23 @@ class CollectableManager extends Entity
 		var total_weighting : Int = 0;
 		var selected_value : Int;
 		
-		for (i in group_templates)
+		for (group in group_templates)
 		{
-			total_weighting += i.weighting;
+			total_weighting += group.weighting;
 		}
 		
-		selected_value = collectable_spawn_random.int(total_weighting);
-		
-		for (i in group_templates)
+		if (total_weighting > 0)
 		{
-			//trace(i.name + " : weighting= " + i.weighting + " selectedval= " + selected_value);
-			if (selected_value <= i.weighting)
-				return i;
+			selected_value = collectable_spawn_random.int(1, total_weighting);
+			
+			for (group in group_templates)
+			{
+				//trace(group.name + " : weighting= " + group.weighting + " selectedval= " + selected_value);
+				if (selected_value <= group.weighting)
+					return group;
 
-			selected_value -= i.weighting;
+				selected_value -= group.weighting;
+			}
 		}
 		
 		return null;
@@ -203,7 +208,7 @@ class CollectableManager extends Entity
 		for (i in group_templates)
 		{
 			//trace(i.name);
-			if (name <= i.name)
+			if (name == i.name)
 				return i;
 		}
 		
