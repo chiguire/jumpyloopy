@@ -7,7 +7,10 @@ import components.BeatManagerGameHUD;
 import components.BeatManagerVisualizer;
 import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
+import haxe.crypto.Crc32;
+import haxe.crypto.Md5;
 import haxe.ds.Vector;
+import haxe.io.Bytes;
 import luxe.Audio.AudioHandle;
 import luxe.Audio.AudioState;
 import luxe.Entity;
@@ -108,6 +111,9 @@ class BeatManager extends Entity
 	var game_event_id : Array<String>;
 	var audio_handler : AudioHandle -> Void;
 	
+	/// uint hash for seed
+	public var audio_seed (default, null) = 0; 
+	
 	public function new(?_options:BeatManagerOptions) 
 	{
 		super(_options);
@@ -178,7 +184,7 @@ class BeatManager extends Entity
 		if (audio_handler != null)
 		{
 			var res = Luxe.audio.off(ae_end, audio_handler);
-			trace(res);
+			//trace(res);
 		}
 	}
 	
@@ -270,7 +276,7 @@ class BeatManager extends Entity
 			}
 			
 			var beg_idx = Std.int(Math.max(curr_beat_idx, 0));
-			trace(beg_idx);
+			//trace(beg_idx);
 			for ( i in beg_idx...beat_pos.length )
 			{
 				var beat_time = beat_pos[i] * 1024.0 / 44100.0;
@@ -367,7 +373,7 @@ class BeatManager extends Entity
 	{
 		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		//audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		// we need to reload it if it is already been loaded as a stream
 		var res = Luxe.resources.audio(audio_id);
@@ -397,6 +403,12 @@ class BeatManager extends Entity
 			
 			process_audio();
 			process_audio_fft();
+			
+			// create a seed for random
+			var md5str = Md5.encode(beat_pos.toString());
+			var md5bytes = Bytes.ofString(md5str);
+			audio_seed = Crc32.make(md5bytes);
+			trace("audio_seed " + audio_seed);
 			
 			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});
