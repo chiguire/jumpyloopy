@@ -38,7 +38,8 @@ class CollisionShape extends Polygon
 			set_y(parentSprite.pos.y);
 		}
 		
-		/* Uncomment to see collision positions.
+		//Uncomment to see collision positions.
+#if debug
 		var verts = get_transformedVertices();
 		Luxe.draw.poly({
 			immediate: true,
@@ -57,7 +58,7 @@ class CollisionShape extends Polygon
 				verts[3]
 			]
 		});
-		*/
+#end
 	}
 	
 	public function onCollisionEnter(other : CollisionShape):Void 
