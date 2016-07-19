@@ -76,6 +76,9 @@ class Platform extends Sprite
 		var animation_name = select_platform_animation(t);
 		if (animation_name != "")
 		{
+			// aik to ciro -> Until you fixed the bug in platform animation
+			skip_animation_to_end = true;
+			
 			//Animations
 			anim = new SpriteAnimation({name: "PlatformAnimation"+name });
 			add(anim);
@@ -94,7 +97,7 @@ class Platform extends Sprite
 		return switch (t)
 		{
 			case LEFT:      'assets/image/platforms/platform_left01_anim.png';
-			case RIGHT:     'assets/image/platforms/platform_rightt01_anim.png';
+			case RIGHT:     'assets/image/platforms/platform_right01_anim.png';
 			case CENTER(n): 'assets/image/platforms/platform_straight0${n}_anim.png';
 			default:        '';
 		};

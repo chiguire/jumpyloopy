@@ -328,7 +328,7 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture("assets/image/aviator_sprite_color.png"),
+			texture: Luxe.resources.texture(Main.player_avatar_texture_id),
 			pos: Luxe.screen.mid,
 			size: new Vector(140, 140),
 			scene: scene,
