@@ -38,11 +38,15 @@ class Platform extends Sprite
 	public var eternal : Bool = false;
 	public var stepped_on_by_player : Bool = false;
 	
+	//private var last_anim : String 
+	
 	var visual_flashing_comp : VisualFlashingComponent;
 	
 	public function new(options : PlatformOptions) 
 	{
 		options.name = 'Platform'+options.n;
+		options.texture = Luxe.resources.texture('assets/image/platforms/platform_anim.png');
+		options.size = max_size;
 		
 		super(options);
 		
@@ -50,6 +54,11 @@ class Platform extends Sprite
 		
 		visual_flashing_comp = new VisualFlashingComponent();
 		add(visual_flashing_comp);
+		
+		anim = new SpriteAnimation({name: "PlatformAnimation" + name });
+		add(anim);
+		var anim_object = Luxe.resources.json('assets/animation/animation_platform.json');
+		anim.add_from_json_object(anim_object.asset.json);
 		
 		set_type(options.type, true);
 		//scale.set_xy(0.5, 0.5);
@@ -61,29 +70,10 @@ class Platform extends Sprite
 		visible = (t != NONE);
 		touches = initialTouches;
 		
-		var tex = Luxe.resources.texture(select_platform_texture(t));
-		if (tex != null)
-		{
-			texture = tex;
-			size.set_xy(max_size.x, max_size.y);
-		}
-		
-		if (anim != null)
-		{
-			remove("PlatformAnimation" + name);
-		}
-		
 		var animation_name = select_platform_animation(t);
 		if (animation_name != "")
 		{
-			//Animations
-			anim = new SpriteAnimation({name: "PlatformAnimation"+name });
-			add(anim);
-			
-			var anim_object = Luxe.resources.json(animation_name);
-			anim.add_from_json_object(anim_object.asset.json);
-			
-			anim.animation = if (skip_animation_to_end) "skip" else "play";
+			anim.animation = animation_name + if (skip_animation_to_end) "skip" else "play";
 			anim.play();
 		}
 		return type = t;
@@ -91,32 +81,21 @@ class Platform extends Sprite
 	
 	public function touch()
 	{
-		if (anim.name == "play")
+		if (anim.name.substring(anim.name.length - 4) == "play")
 		{
-			anim.animation = "skip";
+			anim.animation = anim.name.substring(0, anim.name.length - 4) + "skip";
 			anim.play();
 		}
-	}
-	
-	private static function select_platform_texture(t : PlatformType) : String
-	{
-		return switch (t)
-		{
-			case LEFT:      'assets/image/platforms/platform_left01_anim.png';
-			case RIGHT:     'assets/image/platforms/platform_right01_anim.png';
-			case CENTER(n): 'assets/image/platforms/platform_straight0${n}_anim.png';
-			default:        '';
-		};
 	}
 	
 	private static function select_platform_animation(t : PlatformType) : String
 	{
 		return switch (t)
 		{
-			case LEFT:      'assets/animation/animation_platform_6.json';
-			case RIGHT:     'assets/animation/animation_platform_6.json';
-			case CENTER(1): 'assets/animation/animation_platform_6.json';
-			case CENTER(2): 'assets/animation/animation_platform_5.json';
+			case LEFT:      'platform_left01_';
+			case RIGHT:     'platform_right01_';
+			case CENTER(1): 'platform_straight01_';
+			case CENTER(2): 'platform_straight02_';
 			default:        '';
 		};
 	}
