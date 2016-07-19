@@ -60,6 +60,7 @@ class CollectableManager extends Entity
 				current_pct += pct_step;
 			}
 		}
+		trace(story_fragment_array.length);
 		
 		super({
 			scene : game_state.scene

@@ -161,12 +161,13 @@ class Level extends Entity
 		report_text.set_visible(true);
 		report_text.set_alpha(1.0);
 		
-		Actuate.update(report_text.set_alpha, 3.0, [1.0], [0.0]).delay(3.0);
+		Actuate.update(report_text.set_alpha, 3.0, [1.0], [0.0]).delay(2.0);
 	}
 	
 	public function on_activate_report_text(e)
 	{
 		var str = e.s;
-		activate_report(str);
+		trace(str);
+		//activate_report(str);
 	}
 }
