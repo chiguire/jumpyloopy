@@ -1,6 +1,7 @@
 package components;
 import analysis.DFT;
 import entities.CollisionShape;
+import haxe.ds.Vector;
 import luxe.Component;
 import luxe.Sprite;
 import luxe.collision.Collision;
@@ -20,7 +21,8 @@ class PlayerCollisionComponent extends Component
 	public function SetupPlayerCollision(playerSprite : Sprite) 
 	{
 		trace("Setting up player collision.");
-		player_collision = new CollisionShape(playerSprite, true);
+		//Also inset the player collision.
+		player_collision = new CollisionShape(playerSprite, true, 0, -50, 0.75, 0.75);
 		initialised = true;
 	}
 	
