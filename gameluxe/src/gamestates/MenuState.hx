@@ -81,6 +81,8 @@ class MenuState extends State
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 		
+		// Background Layer
+		Main.create_background(scene);
 		//FFT.test_fft();
 	}
 	
@@ -125,9 +127,6 @@ class MenuState extends State
 		var json_resource = Luxe.resources.json("assets/data/frontend.json");
 		var layout_data = json_resource.asset.json;
 		//trace(layout_data);
-		
-		// Background Layer
-		Main.create_background(scene);
 		
 		var background1 = new Sprite({
 			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),

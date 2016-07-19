@@ -10,6 +10,7 @@ import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
 import gamestates.StoryIntroState;
+import gamestates.SplashState;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
@@ -198,10 +199,15 @@ class Main extends luxe.Game
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
+		machine.add(new SplashState("SplashState", game_info));
 		
 		var parcel = new Parcel();
 		Main.load_parcel(parcel, "assets/data/common_parcel.json", function(p:Parcel){
+#if debug
 			machine.set("MenuState");
+#else
+			machine.set("SplashState");
+#end
 		});
 	}
 
