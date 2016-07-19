@@ -260,7 +260,7 @@ class CollectableGroup
 				//HACK - iterate lanes by one as 0 is the gutter.
 				var pos : Vector = new Vector(
 					c_manager.lanes[x+1], 
-					GetYPos() + ( -y * c_manager.row_height) + (c_manager.row_height / 2) //Adding half a row height offset.
+					GetYPos() + ( (-y * c_manager.row_height) + (c_manager.row_height / 2) + y //Adding half a row height offset. Adding y to make it spaced by one.
 				);
 				
 				//0 = An empty space!
