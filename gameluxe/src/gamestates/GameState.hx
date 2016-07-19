@@ -357,7 +357,7 @@ class GameState extends State
 			color: new Color(1.0, 1.0, 1.0, 0.5)
 		});
 		
-		ui_bg = Main.create_background(scene);
+		ui_bg = Main.create_background(scene, "assets/image/ui/UI_03_alpha.png" );
 		
 		ui_distance_panel = new MintLabelPanel({
 			x: 305, y: 55, w: 125, h: 65, 
