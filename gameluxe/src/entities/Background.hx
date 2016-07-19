@@ -235,4 +235,9 @@ class Background extends Visual
 			prev_camera_pos_y = Luxe.camera.pos.y;
 		}
 	}
+
+	public function get_percent_through_background() : Float
+	{
+		return curr_state / tile_map.length;
+	}
 }

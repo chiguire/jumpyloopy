@@ -1,5 +1,6 @@
 package gamestates;
 
+import cpp.Function;
 import data.BackgroundGroup;
 import data.GameInfo;
 import components.GameCameraComponent;
@@ -44,7 +45,8 @@ typedef GameOverReasonEvent = {
 }
 
 typedef GameStateOnEnterData = {
-	@:optional var play_audio_loop : Bool; 
+	@:optional var play_audio_loop : Bool;
+	@:optional var is_story_mode : Bool;
 }
 
 /**
@@ -133,6 +135,9 @@ class GameState extends State
 	// Path multiplier
 	var path_multiplier : Int;
 	var highest_path_multiplier : Int;
+	
+	//Game Mode Type
+	public var is_story_mode (default, null) = false;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -274,6 +279,13 @@ class GameState extends State
 		Main.beat_manager.enter_game_state();
 		
 		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
+		
+		//Set mode data
+		is_story_mode = (on_enter_data != null) ? on_enter_data.is_story_mode : false;
+		if (is_story_mode)
+			trace("--------- Loading STORY mode ---------");
+		else
+			trace("--------- Loading ARCADE mode ---------");
 						
 		jumping_points = new Array<PlatformPeg>();
 		platform_points = new Array<Platform>();
@@ -291,7 +303,16 @@ class GameState extends State
 			platform_points.push(platform);
 		}
 		
+		//Collectable Manager and select the data we want.
 		collectable_manager = new CollectableManager(this, lanes, level.beat_height);
+		if (is_story_mode)
+		{
+			collectable_manager.LoadCollectableData("assets/collectable_groups/story_mode_collectables.json", 1);
+		}
+		else
+		{
+			collectable_manager.LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
+		}
 		
 		score_component = new Score();
 		
@@ -1174,5 +1195,10 @@ class GameState extends State
 		}
 		
 		Main.beat_manager.on_player_respawn_begin();
+	}
+	
+	public function get_percent_through_level() : Float
+	{
+		return background.get_percent_through_background();
 	}
 }
