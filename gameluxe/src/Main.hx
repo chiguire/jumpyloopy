@@ -12,6 +12,7 @@ import gamestates.ScoreState;
 import gamestates.StoryEndingState;
 import gamestates.StoryIntroState;
 import gamestates.SplashState;
+import gamestates.ShopState;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
@@ -206,6 +207,7 @@ class Main extends luxe.Game
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
 		machine.add(new SplashState("SplashState", game_info));
+		machine.add(new ShopState("ShopState", game_info));
 		
 		var parcel = new Parcel();
 		Main.load_parcel(parcel, "assets/data/common_parcel.json", function(p:Parcel){
@@ -250,6 +252,7 @@ class Main extends luxe.Game
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
+		config.preload.jsons.push({id:"assets/data/shop_parcel.json"});
 		
         return config;
 
