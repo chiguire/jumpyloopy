@@ -1,0 +1,12 @@
+{
+	"textures" : 
+	[ 
+		{ "id" : "assets/image/track_selection.png" },
+		{ "id" : "assets/image/war-child-logo-home.png" }
+	],
+	
+	"json" : 
+	[
+		{ "id" : "assets/data/shop.json" }
+	]
+}

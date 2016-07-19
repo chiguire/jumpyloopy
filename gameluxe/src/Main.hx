@@ -251,6 +251,7 @@ class Main extends luxe.Game
 		config.preload.jsons.push({id:"assets/data/level_select_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
+		config.preload.jsons.push({id:"assets/data/shop_parcel.json"});
 		
         return config;
 
