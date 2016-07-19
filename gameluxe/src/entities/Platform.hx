@@ -90,14 +90,13 @@ class Platform extends Sprite
 	
 	private function select_platform_texture(t : PlatformType) : String
 	{
-		if (t == PlatformType.LEFT)
-			return 'assets/image/platforms/platform_left01.png';
-		else if (t == PlatformType.RIGHT)
-			return 'assets/image/platforms/platform_right01.png';
-		else if (Math.random() > 0.5)
-			return 'assets/image/platforms/platform_straight01.png';
-
-		return 'assets/image/platforms/platform_straight02.png';
+		return switch (t)
+		{
+			case LEFT: 'assets/image/platforms/platform_left01.png';
+			case RIGHT: 'assets/image/platforms/platform_right01.png';
+			case CENTER(n): 'assets/image/platforms/platform_straight0$n.png';
+			default: '';
+		};
 	}
 	
 	override public function update(dt:Float) 
@@ -124,5 +123,10 @@ class Platform extends Sprite
 			type = NONE;
 			stepped_on_by_player = false;
 		}
+	}
+	
+	public static function get_random_center_type()
+	{
+		return Std.int(Math.random() * 2) + 1;
 	}
 }

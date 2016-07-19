@@ -6,7 +6,7 @@ package entities;
 enum PlatformType 
 {
 	NONE;
-	CENTER;
+	CENTER(n:Int);
 	LEFT;
 	RIGHT;
 }
