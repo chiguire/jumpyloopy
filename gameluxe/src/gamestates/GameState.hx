@@ -207,15 +207,7 @@ class GameState extends State
 		// update player achievements
 		Main.achievement_manager.update_collected_fragments(collectable_manager.story_fragment_array);
 		
-		
 		is_pause = false;
-		
-		// events
-		for (i in 0...event_id.length)
-		{
-			var res = Luxe.events.unlisten(event_id[i]);
-		}
-		event_id = null;
 		
 		// reset and remove all tweenign that is current in-flight
 		Actuate.reset();
@@ -235,6 +227,13 @@ class GameState extends State
 		scene = null;
 		
 		parcel = null;
+		
+		// events
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
+		event_id = null;
 	}
 	
 	function calc_lane_width() : Float
@@ -290,7 +289,10 @@ class GameState extends State
 		Main.beat_manager.play_audio_loop = (on_enter_data != null) ? on_enter_data.play_audio_loop : true;
 		Main.beat_manager.enter_game_state();
 		
-		level = new Level({batcher_ui : Main.batcher_ui}, new Vector(lanes[2], 0));
+		level = new Level({
+			batcher_ui : Main.batcher_ui,
+			scene : scene,
+		}, new Vector(lanes[2], 0));
 		
 		//Set mode data
 		is_story_mode = (on_enter_data != null) ? on_enter_data.is_story_mode : false;

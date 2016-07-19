@@ -74,9 +74,11 @@ class Level extends Entity
 	
 	override public function ondestroy() 
 	{
+		//trace("on destroy");
 		for (id in event_id)
 		{
-			Luxe.events.unlisten(id);
+			var res = Luxe.events.unlisten(id);
+			//trace(res);
 		}
 		
 		super.ondestroy();
@@ -168,6 +170,6 @@ class Level extends Entity
 	{
 		var str = e.s;
 		trace(str);
-		//activate_report(str);
+		activate_report(str);
 	}
 }
