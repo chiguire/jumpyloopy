@@ -17,12 +17,18 @@ class CollisionShape extends Polygon
 	private var updatePosition : Bool;
 	private var parentSprite : Sprite;
 	private var colliding : Bool;
-	public var destroyed (default,null): Bool;
+	public var destroyed (default, null): Bool;
+	public var offsetX : Float;
+	public var offsetY : Float;
 	
-	public function new(sprite : Sprite, updatePos : Bool) 
+	public function new(sprite : Sprite, updatePos : Bool, offset_x : Float = 0, offset_y : Float = 0, 
+		pct_x : Float = 1, pct_y : Float = 1) 
 	{
-		var polyArray : Array<Vector> = buildPolygon(sprite.size);
-		super(sprite.pos.x, sprite.pos.y, polyArray);
+		offsetX = offset_x;
+		offsetY = offset_y;
+		
+		var polyArray : Array<Vector> = buildPolygon(sprite.size, pct_x, pct_y);
+		super(sprite.pos.x + offsetX, sprite.pos.y + offsetY, polyArray);
 		
 		//We use our parent sprite to set the position of the collision each frame.
 		parentSprite = sprite;
@@ -34,8 +40,8 @@ class CollisionShape extends Polygon
 	{
 		if (updatePosition)
 		{
-			set_x(parentSprite.pos.x);
-			set_y(parentSprite.pos.y);
+			set_x(parentSprite.pos.x + offsetX);
+			set_y(parentSprite.pos.y + offsetY);
 		}
 		
 		//Uncomment to see collision positions.
@@ -79,11 +85,11 @@ class CollisionShape extends Polygon
 		colliding = true;
 	}
 	
-	private function buildPolygon(size : Vector):Array<Vector>
+	private function buildPolygon(size : Vector, pctX : Float, pctY : Float):Array<Vector>
 	{
 		var a : Array<Vector> = new Array();
-		var halfX = size.x / 2;
-		var halfY = size.y / 2;
+		var halfX = (size.x / 2) * pctX;
+		var halfY = (size.y / 2) * pctY;
 		
 		a.push( new Vector(halfX, halfY));
 		a.push( new Vector(halfX, -halfY));
