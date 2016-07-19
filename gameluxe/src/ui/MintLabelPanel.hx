@@ -57,6 +57,16 @@ class MintLabelPanel
 		var renderer = cast(label.renderer, mint.render.luxe.Label);
 		renderer.text.visible = v;
 		
-		cast(panel.renderer, mint.render.luxe.Panel).visual.visible = v;
+		var panel_renderer = cast(panel.renderer, mint.render.luxe.Panel);
+		panel_renderer.visual.visible = v;
+	}
+	
+	public function set_alpha( a : Float )
+	{
+		var renderer = cast(label.renderer, mint.render.luxe.Label);
+		renderer.text.color.a = a;
+		
+		var panel_renderer = cast(panel.renderer, mint.render.luxe.Panel);
+		panel_renderer.visual.color.a = a;
 	}
 }

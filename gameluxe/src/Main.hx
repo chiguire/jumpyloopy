@@ -1,5 +1,6 @@
 package;
 
+import data.AchievementManager;
 import data.GameInfo;
 import data.GameInfo.ScoreList;
 import entities.BeatManager;
@@ -42,7 +43,6 @@ class Main extends luxe.Game
 {
 	public static var global_info : GlobalGameInfo;
 	public static var user_data : UserDataV1;
-	
 	private var game_info : GameInfo;
 	private var machine : States;
 		
@@ -66,6 +66,9 @@ class Main extends luxe.Game
 	
 	/// Beat Manager
 	public static var beat_manager (default, null) : BeatManager;
+	
+	/// Achievement
+	public static var achievement_manager (default, null) : AchievementManager;
 	
 	public static function gameplay_area_size() : Vector
 	{
@@ -185,6 +188,9 @@ class Main extends luxe.Game
 		canvas = auto_canvas;
 		focus = new Focus(canvas);
 		///////////////////////////////////
+		
+		// achievement
+		achievement_manager = new AchievementManager();
 		
 		// audio/ beat manager
 		beat_manager = new BeatManager({batcher : batcher_ui});

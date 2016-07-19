@@ -25,6 +25,8 @@ class Collectable_Fragment extends Collectable
 		c_manager.story_fragment_array[fragment_index - 1] = true;
 		trace("Fragment Collected : " + fragment_index);
 		super.onCollisionEnter(player);
+		
+		Luxe.events.fire("activate_report_text", {s : "Unlocked! Story Fragment"});
 	}
 	
 	function getSpriteForID() : String

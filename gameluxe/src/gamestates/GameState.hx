@@ -174,13 +174,10 @@ class GameState extends State
 			unpause();
 		}
 		
-		/*
 		if ( e.keycode == Key.key_o)
 		{
-			trace("game over");
-			reset_state();
+			on_audio_track_finished({});
 		}
-		*/
 	}
 	
 	function pause()
@@ -206,6 +203,10 @@ class GameState extends State
 	override function onleave<T>(d:T)
 	{
 		trace("Exiting game");
+		
+		// update player achievements
+		Main.achievement_manager.update_collected_fragments(collectable_manager.story_fragment_array);
+		
 		
 		is_pause = false;
 		
@@ -252,7 +253,7 @@ class GameState extends State
 		var restart_signal = false;
 		var state_change_menu_signal = false;
 		
-		var on_enter_data = cast d;
+		var on_enter_data : GameStateOnEnterData = cast d;
 		
 		// events
 		event_id = new Array<String>();
@@ -480,10 +481,12 @@ class GameState extends State
 	
 	function on_audio_track_finished(e)
 	{
+		var next_state = is_story_mode ? "StoryEndingState" : "ScoreState";
+		
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
-			machine.set("ScoreState");
+			machine.set(next_state);
 		});
 	}
 	
@@ -530,7 +533,7 @@ class GameState extends State
 	{
 		if ( player_sprite.pos.equals( e.pos ) )
 		{
-			trace("player need to fall");
+			//trace("player need to fall");
 			Luxe.events.fire("player_move_event", { interval: BeatManager.jump_interval, falling: true }, false );
 		}
 	}

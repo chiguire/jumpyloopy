@@ -91,6 +91,13 @@ class Platform extends Sprite
 	
 	public function touch()
 	{
+		if (anim == null)
+		{
+			// early out, workaround for crashing bug
+			trace("Ciro, null crashing bug here, could you please fix?");
+			return;
+		}
+		
 		if (anim.name == "play")
 		{
 			anim.animation = "skip";
