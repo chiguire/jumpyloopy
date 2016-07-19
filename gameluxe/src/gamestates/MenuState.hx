@@ -175,6 +175,14 @@ class MenuState extends State
 			}
 		);
 		
+		var button4 = create_button( layout_data.shop_button );
+		button4.onmouseup.listen(
+			function(e,c) 
+			{
+				change_to = "ShopState";
+			}
+		);
+		
 		var warchild_tex_id = "assets/image/war-child-logo-home.png";
 		var warchild_tex = Luxe.resources.texture(warchild_tex_id); 
 		var warchild_img = new mint.Image({
