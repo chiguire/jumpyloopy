@@ -353,7 +353,7 @@ class GameState extends State
 				scene: scene, 
 				game_info: game_info, 
 				n:num_internal_lanes * num_peg_levels + 2 + i, 
-				type: CENTER, 
+				type: CENTER(1), 
 				batcher: Main.batcher_ui,
 				pos: new Vector(970 + 40, 200 + i * Platform.max_size.y * distance_scale),
 				size: Platform.max_size,
@@ -443,7 +443,7 @@ class GameState extends State
 		
 		for (pl in [get_platform(1, beat_n), get_platform(2, beat_n), get_platform(3, beat_n)])
 		{
-			pl.type = CENTER;
+			pl.type = CENTER(Platform.get_random_center_type());
 			pl.visible = false;
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
@@ -495,7 +495,7 @@ class GameState extends State
 			}
 			else if (Luxe.input.keypressed(Key.key_2))
 			{
-				current_platform_type = CENTER;
+				current_platform_type = CENTER(Platform.get_random_center_type());
 				mouse_platform.type = current_platform_type;
 			}
 			else if (Luxe.input.keypressed(Key.key_3))
@@ -539,7 +539,7 @@ class GameState extends State
 				platform.stepped_on_by_player = false;
 				if (platform.pos.y == -(beat_n) * level.beat_height && test_internal_platform(platform.pos.x))
 				{
-					platform.type = CENTER;
+					platform.type = CENTER(Platform.get_random_center_type());
 				}
 				
 				platform.visible = false;
@@ -662,7 +662,7 @@ class GameState extends State
 
 			if (first_line)
 			{
-				platform.type = CENTER;
+				platform.type = CENTER(Platform.get_random_center_type());
 				platform.visible = false;
 				platform.eternal = true;
 			}
@@ -756,7 +756,7 @@ class GameState extends State
 				platform_destination_x += switch (pl_src_type)
 				{
 					case NONE: 0;
-					case CENTER: 0;
+					case CENTER(_): 0;
 					case LEFT: -1;
 					case RIGHT: 1;
 				}
@@ -929,8 +929,8 @@ class GameState extends State
 		if (random_next_platforms == null)
 		{
 			random_next_platforms = new Array<PlatformType>();
-			random_next_platforms.push(CENTER);
-			random_next_platforms.push(CENTER);
+			random_next_platforms.push(CENTER(1));
+			random_next_platforms.push(CENTER(2));
 			random_next_platforms.push(LEFT);
 			random_next_platforms.push(RIGHT);
 			
