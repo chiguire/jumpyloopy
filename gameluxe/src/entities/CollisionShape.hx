@@ -39,7 +39,7 @@ class CollisionShape extends Polygon
 		}
 		
 		//Uncomment to see collision positions.
-#if !debug
+#if debug
 		var verts = get_transformedVertices();
 		Luxe.draw.poly({
 			immediate: true,
