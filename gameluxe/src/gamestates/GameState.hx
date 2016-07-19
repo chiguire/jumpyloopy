@@ -103,6 +103,8 @@ class GameState extends State
 	/// Text
 	var processing_text : Text;
 	var debug_text : Text;
+	var txt_poppings : Array<Text>;
+	var current_txt_popping : Int;
 	
 	public var is_pause (default, null) = false;
 	/// pause panel
@@ -130,9 +132,7 @@ class GameState extends State
 	// Damage
 	var damage_feedback : DamageFeedback;
 	
-	// Path multiplier
-	var path_multiplier : Int;
-	var highest_path_multiplier : Int;
+	var event_id : Array<String>;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -149,18 +149,7 @@ class GameState extends State
 		var level_height = Main.global_info.ref_window_size_y;
 		var level_width = level_height / aspect_ratio;
 		
-		level_rect = new Rectangle((Main.global_info.ref_window_size_x - level_width) / 2.0, 0, level_width, level_height);
-		
-		Luxe.events.listen("Level.Start", OnLevelStart );
-		Luxe.events.listen("player_move_event", OnPlayerMove );
-		Luxe.events.listen("player_respawn_end", on_player_respawn_end );
-		Luxe.events.listen("platform_time_out", on_platform_time_out );
-		Luxe.events.listen("audio_track_finished", on_audio_track_finished );
-		
-		Luxe.events.listen("player_damage", on_player_damage);
-		Luxe.events.listen("player_heal", on_player_heal);
-		Luxe.events.listen("kill_player", trigger_game_over);
-	}
+		level_rect = new Rectangle((Main.global_info.ref_window_size_x - level_width) / 2.0, 0, level_width, level_height);	}
 	
 	
 	override function init()
@@ -214,6 +203,13 @@ class GameState extends State
 		
 		is_pause = false;
 		
+		// events
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
+		event_id = null;
+		
 		// reset and remove all tweenign that is current in-flight
 		Actuate.reset();
 		
@@ -251,6 +247,19 @@ class GameState extends State
 		var state_change_menu_signal = false;
 		
 		var on_enter_data = cast d;
+		
+		// events
+		event_id = new Array<String>();
+		event_id.push(Luxe.events.listen("Level.Start", OnLevelStart ));
+		event_id.push(Luxe.events.listen("player_move_event", OnPlayerMove ));
+		event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
+		event_id.push(Luxe.events.listen("platform_time_out", on_platform_time_out ));
+		event_id.push(Luxe.events.listen("audio_track_finished", on_audio_track_finished ));
+		event_id.push(Luxe.events.listen("player_damage", on_player_damage));
+		event_id.push(Luxe.events.listen("kill_player", trigger_game_over));
+		event_id.push(Luxe.events.listen("player_heal", on_player_heal));
+		event_id.push(Luxe.events.listen("add_score", add_score));
+		event_id.push(Luxe.events.listen("add_multiplier", add_multiplier));
 		
 		Main.load_parcel(parcel, "assets/data/game_state_parcel.json", on_parcel_loaded);
 		
@@ -391,6 +400,23 @@ class GameState extends State
 		*/
 		
 		damage_feedback = new DamageFeedback(scene);
+		
+		txt_poppings = new Array<Text>();
+		for (i in 0...4)
+		{
+			txt_poppings.push(new Text({
+				font: Luxe.resources.font("assets/image/font/later_on.fnt"),
+				text: "",
+				point_size: 48,
+				pos: new Vector(0, 0),
+				scene: scene,
+				color: new Color(1, 1, 1, 1),
+				outline: 0,
+				glow_amount: 0,
+			}));
+			txt_poppings[txt_poppings.length - 1].visible = false;
+		}
+		current_txt_popping = 0;
 	}
 	
 	function on_player_damage(e)
@@ -602,7 +628,7 @@ class GameState extends State
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
-		ui_score.set_text('score\n${score}');
+		ui_score.set_text('Score\n${score}');
 		
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
 	}
@@ -699,9 +725,6 @@ class GameState extends State
 		list_of_platforms_bg.visible = true;
 		
 		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
-		
-		path_multiplier = 0;
-		highest_path_multiplier = 1;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -776,7 +799,7 @@ class GameState extends State
 				{
 					if (pl_dst.stepped_on_by_player)
 					{
-						path_multiplier = 0;
+						Luxe.events.fire("reset_multiplier", null);
 						
 						// Reset stepped on by player for all platforms
 						for (pl in platform_points)
@@ -788,10 +811,8 @@ class GameState extends State
 					else
 					{
 						pl_dst.stepped_on_by_player = true;
-						path_multiplier++;
-						highest_path_multiplier = Std.int(Math.max(highest_path_multiplier, path_multiplier));
+						Luxe.events.fire("add_multiplier", null);
 					}
-					trace('path multiplier is $path_multiplier, highest path multiplier is $highest_path_multiplier');
 				}
 				//s_debug += '($platform_destination_x, $platform_destination_y) beat_n is $beat_n';
 			}
@@ -1174,5 +1195,59 @@ class GameState extends State
 		}
 		
 		Main.beat_manager.on_player_respawn_begin();
+	}
+	
+	function add_score(e:ScoreEvent)
+	{
+		create_score_popping(e.val);
+	}
+	
+	function add_multiplier(e:ScoreEvent)
+	{
+		create_multiplier_popping(score_component.current_multiplier);
+	}
+	
+	function create_score_popping( val : Int )
+	{
+		var s = (val > 0 ? "+" : "-") + Std.string(val);
+		
+		var txt_obj = txt_poppings[current_txt_popping];
+		txt_obj.text = s;
+		txt_obj.pos = player_sprite.pos.clone();
+		txt_obj.pos.x -= txt_obj.geom.text_width / 2;
+		txt_obj.visible = true;
+		txt_obj.color.set(1, 1, 1, 1);
+		
+		Actuate.tween(txt_obj.pos, 2, {y : player_sprite.pos.y - 96 });
+		Actuate.tween(txt_obj.color, 2, {a : 0}).onComplete( function(){
+			txt_obj.visible = false;
+		});
+		
+		current_txt_popping = (current_txt_popping + 1) % txt_poppings.length;
+	}
+	
+	function create_multiplier_popping( val : Int )
+	{
+		if (val <= 1)
+		{
+			return;
+		}
+		
+		var s = 'x$val combo'; 
+		
+		var txt_obj = txt_poppings[current_txt_popping];
+		txt_obj.text = s;
+		txt_obj.pos = player_sprite.pos.clone();
+		txt_obj.pos.y -= 30;
+		txt_obj.pos.x -= txt_obj.geom.text_width / 2;
+		txt_obj.visible = true;
+		txt_obj.color.set(1, 1, 1, 1);
+		
+		Actuate.tween(txt_obj.pos, 2, {y : player_sprite.pos.y - 126 });
+		Actuate.tween(txt_obj.color, 2, {a : 0}).onComplete( function(){
+			txt_obj.visible = false;
+		});
+		
+		current_txt_popping = (current_txt_popping + 1) % txt_poppings.length;
 	}
 }
