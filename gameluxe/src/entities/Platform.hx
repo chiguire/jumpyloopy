@@ -76,9 +76,6 @@ class Platform extends Sprite
 		var animation_name = select_platform_animation(t);
 		if (animation_name != "")
 		{
-			// aik to ciro -> Until you fixed the bug in platform animation
-			skip_animation_to_end = true;
-			
 			//Animations
 			anim = new SpriteAnimation({name: "PlatformAnimation"+name });
 			add(anim);
@@ -90,6 +87,15 @@ class Platform extends Sprite
 			anim.play();
 		}
 		return type = t;
+	}
+	
+	public function touch()
+	{
+		if (anim.name == "play")
+		{
+			anim.animation = "skip";
+			anim.play();
+		}
 	}
 	
 	private static function select_platform_texture(t : PlatformType) : String

@@ -229,6 +229,7 @@ class Avatar extends Sprite
 		
 		anim.animation = 'land';
 		anim.play();
+		Luxe.events.fire("player_land");
 	}
 	
 	function InitialiseAnimations()

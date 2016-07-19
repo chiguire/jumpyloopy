@@ -3,12 +3,12 @@
         "frame_size":{ "x":"164", "y":"123" },
         "frameset": ["1-6"],
         "loop": "false",
-        "speed": "60"
+        "speed": "10"
     },
 	"skip" : {
         "frame_size":{ "x":"164", "y":"123" },
         "frameset": ["6"],
         "loop": "false",
-        "speed": "60"
+        "speed": "10"
     }
 }

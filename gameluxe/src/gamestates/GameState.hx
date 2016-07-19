@@ -264,6 +264,7 @@ class GameState extends State
 		event_id.push(Luxe.events.listen("player_damage", on_player_damage));
 		event_id.push(Luxe.events.listen("kill_player", trigger_game_over));
 		event_id.push(Luxe.events.listen("player_heal", on_player_heal));
+		event_id.push(Luxe.events.listen("player_land", on_player_land));
 		event_id.push(Luxe.events.listen("add_score", add_score));
 		event_id.push(Luxe.events.listen("add_multiplier", add_multiplier));
 		
@@ -465,6 +466,16 @@ class GameState extends State
 	function on_player_heal(e)
 	{
 		player_sprite.num_lives += 1;
+	}
+	
+	function on_player_land(e)
+	{
+		var pl = get_platform(player_sprite.current_lane, beat_n);
+		
+		if (pl != null)
+		{
+			pl.touch();
+		}
 	}
 	
 	function on_audio_track_finished(e)
