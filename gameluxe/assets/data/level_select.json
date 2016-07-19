@@ -4,11 +4,13 @@
 	"level_0": { "text": "Mode\nTraining", "pos_x": 575, "pos_y": 300, "width":150, "height":75, "track":"assets/music/Warchild_SimpleDrums.ogg", "desc_id": 0 },
 	"level_1": { "text": "Mode\nStory", "pos_x": 575, "pos_y": 400, "width":150, "height":75, "track":"assets/music/Warchild_Music_Prototype.ogg", "desc_id": 1 },
 	"level_x": { "text": "Mode\nArcade", "pos_x": 575, "pos_y": 500, "width":150, "height":75, "desc_id": 2},
+	"back" : { "text" : "Back", "pos_x": 575, "pos_y": 600, "width": 150, "height": 75, "desc_id": 3 },
 	"warchild_img": {"pos_x": 720, "pos_y": 720},
 	
 	"desc_table": [
 		"Training Mode\n\nA Simple Drum Track\nInfinite Life\n\n\n\nComposed by:\nTeam Rise",
 		"Story Mode\n\nPlay A WarChild Track\nCollecting Pieces of Memory\nAnd Reveal the Story\n\n\n\nComposed by:\nTeam Rise",
-		"Arcade Mode\n\nPlay the game\nwith your own OGG Music"
+		"Arcade Mode\n\nPlay the game\nwith your own OGG Music",
+		"Return to the Main Menu"
 	]
 }
