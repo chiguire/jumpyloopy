@@ -48,7 +48,7 @@ class CollectableManager extends Entity
 		
 		//Set up the story mode fragments here for convenience.
 		
-		if (gs.is_story_mode)
+		if (gs.game_state_onenter_data.is_story_mode)
 		{
 			var pct_step = 0.075;
 			var current_pct = 0.1;
@@ -123,7 +123,7 @@ class CollectableManager extends Entity
 		var selected_data : CollectableGroupData;
 		
 		//For story mode, we want to spawn one of 10 special groups when the player reaches set levels.
-		if (game_state.is_story_mode)
+		if (game_state.game_state_onenter_data.is_story_mode)
 		{
 			var level_percent = game_state.get_percent_through_level();
 			if (level_percent > story_fragment_spawn_pct[story_coll_index])

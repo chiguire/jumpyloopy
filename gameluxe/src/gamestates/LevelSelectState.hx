@@ -145,6 +145,7 @@ class LevelSelectState extends State
 			function(e,c) 
 			{
 				Main.beat_manager.load_song(layout_data.level_0.track);
+				game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
 				next_state = "GameState";
 			});
 		
@@ -188,7 +189,7 @@ class LevelSelectState extends State
 					}
 					
 					next_state = "GameState";
-					game_state_on_enter_data = { play_audio_loop: false };
+					game_state_on_enter_data = { is_story_mode: false, play_audio_loop: false };
 					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
 				}
 				#end

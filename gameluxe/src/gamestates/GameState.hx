@@ -45,8 +45,8 @@ typedef GameOverReasonEvent = {
 }
 
 typedef GameStateOnEnterData = {
-	@:optional var play_audio_loop : Bool;
-	@:optional var is_story_mode : Bool;
+	var play_audio_loop : Bool;
+	var is_story_mode : Bool;
 }
 
 /**
@@ -137,7 +137,7 @@ class GameState extends State
 	var event_id : Array<String>;
 	
 	//Game Mode Type
-	public var is_story_mode (default, null) = false;
+	public var game_state_onenter_data : GameStateOnEnterData;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -197,7 +197,7 @@ class GameState extends State
 	function reset_state()
 	{
 		onleave({});
-		onenter({});
+		onenter(game_state_onenter_data);
 	}
 	
 	override function onleave<T>(d:T)
@@ -252,7 +252,7 @@ class GameState extends State
 		var restart_signal = false;
 		var state_change_menu_signal = false;
 		
-		var on_enter_data : GameStateOnEnterData = cast d;
+		game_state_onenter_data = cast d;
 		
 		// events
 		event_id = new Array<String>();
@@ -286,7 +286,7 @@ class GameState extends State
 		lanes[0] -= lane_width / num_all_lanes;
 		lanes[4] += lane_width / num_all_lanes;
 		
-		Main.beat_manager.play_audio_loop = (on_enter_data != null) ? on_enter_data.play_audio_loop : true;
+		Main.beat_manager.play_audio_loop = game_state_onenter_data.play_audio_loop;
 		Main.beat_manager.enter_game_state();
 		
 		level = new Level({
@@ -295,7 +295,7 @@ class GameState extends State
 		}, new Vector(lanes[2], 0));
 		
 		//Set mode data
-		is_story_mode = (on_enter_data != null) ? on_enter_data.is_story_mode : false;
+		var is_story_mode = game_state_onenter_data.is_story_mode;
 		if (is_story_mode)
 			trace("--------- Loading STORY mode ---------");
 		else
@@ -484,7 +484,7 @@ class GameState extends State
 	
 	function on_audio_track_finished(e)
 	{
-		var next_state = is_story_mode ? "StoryEndingState" : "ScoreState";
+		var next_state = game_state_onenter_data.is_story_mode ? "StoryEndingState" : "ScoreState";
 		
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
