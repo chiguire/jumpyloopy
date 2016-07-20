@@ -11,7 +11,7 @@
 		{ "id" : "assets/image/skins/icarus_sprite.png" },
 		{ "id" : "assets/image/skins/minor_sprite_color.png" },
 		{ "id" : "assets/image/platforms/peg.png" },
-		{ "id" : "assets/image/coin-sprite-animation-sprite-sheet.png", "_comment" : "placeholder, need to be removed"},
+		{ "id" : "assets/image/coin-sprite-animation-sprite-sheet.png"},
 		{ "id" : "assets/image/splash/ca.png" },
 		{ "id" : "assets/image/splash/warchild.png" },
 		{ "id" : "assets/image/splash/audio.png" },
@@ -26,7 +26,7 @@
 		{ "id" : "assets/animation/animation_jumper.json" },
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },
-		{ "id" : "assets/animation/animation_coin.json", "_comment" : "placeholder, need to be removed"},
+		{ "id" : "assets/animation/animation_coin.json"},
 		{ "id" : "assets/collectable_groups/story_mode_collectables.json" },
 		{ "id" : "assets/animation/animation_platform.json" }
 	],
