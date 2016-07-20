@@ -69,7 +69,7 @@ class ScoreState extends State
 		Main.create_background(scene);
 		
 		var name = ["Score", "Distance", "Time"];
-		var val = ["200", "5432", "0:04:01"];
+		var val = [Std.string(game_info.current_score.score), Std.string(game_info.current_score.distance), Std.string(game_info.current_score.time)];
 		
 		for (i in 0...name.length)
 		{

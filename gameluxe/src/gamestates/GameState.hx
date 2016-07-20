@@ -137,6 +137,9 @@ class GameState extends State
 	
 	var event_id : Array<String>;
 	
+	// Time
+	private var starting_time : Float;
+	
 	//Game Mode Type
 	public var game_state_onenter_data : GameStateOnEnterData;
 	
@@ -492,6 +495,13 @@ class GameState extends State
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
+			game_info.current_score =
+			{
+				name: "",
+				score: score_component.current_score,
+				distance: beat_n,
+				time: Std.int(Luxe.time - starting_time),
+			};
 			machine.set(next_state);
 		});
 	}
@@ -533,6 +543,8 @@ class GameState extends State
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
 		}
+		
+		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
 		
 		level.activate_countdown_text();
 		Main.beat_manager.on_player_respawn_end();
@@ -772,6 +784,8 @@ class GameState extends State
 		list_of_platforms_bg.visible = true;
 		
 		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
+		
+		starting_time = Luxe.time;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
