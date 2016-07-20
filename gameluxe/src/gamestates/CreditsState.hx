@@ -1,14 +1,13 @@
 package gamestates;
 
 import data.GameInfo;
+import luxe.Sprite;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Scene;
-import luxe.Text;
 import luxe.Input;
 import luxe.Vector;
 import luxe.Color;
-import ui.Button;
 
 /**
  * ...
@@ -19,11 +18,7 @@ class CreditsState extends State
 	private var game_info : GameInfo;
 
 	private var scene : Scene;
-	private var title_text : Text;
-	private var play_text : Text;
-	private var scores_text : Text;
-	
-	private var return_button : Button;
+	private var credits_image : Sprite;
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -47,17 +42,11 @@ class CreditsState extends State
 	{
 		trace("Exiting Credits");
 		
-		return_button.destroy();
-		scores_text.destroy();
-		play_text.destroy();
-		title_text.destroy();
+		credits_image.destroy();
 		scene.empty();
 		scene.destroy();
 		scene = null;
-		title_text = null;
-		play_text = null;
-		scores_text = null;
-		return_button = null;
+		credits_image = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -66,44 +55,24 @@ class CreditsState extends State
 		
 		scene = new Scene("CreditsScene");
 		
-		title_text = new Text({
-			text: "Credits",
-			point_size: 48,
-			pos: new Vector(10, 10),
-			color: Color.random(),
+		Main.create_background(scene);
+		
+		var data : Dynamic = { pos_x: 720, pos_y: 450 };
+		
+		credits_image = new Sprite({
+			name: 'CreditsSprite',
+			texture: Luxe.resources.texture('assets/image/ui/credits.png'),
+			pos: new Vector(data.pos_x, data.pos_y),
 			scene: scene,
 		});
-		
-		play_text = new Text({
-			text: "Very awesome people",
-			point_size: 18,
-			pos: new Vector(10, 85),
-			color: new Color(255, 255, 255),
-			scene: scene,
-		});
-		
-		scores_text = new Text({
-			text: "CA",
-			point_size: 18,
-			pos: new Vector(10, 110),
-			color: new Color(255, 255, 255),
-			scene: scene,
-		});
-		
-		return_button = new Button({
-			name: "Return",
-			pos: new Vector(Luxe.screen.width - 110, Luxe.screen.height - 50),
-			text: {
-				text: "Return",
-				point_size: 12,
-			},
-			scene: scene,
-		});
-		
-		return_button.events.listen('button.clicked', function (e:ButtonEvent)
+	}
+	
+	override function update(dt:Float) 
+	{
+		if (Luxe.input.mousepressed(MouseButton.left))
 		{
 			machine.set("MenuState");
-		});
+		}
 	}
 	
 }
