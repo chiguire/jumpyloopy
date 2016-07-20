@@ -7,6 +7,7 @@ import entities.BeatManager;
 import entities.CollectableManager;
 import gamestates.CreditsState;
 import gamestates.GameState;
+import gamestates.HighScoreState;
 import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
@@ -211,6 +212,7 @@ class Main extends luxe.Game
 		machine.add(new StoryEndingState("StoryEndingState", game_info));
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
+		machine.add(new HighScoreState("HighScoreState", game_info));
 		machine.add(new CreditsState("CreditsState", game_info));
 		machine.add(new SplashState("SplashState", game_info));
 		machine.add(new ShopState("ShopState", game_info));

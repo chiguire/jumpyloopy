@@ -30,7 +30,17 @@
 		{ "id" : "assets/image/ui/UI_track_selection_story_text.png" },
 		{ "id" : "assets/image/ui/UI_track_selection_arcade.png" },
 		{ "id" : "assets/image/ui/UI_track_selection_arcade_text.png" },
-		{ "id" : "assets/image/ui/UI_track_selection_back.png" }
+		{ "id" : "assets/image/ui/UI_track_selection_back.png" },
+		{ "id" : "assets/image/ui/UI_score_Mainmenu.png" },
+		{ "id" : "assets/image/ui/UI_Game_Pause_Mainmenu.png" },
+		{ "id" : "assets/image/ui/UI_Game_Pause_paper.png" },
+		{ "id" : "assets/image/ui/UI_Game_Pause_quit.png" },
+		{ "id" : "assets/image/ui/UI_Game_Pause_restartgame.png" },
+		{ "id" : "assets/image/ui/UI_Game_Pause_resume.png" },
+		{ "id" : "assets/image/ui/UI_titlescreen_credits.png" },
+		{ "id" : "assets/image/ui/UI_titlescreen_play.png" },
+		{ "id" : "assets/image/ui/UI_titlescreen_score.png" },
+		{ "id" : "assets/image/ui/UI_titlescreen_unlockables.png" }
 	],
 	
 	"json" : 

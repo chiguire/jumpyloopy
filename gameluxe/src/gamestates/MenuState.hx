@@ -21,6 +21,7 @@ import luxe.Input;
 import mint.Control;
 import mint.Button;
 import mint.Image;
+import ui.MintImageButton;
 	
 /**
  * ...
@@ -133,50 +134,25 @@ class MenuState extends State
 		// UI layer
 		var canvas = Main.canvas;
 		
-		/*
-		title_text = new Text({
-			text: "-Rise-",
-			point_size: 48,
-			//color: Color.random(),
-			scene: scene,
+		var button = new MintImageButton(canvas, "Play", new Vector(618, 365), new Vector(205, 54), "assets/image/ui/UI_titlescreen_play.png");
+		button.onmouseup.listen(function(e, c) {
+			change_to = "LevelSelect";
 		});
-		title_text.pos.set_xy(Main.global_info.ref_window_size_x / 2 - title_text.geom.text_width /2, 100);
-		*/
 		
-		//create_image( layout_data.title_img );
+		button = new MintImageButton(canvas, "Score", new Vector(618, 485), new Vector(206, 46), "assets/image/ui/UI_titlescreen_score.png");
+		button.onmouseup.listen(function(e, c) {
+			change_to = "HighScoreState";
+		});
 		
-		var button1 = create_button( layout_data.play_button );
-		button1.onmouseup.listen(
-			function(e,c) 
-			{
-				change_to = "LevelSelect";
-			}
-		);
+		button = new MintImageButton(canvas, "Credits", new Vector(618, 530), new Vector(207, 47), "assets/image/ui/UI_titlescreen_credits.png");
+		button.onmouseup.listen(function(e, c) {
+			change_to = "CreditsState";
+		});
 		
-		var button2 = create_button( layout_data.score_button );
-		button2.onmouseup.listen(
-			function(e,c) 
-			{
-				change_to = "HighScoreState";
-				//sdl.SDL.setWindowSize(Luxe.snow.runtime.window, 1024, Std.int(1024 * 1.0 / Main.ref_window_aspect()));
-			}
-		);
-		
-		var button3 = create_button( layout_data.credits_button );
-		button3.onmouseup.listen(
-			function(e,c) 
-			{
-				change_to = "CreditsState";
-			}
-		);
-		
-		var button4 = create_button( layout_data.shop_button );
-		button4.onmouseup.listen(
-			function(e,c) 
-			{
-				change_to = "ShopState";
-			}
-		);
+		button = new MintImageButton(canvas, "Unlockables", new Vector(618, 425), new Vector(207, 56), "assets/image/ui/UI_titlescreen_unlockables.png");
+		button.onmouseup.listen(function(e, c) {
+			change_to = "ShopState";
+		});
 		
 		var warchild_tex_id = "assets/image/war-child-logo-home.png";
 		var warchild_tex = Luxe.resources.texture(warchild_tex_id); 
