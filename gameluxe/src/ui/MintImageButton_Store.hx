@@ -25,16 +25,14 @@ class MintImageButton_Store extends MintImageButton
 	
 	override public function mouseenter(e:MouseEvent) 
 	{
-		update_button();
 		is_over = true;
-		//super.mouseenter(e);
+		update_button();
 	}
 	
 	override public function mouseleave(e:MouseEvent) 
 	{
+		is_over = false;
 		update_button();
-		is_over = false;	
-		//super.mouseleave(e);
 	}
 	
 	override public function mousedown(e:MouseEvent) 
@@ -62,24 +60,34 @@ class MintImageButton_Store extends MintImageButton
 	
 	private function get_texture() : String
 	{
-		var tex = textures.tex_locked_over;
+		var tex;
 		
-		if (is_over)
+		if (is_equipped)
 		{
-			if (is_unlocked)
+			tex = textures.tex_unlocked_selected;
+		}
+		else if(is_unlocked)
+		{
+			if (is_over)
+			{
 				tex = textures.tex_unlocked_over;
-			if (is_equipped)
-				tex = textures.tex_unlocked_selected;
+			}
+			else
+			{
+				tex = textures.tex_unlocked;
+			}
 		}
 		else
 		{
-			tex = textures.tex_locked;
-			if (is_unlocked)
-				tex = textures.tex_unlocked;
-			if (is_equipped)
-				tex = textures.tex_unlocked_selected;
+			if (is_over)
+			{
+				tex = textures.tex_locked_over;
+			}
+			else
+			{
+				tex = textures.tex_locked;
+			}
 		}
-		
 		
 		return tex;
 	}

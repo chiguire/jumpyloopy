@@ -35,6 +35,7 @@ class AchievementManager
 		selected_character = "Aviator";
 		
 		unlocked_backgrounds.push("paper");
+		selected_background = "paper";
 	}
 	
 	public function OnParcelLoaded()
@@ -102,7 +103,7 @@ class AchievementManager
 		var groups : Array<Dynamic> = json.groups;
 		for (i in 0...groups.length)
 		{
-			//trace(groups[i]);
+			trace(groups[i]);
 			var group = new BackgroundGroup();
 			group.load_group(groups[i]);
 			background_groups.push(group);

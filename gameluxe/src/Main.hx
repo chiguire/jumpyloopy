@@ -95,7 +95,7 @@ class Main extends luxe.Game
             parcel      : parcel,
             background  : new Color(0,0,0,0.85),
             oncomplete  : on_complete,
-			no_visuals 	: true
+			no_visuals 	: false
         });
 		
 		parcel.load();

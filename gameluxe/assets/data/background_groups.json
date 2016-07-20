@@ -1,6 +1,8 @@
 {
 	"groups":[{
 		"name": "story",
+		"cost": 250,
+		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
 			, "assets/image/bg/cave_02_tiling.png"
@@ -65,6 +67,8 @@
 	
 	{
 		"name" : "paper",
+		"cost": 250,
+		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_01_paper.png"
 		],
 		"distances": [1
@@ -73,6 +77,8 @@
 	
 	{
 		"name" : "cave",
+		"cost": 250,
+		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_02_tiling.png"
 		],
 		"distances": [1
@@ -81,6 +87,8 @@
 	
 	{
 		"name" : "sky",
+		"cost": 250,
+		"tex_path":"assets/image/unlockables/backgrounds/sky",
 		"textures": ["assets/image/bg/sky_03_clouds01.png"
 			, "assets/image/bg/sky_03_clouds02.png"
 			, "assets/image/bg/sky_04_airballon01.png"
