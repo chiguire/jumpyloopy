@@ -112,7 +112,7 @@ class Level extends Entity
 	var countdown_time = 3;
 	var countdown_counter = 0;
 	
-	public function OnAudioLoad(e)
+	public function activate_countdown_text( ?fire_start_event : Bool )
 	{
 		countdown_counter = countdown_time;
 		countdown_text.set_visible(true);
@@ -122,39 +122,32 @@ class Level extends Entity
 		countdown_timer = Luxe.timer.schedule( 1.0, function()
 		{
 			countdown_counter--;
-			countdown_text.set_text( Std.string(countdown_counter) );
-			if (countdown_counter == 0)
-			{
-				countdown_timer.stop();
-				//var player_startpos = get_player_start_pos();
-				countdown_text.set_visible(false);
-				can_put_platforms = true;
-				Luxe.events.fire("Level.Start", {pos:player_start_pos, beat_height:beat_height}, false );
-			}
-			//trace(countdown_counter);
-			
-		}, true);
-	}
-	
-	public function on_game_unpause(e)
-	{
-		countdown_counter = countdown_time;
-		countdown_text.set_visible(true);
-		countdown_text.set_text( Std.string(countdown_counter) );
-		
-		countdown_timer = Luxe.timer.schedule( 1.0, function()
-		{
-			countdown_counter--;
 			countdown_text.set_text( countdown_counter == 1 ? "Go!" : Std.string(countdown_counter) );
 			if (countdown_counter == 0)
 			{
 				countdown_timer.stop();
-				//var player_startpos = get_player_start_pos();
 				countdown_text.set_visible(false);
+				
+				can_put_platforms = true;
+				
+				// fire start event
+				if (fire_start_event)
+				{
+					Luxe.events.fire("Level.Start", {pos:player_start_pos, beat_height:beat_height}, false );
+				}
 			}
-			//trace(countdown_counter);
 			
 		}, true);
+	}
+	
+	public function OnAudioLoad(e)
+	{
+		activate_countdown_text(true);
+	}
+	
+	public function on_game_unpause(e)
+	{
+		activate_countdown_text();
 	}
 	
 	public function activate_report( s : String )
@@ -169,7 +162,7 @@ class Level extends Entity
 	public function on_activate_report_text(e)
 	{
 		var str = e.s;
-		trace(str);
+		//trace(str);
 		activate_report(str);
 	}
 }
