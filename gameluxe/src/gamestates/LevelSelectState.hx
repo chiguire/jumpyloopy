@@ -192,42 +192,6 @@ class LevelSelectState extends State
 		desc_sprite = new Sprite({
 		});
 		desc_sprite.visible = false;
-		//button2.onmouseenter.listen(
-		//	function(e, c)
-		//	{
-		//		// update track description
-		//		desc_label.text = layout_data.desc_table[layout_data.level_x.desc_id];
-		//	});
-		//
-		//var button_back = MenuState.create_button( layout_data.back );
-		//button_back.onmouseup.listen(
-		//	function(e,c) 
-		//	{
-		//		next_state = "MenuState";
-		//		change_state_signal = true;
-		//	});
-		//button_back.onmouseenter.listen(
-		//	function(e, c)
-		//	{
-		//		// update track description
-		//		desc_label.text = layout_data.desc_table[layout_data.back.desc_id];
-		//	});
-		//	
-		//// description panel
-		//var panel = new mint.Panel({
-		//	parent: Main.canvas,
-		//	name: 'panel',
-		//	mouse_input: false,
-		//	x: 710, y: 250, w: 225, h: 400,
-		//});
-		//cast(panel.renderer, Panel).color.a = 0.5;
-		//
-		//desc_label = new mint.Label({
-		//	parent: panel, name: 'label',
-		//	mouse_input:false, x:0, y:25, w:225, h:400, //text_size: 32,
-		//	align: TextAlign.center, align_vertical: TextAlign.top,
-		//	text: "",
-		//});
 	}
 	
 	function on_audio_cfg_loaded(e)
