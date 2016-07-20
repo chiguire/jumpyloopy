@@ -12,6 +12,8 @@ class AchievementManager
 	public var unlocked_items : Array<String>;
 	public var current_character_name : String;
 	public var collected_fragments : Vector<Bool>;
+	public var finished_story_mode = false;
+	public var unlocked_backgrounds = new Array<String>();
 	
 	public function new() 
 	{
@@ -40,5 +42,18 @@ class AchievementManager
 		}
 		
 		return false;
+	}
+	
+	public function is_background_unlocked( s :String ) : Bool
+	{
+		return Lambda.exists(unlocked_backgrounds, function(obj) { return obj == s; });
+	}
+	
+	public function unlock_background( s: String )
+	{
+		if (is_background_unlocked(s) == false)
+		{
+			unlocked_backgrounds.push(s);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package ui;
 
+import luxe.Color;
 import mint.Label;
 import mint.Label.LabelOptions;
 
@@ -10,6 +11,8 @@ import mint.Label.LabelOptions;
 typedef MintLabelOptions =
 {
 	> LabelOptions,
+	
+	color : Color,
 }
  
 class MintLabel extends Label
@@ -21,5 +24,6 @@ class MintLabel extends Label
 		var renderer = cast(renderer, mint.render.luxe.Label);
 		var font = Luxe.resources.font(Main.rise_font_id);
 		renderer.text.font = font;
+		renderer.text.color = _options.color;
 	}
 }

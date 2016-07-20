@@ -2,7 +2,6 @@
 	"textures" : 
 	[ 
 		{ "id" : "assets/image/war-child-logo-home.png" },
-		{ "id" : "assets/image/frontend_bg.png" },
 		{ "id" : "assets/image/rise_logo.png" }
 	],
 	

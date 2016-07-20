@@ -67,6 +67,6 @@ class MintLabelPanel
 		renderer.text.color.a = a;
 		
 		var panel_renderer = cast(panel.renderer, mint.render.luxe.Panel);
-		panel_renderer.visual.color.a = a;
+		panel_renderer.visual.color.a = Math.min(a, 0.5);
 	}
 }
