@@ -13,6 +13,7 @@ typedef UserDataHeader =
 
 typedef UserDataV1 = 
 {
+	?user_name : String,
 	?score_list : ScoreList,
 	//unlockables : Unlockables,
 };
@@ -22,6 +23,7 @@ typedef ScoreRun = {
 	score:Int,
 	distance:Int,
 	time:Int,
+	?song_id:SongSignature,
 };
 
 typedef SongSignature = String;

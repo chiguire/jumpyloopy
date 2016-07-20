@@ -6,6 +6,7 @@ import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Input;
+import mint.TextEdit;
 import mint.types.Types.TextAlign;
 import ui.MintLabel;
 import ui.MintLabelPanel;
@@ -90,7 +91,13 @@ class ScoreState extends State
 				color: Main.global_info.text_color,
 			});
 		}
-				
+		
+		new TextEdit({
+			text: game_info.current_score.name,
+			x: 495, y:200 + name.length * 72, text_size: 48,
+			w: 450, h: 72,
+			parent: Main.canvas,
+		});
 		
 		/*
 		var panel = new MintLabelPanel({

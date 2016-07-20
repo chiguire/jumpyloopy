@@ -135,6 +135,10 @@ class Level extends Entity
 				{
 					Luxe.events.fire("Level.Start", {pos:player_start_pos, beat_height:beat_height}, false );
 				}
+				else
+				{
+					Luxe.events.fire("Level.SetCamera");
+				}
 			}
 			
 		}, true);

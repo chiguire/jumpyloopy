@@ -279,6 +279,7 @@ class Main extends luxe.Game
 			
 			// Example data
 			user_data = {};
+			user_data.user_name = "";
 			user_data.score_list = new ScoreList();
 			
 			var score_run_a : Array<ScoreRun> = [

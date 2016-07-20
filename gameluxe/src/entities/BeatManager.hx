@@ -5,6 +5,7 @@ import analysis.SpectrumProvider;
 import analysis.ThresholdFunction;
 import components.BeatManagerGameHUD;
 import components.BeatManagerVisualizer;
+import data.GameInfo.SongSignature;
 import entities.Level.LevelStartEvent;
 import haxe.PosInfos;
 import haxe.crypto.Crc32;
@@ -103,6 +104,7 @@ class BeatManager extends Entity
 	
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
+	public var song_id(default, null) : SongSignature;
 		
 	/// renderer
 	public var batcher: Batcher;
@@ -407,6 +409,7 @@ class BeatManager extends Entity
 			
 			// create a seed for random
 			var md5str = Md5.encode(beat_pos.toString());
+			song_id = md5str;
 			var md5bytes = Bytes.ofString(md5str);
 			audio_seed = Crc32.make(md5bytes);
 			trace("audio_seed " + md5str);

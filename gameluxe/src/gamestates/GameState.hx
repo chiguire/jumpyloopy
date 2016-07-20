@@ -269,6 +269,7 @@ class GameState extends State
 		// events
 		event_id = new Array<String>();
 		event_id.push(Luxe.events.listen("Level.Start", OnLevelStart ));
+		event_id.push(Luxe.events.listen("Level.SetCamera", OnLevelSetCamera ));
 		event_id.push(Luxe.events.listen("player_move_event", OnPlayerMove ));
 		event_id.push(Luxe.events.listen("player_respawn_end", on_player_respawn_end ));
 		event_id.push(Luxe.events.listen("platform_time_out", on_platform_time_out ));
@@ -495,10 +496,11 @@ class GameState extends State
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
 			game_info.current_score =
 			{
-				name: "",
+				name: Main.user_data.user_name,
 				score: score_component.current_score,
 				distance: beat_n,
 				time: Std.int(Luxe.time - starting_time),
+				song_id: Main.beat_manager.song_id,
 			};
 			machine.set(next_state);
 		});
@@ -806,6 +808,11 @@ class GameState extends State
 			
 			trace( story_end_disp.pos );
 		}
+	}
+	
+	function OnLevelSetCamera(e:LevelStartEvent)
+	{
+		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
