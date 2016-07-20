@@ -22,7 +22,7 @@ class PlayerCollisionComponent extends Component
 	{
 		trace("Setting up player collision.");
 		//Also inset the player collision.
-		player_collision = new CollisionShape(playerSprite, true, 0, -50, 0.75, 0.75);
+		player_collision = new CollisionShape(playerSprite, playerSprite.size, true, 0, -50, 0.75, 0.75);
 		initialised = true;
 	}
 	

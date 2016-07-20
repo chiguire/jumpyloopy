@@ -11,7 +11,7 @@ class Collectable_Spike extends Collectable
 {
 	public function new(c_manager: CollectableManager, name : String, position : Vector) 
 	{
-		super(c_manager, name, "assets/image/collectables/spiky_ball.png", 'assets/animation/animation_spiky_ball.json', new Vector(50, 50), position);
+		super(c_manager, name, "assets/image/collectables/paper_hole_01.png", '', new Vector(100, 100), position, new Vector(50,50));
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

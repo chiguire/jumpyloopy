@@ -25,7 +25,7 @@ class Collectable extends Sprite
 	// event id, stored so we can unlisten
 	var event_id : Array<String>;
 	
-	public function new(parent_manager : CollectableManager, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector) 
+	public function new(parent_manager : CollectableManager, name : String, texture_name : String, animation_name : String, size : Vector, position : Vector, collision_size : Vector ) 
 	{
 		c_manager = parent_manager;
 		
@@ -58,7 +58,7 @@ class Collectable extends Sprite
 		}
 		
 		//Define collision for the collectable.
-		collisionShape = new CollisionShape(this, false);
+		collisionShape = new CollisionShape(this, collision_size, false);
 		GameState.player_sprite.collision.RegisterCollisionEntity(collisionShape);
 		
 		event_id = new Array<String>();
@@ -79,6 +79,7 @@ class Collectable extends Sprite
 		destroy();
 	}
 	
+	/*
 	private function buildPolygon(size : Vector):Array<Vector>
 	{
 		var a = new Array();
@@ -92,6 +93,7 @@ class Collectable extends Sprite
 		
 		return a;
 	}
+	*/
 	
 	override public function ondestroy() 
 	{

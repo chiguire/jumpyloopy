@@ -15,7 +15,7 @@ class Collectable_Fragment extends Collectable
 	public function new(c_manager : CollectableManager, name : String, position : Vector, index : Int) 
 	{
 		fragment_index = index;
-		super(c_manager, name, getSpriteForID(), '', new Vector(40, 40), position);
+		super(c_manager, name, getSpriteForID(), '', getSpriteSizeForID(), position, new Vector(40,40));
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 
@@ -39,6 +39,19 @@ class Collectable_Fragment extends Collectable
 			case 4: return "assets/image/collectables/letter_chunk_04.png";
 			case 5: return "assets/image/collectables/letter_chunk_05.png";
 			default: return "assets/image/collectables/letter_chunk_01.png";
+		}
+	}
+	
+	function getSpriteSizeForID() : Vector
+	{
+		switch(fragment_index)
+		{
+			case 1: return new Vector(40, 50);
+			case 2: return new Vector(50, 35);
+			case 3: return new Vector(40, 35);
+			case 4: return new Vector(45, 43);
+			case 5: return new Vector(85, 30);
+			default: return new Vector(40, 50);
 		}
 	}
 }
