@@ -39,7 +39,11 @@ class Platform extends Sprite
 	
 	//private var last_anim : String 
 	
+	var event_id : Array<String>;
+	
 	var visual_flashing_comp : VisualFlashingComponent;
+	
+	private var paused : Bool;
 	
 	public function new(options : PlatformOptions) 
 	{
@@ -59,6 +63,24 @@ class Platform extends Sprite
 		
 		set_type(options.type, true);
 		//scale.set_xy(0.5, 0.5);
+		
+		event_id = new Array<String>();
+		event_id.push(Luxe.events.listen("game.pause", OnGamePause ));
+		event_id.push(Luxe.events.listen("game.unpause", OnGameUnpause ));
+		
+		paused = false;
+	}
+	
+	override public function ondestroy()
+	{
+		// events
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
+		event_id = null;
+		
+		super.ondestroy();
 	}
 	
 	public function set_type(t:PlatformType, skip_animation_to_end:Bool)
@@ -123,5 +145,15 @@ class Platform extends Sprite
 	public static function get_random_center_type()
 	{
 		return Std.int(Luxe.utils.random.float(1.0) * 2) + 1;
+	}
+	
+	public function OnGamePause(e)
+	{
+		paused = true;
+	}
+	
+	public function OnGameUnpause(e)
+	{
+		paused = false;
 	}
 }

@@ -190,6 +190,7 @@ class LevelSelectState extends State
 		});
 		
 		desc_sprite = new Sprite({
+			scene: scene,
 		});
 		desc_sprite.visible = false;
 	}

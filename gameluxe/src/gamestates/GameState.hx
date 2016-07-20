@@ -27,9 +27,11 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
 import luxe.utils.Random;
+import mint.Image;
 import mint.Label;
 import mint.Panel;
 import phoenix.Batcher;
+import ui.MintImageButton;
 import ui.MintLabelPanel;
 
 import luxe.tween.Actuate;
@@ -113,7 +115,7 @@ class GameState extends State
 	
 	public var is_pause (default, null) = false;
 	/// pause panel
-	var pause_panel : Panel;
+	var pause_panel : Image;
 	
 	//Game over panel.
 	public var is_game_over (default, null) = false;
@@ -194,6 +196,8 @@ class GameState extends State
 	function pause()
 	{
 		is_pause = true;
+		level.can_put_platforms = false;
+		mouse_platform.visible = false;
 		activate_pause_panel();
 		Luxe.events.fire("game.pause");
 	}
@@ -201,6 +205,7 @@ class GameState extends State
 	function unpause()
 	{
 		is_pause = false;
+		mouse_platform.visible = true;
 		deactivate_pause_panel();
 		Luxe.events.fire("game.unpause");
 	}
@@ -1101,66 +1106,33 @@ class GameState extends State
 	
 	function create_pause_panel()
 	{
-		pause_panel = new mint.Panel({
-			parent: Main.canvas,
-			name: 'panel_pause',
+		pause_panel = new Image({
+			parent: Main.canvas, name: "panel_pause",
+			x:554, y:295, w:335, h:316,
+			path: "assets/image/ui/UI_Game_Pause_paper.png",
 			mouse_input: true,
-			x: 595, y: 300, w: 250, h: 300,
 		});
 		pause_panel.visible = false;
 		
-		var title = new mint.Label({
-			parent: pause_panel, name: 'label',
-			mouse_input:false, x:0, y:0, w:250, h:100, text_size: 32,
-			align: MintTextAlign.center, align_vertical: MintTextAlign.center,
-			text: "Game Pause",
+		var button = new MintImageButton(pause_panel, "Resume", new Vector(620 - 554, 350 - 295), new Vector(201, 45), "assets/image/ui/UI_Game_Pause_resume.png");
+		button.onmouseup.listen(function(e, c) {
+			unpause();
 		});
 		
-		var button = new mint.Button({
-            parent: pause_panel,
-            name: 'button',
-            text: "Resume",
-			x: 61, y: 110, w: 128, h: 32,
-            text_size: 14,
-            options: { label: { color:new Color().rgb(0x9dca63) } }
-        });
-		button.onmouseup.listen(
-			function(e,c) 
-			{
-				unpause();
-			}
-		);
+		button = new MintImageButton(pause_panel, "Restart", new Vector(620 - 554, 400 - 295), new Vector(203, 52), "assets/image/ui/UI_Game_Pause_restartgame.png");
+		button.onmouseup.listen(function(e, c) {
+			restart_signal = true;
+		});
 		
-		var button1 = new mint.Button({
-            parent: pause_panel,
-            name: 'button',
-            text: "Restart",
-			x: 61, y: 152, w: 128, h: 32,
-            text_size: 14,
-            options: { label: { color:new Color().rgb(0x9dca63) } }
-        });
-		button1.onmouseup.listen(
-			function(e,c) 
-			{
-				restart_signal = true;
-			}
-		);
+		button = new MintImageButton(pause_panel, "MainMenu", new Vector(620 - 554, 455 - 295), new Vector(202, 42), "assets/image/ui/UI_Game_Pause_Mainmenu.png");
+		button.onmouseup.listen(function(e, c) {
+			state_change_menu_signal = true;
+		});
 		
-		var button2 = new mint.Button({
-            parent: pause_panel,
-            name: 'button',
-            text: "Main Menu",
-			x: 61, y: 152+42, w: 128, h: 32,
-            text_size: 14,
-            options: { label: { color:new Color().rgb(0x9dca63) } }
-        });
-		button2.onmouseup.listen(
-			function(e,c) 
-			{
-				state_change_menu_signal = true;
-				//reset_state();
-			}
-		);
+		button = new MintImageButton(pause_panel, "Quit", new Vector(620 - 554, 525 - 295), new Vector(203, 43), "assets/image/ui/UI_Game_Pause_quit.png");
+		button.onmouseup.listen(function(e, c) {
+			Luxe.shutdown();
+		});
 	}
 	
 		
