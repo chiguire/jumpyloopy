@@ -156,7 +156,7 @@ class Main extends luxe.Game
 	{
 		//app.debug.visible = true;
 		
-		get_user_data();
+		load_user_data();
 		
 		// camera
 		// create views for all layers
@@ -269,7 +269,7 @@ class Main extends luxe.Game
 		//canvas.set_size(e.x, e.y);
     }
 	
-	public static function get_user_data()
+	public static function load_user_data()
 	{
 		if (!FileSystem.exists(global_info.user_storage_filename))
 		{
@@ -340,5 +340,18 @@ class Main extends luxe.Game
 		var unserializer = new Unserializer(bytes_data.toString());
 		var user_data_header = unserializer.unserialize();
 		user_data = unserializer.unserialize();
+	}
+	
+	public static function save_user_data()
+	{
+		var serializer = new Serializer();
+		
+		var userdata_header : UserDataHeader = { version: 1.0 };
+		serializer.serialize(userdata_header);
+		serializer.serialize(user_data);
+		
+		var bytes_data = Bytes.ofString(serializer.toString());
+			
+		File.saveBytes(global_info.user_storage_filename, bytes_data);
 	}
 }
