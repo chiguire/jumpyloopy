@@ -1,5 +1,6 @@
 package ui;
 import luxe.Vector;
+import mint.Control;
 import mint.Image;
 import mint.types.Types.MouseEvent;
 
@@ -10,18 +11,22 @@ import mint.types.Types.MouseEvent;
 class MintImageButton extends Image
 {
 	public var is_active : Bool = true;
+	var callback : Void->Void;
 	
-	public function new(name : String, pos : Vector, size : Vector, image_path : String ) 
+	
+	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String, ?onclick : Void->Void) 
 	{
 		super(
 		{
-			parent: Main.canvas, 
+			parent: parent, 
 			name: name,
 			x:pos.x, y:pos.y, 
 			w:size.x, h:size.y,
 			path: image_path,
 			mouse_input: true
 		});
+		
+		callback = onclick;
 	}
 	
 	override public function mouseenter(e:MouseEvent) 
@@ -44,5 +49,11 @@ class MintImageButton extends Image
 		var hsl = renderer.visual.color.toColorHSL();
 		hsl.l /= 1.5;
 		renderer.visual.color.fromColorHSL(hsl);
+	}
+	
+	override public function mousedown(e:MouseEvent) 
+	{
+		callback();
+		super.mousedown(e);
 	}
 }

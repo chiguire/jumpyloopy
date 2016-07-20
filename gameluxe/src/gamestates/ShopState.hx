@@ -1,6 +1,9 @@
 package gamestates;
 
+import analysis.DFT;
 import data.GameInfo;
+import gamestates.ShopState.CharacterData;
+import luxe.Color;
 import luxe.Input;
 import luxe.Input.KeyEvent;
 import luxe.Input.Key;
@@ -10,7 +13,10 @@ import luxe.Text;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import mint.List;
+import ui.MintGridPanel;
 import ui.MintImageButton;
+import ui.MintImageButton_Store;
 
 /**
  * ...
@@ -23,6 +29,8 @@ class ShopState extends State
 	private var title_text : Text;
 	var parcel : Parcel;
 	var change_to : String;
+	
+	private var characters : Array<CharacterData> = new Array();
 	
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -79,16 +87,55 @@ class ShopState extends State
 		title_text = null;
 		
 		parcel = null;
+		
+		characters = new Array();
 	}
 	
 	function on_loaded( p: Parcel )
 	{
 		var json_resource = Luxe.resources.json("assets/data/shop.json");
-		var layout_data = json_resource.asset.json;
-
+		var character_data : Array<Dynamic> = json_resource.asset.json.characters;
+		
+		for (i in 0...character_data.length)
+		{
+			var n = character_data[i];
+			var new_template : CharacterData = new CharacterData(n.name, n.tex_path, n.game_texture, n.cost);
+			characters.push(new_template);
+			trace("Loaded: " + n);
+		}
+		
 		// UI layer
 		var canvas = Main.canvas;
 		
-		var img : MintImageButton = new MintImageButton("test", new Vector(0, 0), new Vector(40, 40), "assets/image/war-child-logo-home.png");
+		var window_w = 500;
+		var character_panel = new MintGridPanel(canvas, "Characters", new Vector((Main.canvas.w / 2) - (window_w/2), 200), window_w, 3,  100, 5);
+		
+		for (i in 0...characters.length)
+		{
+			var item : MintImageButton_Store = new MintImageButton_Store(character_panel, characters[i].name, 
+				new Vector(0, 0), new Vector(100, 100), 
+				characters[i].tex_path, function(){trace("hi");});
+
+			character_panel.add_item(item);
+		}
+		
+		var background_panel = new MintGridPanel(canvas, "Backgrounds", new Vector((Main.canvas.w / 2) - (window_w/2), character_panel.bottom), window_w, 3,  100, 5);
+	}
+
+}
+
+class CharacterData
+{
+	public var name : String;
+	public var game_texture : String;
+	public var cost : Int;
+	public var tex_path : String;
+	
+	public function new(n : String, tp : String, t : String, c: Int)
+	{
+		name = n;
+		tex_path = tp;
+		game_texture = t;
+		cost = c;
 	}
 }

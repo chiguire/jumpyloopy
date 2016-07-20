@@ -1,8 +1,33 @@
 {
 	"textures" : 
 	[ 
-		{ "id" : "assets/image/track_selection.png" },
-		{ "id" : "assets/image/war-child-logo-home.png" }
+		{ "id" : "assets/image/unlockables/astro_locked.png" },
+		{ "id" : "assets/image/unlockables/astro_locked_selected.png"},
+		{ "id" : "assets/image/unlockables/astro_unlocked.png" },
+		{ "id" : "assets/image/unlockables/astro_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/astro_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/aviator_unlocked.png" },
+		{ "id" : "assets/image/unlockables/aviator_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/aviator_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/diver_locked.png" },
+		{ "id" : "assets/image/unlockables/diver_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/diver_unlocked.png" },
+		{ "id" : "assets/image/unlockables/diver_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/diver_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/icar_locked.png" },
+		{ "id" : "assets/image/unlockables/icar_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/icar_unlocked.png" },
+		{ "id" : "assets/image/unlockables/icar_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/icar_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/miner_locked.png" },
+		{ "id" : "assets/image/unlockables/miner_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/miner_unlocked.png" },
+		{ "id" : "assets/image/unlockables/miner_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/miner_unlocked_selected.png" }
 	],
 	
 	"json" : 
