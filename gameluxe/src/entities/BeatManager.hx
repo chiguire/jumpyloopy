@@ -409,7 +409,7 @@ class BeatManager extends Entity
 			var md5str = Md5.encode(beat_pos.toString());
 			var md5bytes = Bytes.ofString(md5str);
 			audio_seed = Crc32.make(md5bytes);
-			trace("audio_seed " + audio_seed);
+			trace("audio_seed " + md5str);
 			
 			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});

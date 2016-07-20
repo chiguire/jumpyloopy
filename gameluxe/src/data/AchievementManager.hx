@@ -31,8 +31,11 @@ class AchievementManager
 		current_coins = 2000;
 #end
 		//Default unlockables.
+
 		unlocked_characters.push("Aviator");
 		selected_character = "Aviator";
+		
+		unlocked_backgrounds.push("paper");
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )

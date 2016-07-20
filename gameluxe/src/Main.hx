@@ -155,6 +155,8 @@ class Main extends luxe.Game
 	{
 		//app.debug.visible = true;
 		
+		load_user_data();
+		
 		// camera
 		// create views for all layers
 		var viewport_size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
@@ -197,7 +199,6 @@ class Main extends luxe.Game
 		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
 		game_info = {
-			score_list: create_score_list(),
 			music_volume: if (Math.isNaN(music_volume)) 0.5 else music_volume,
 			effects_volume: if (Math.isNaN(effects_volume)) 0.8 else effects_volume,
 		};
@@ -226,10 +227,6 @@ class Main extends luxe.Game
 
 	override function config(config:luxe.GameConfig) 
 	{
-		user_data = {
-			total_score : 0
-		}
-		
 		global_info = 
 		{
 			ref_window_size_x : config.user.ref_window_size[0] ? config.user.ref_window_size[0] : 1440,
@@ -239,7 +236,8 @@ class Main extends luxe.Game
 			fullscreen : false,
 			borderless : false,
 			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0,
-			text_color: new Color(0x3f/255.0, 0x24/255.0, 0x14/255.0, 1.0), 
+			text_color: new Color(0x3f / 255.0, 0x24 / 255.0, 0x14 / 255.0, 1.0), 
+			user_storage_filename: "storage.bin",
 		};
 		
 		config.window.title = 'Rise';
@@ -264,67 +262,95 @@ class Main extends luxe.Game
 
     } //config
 	
-	private function create_score_list()
-	{
-		var values_array : Array<String> = Luxe.io.string_load("scores").split(",");
-		var score_list : ScoreList = new ScoreList();
-		
-		var i = 0;
-		var name : String = "";
-		
-		for (s in values_array)
-		{
-			if (i == 0)
-			{
-				name = s;
-			}
-			else
-			{
-				var score = Std.parseInt(s);
-				
-				score_list.push({name: name, score: score});
-			}
-			
-			i = (i + 1) % 2;
-		}
-		
-		return score_list;
-	}
-	
 	override function onwindowresized( e:WindowEvent ) 
 	{
         trace('window resized : ${e.x} / ${e.y}');
 		//canvas.set_size(e.x, e.y);
     }
 	
-	override function onkeyup(e:KeyEvent) 
+	public static function load_user_data()
 	{
-		var user_fn = "user.bin";
-		
-		if (e.keycode == Key.key_l)
+		if (!FileSystem.exists(global_info.user_storage_filename))
 		{
-			// test loading user data
-			if (FileSystem.exists(user_fn))
+			// Initialize data
+			var userdata_header : UserDataHeader = { version: 1.0 };
+			
+			// Example data
+			user_data = {};
+			user_data.score_list = new ScoreList();
+			
+			var score_run_a : Array<ScoreRun> = [
+				{
+					name: "AAA",
+					score: 10000,
+					distance: 100,
+					time: 0,
+				},
+				{
+					name: "AAA",
+					score: 9000,
+					distance: 90,
+					time: 0,
+				},
+				{
+					name: "AAA",
+					score: 8000,
+					distance: 80,
+					time: 0,
+				},
+				{
+					name: "AAA",
+					score: 7000,
+					distance: 70,
+					time: 0,
+				},
+				{
+					name: "AAA",
+					score: 6000,
+					distance: 60,
+					time: 0,
+				},
+			];
+			
+			user_data.score_list.set("6eba6c00b1971ef68b7897a41ce459d4",
 			{
-				var fin = File.read(user_fn);
-				var bytes_data = fin.readAll();
-				
-				var unserializer = new Unserializer(bytes_data.toString());
-				trace(unserializer.unserialize());
-				trace(unserializer.unserialize());
-			}
-			else
+				name: "Training",
+				scores: score_run_a,
+			});
+			
+			user_data.score_list.set("e1c230c608ea62436abde2ee6d412e8d",
 			{
-				var userdata_header : UserDataHeader = {version : 1.0 } ;
-				user_data.total_score += 1000;
-				var serializer = new Serializer();
-				serializer.serialize(userdata_header);
-				serializer.serialize(user_data);
+				name: "Story",
+				scores: score_run_a,
+			});
+			
+			var serializer = new Serializer();
+			serializer.serialize(userdata_header);
+			serializer.serialize(user_data);
+			
+			var bytes_data = Bytes.ofString(serializer.toString());
 				
-				var bytes_data = Bytes.ofString(serializer.toString());
-				
-				File.saveBytes(user_fn, bytes_data);
-			}
+			File.saveBytes(global_info.user_storage_filename, bytes_data);
 		}
+		
+		var fin = File.read(global_info.user_storage_filename);
+		var bytes_data = fin.readAll();
+		
+		var unserializer = new Unserializer(bytes_data.toString());
+		var user_data_header = unserializer.unserialize();
+		user_data = unserializer.unserialize();
+	}
+	
+	public static function save_user_data()
+	{
+		var serializer = new Serializer();
+		
+		var userdata_header : UserDataHeader = { version: 1.0 };
+		serializer.serialize(userdata_header);
+		serializer.serialize(user_data);
+		
+		var bytes_data = Bytes.ofString(serializer.toString());
+			
+		File.saveBytes(global_info.user_storage_filename, bytes_data);
 	}
 }

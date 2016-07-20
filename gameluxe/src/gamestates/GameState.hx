@@ -139,6 +139,9 @@ class GameState extends State
 	
 	var event_id : Array<String>;
 	
+	// Time
+	private var starting_time : Float;
+	
 	//Game Mode Type
 	public var game_state_onenter_data : GameStateOnEnterData;
 	
@@ -494,6 +497,13 @@ class GameState extends State
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
+			game_info.current_score =
+			{
+				name: "",
+				score: score_component.current_score,
+				distance: beat_n,
+				time: Std.int(Luxe.time - starting_time),
+			};
 			machine.set(next_state);
 		});
 	}
@@ -536,6 +546,8 @@ class GameState extends State
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
 		}
+		
+		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
 		
 		level.activate_countdown_text();
 		Main.beat_manager.on_player_respawn_end();
@@ -775,6 +787,8 @@ class GameState extends State
 		list_of_platforms_bg.visible = true;
 		
 		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
+		
+		starting_time = Luxe.time;
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -1030,16 +1044,21 @@ class GameState extends State
 		
 		background = new Background({scene : scene});
 		background.is_story_mode = game_state_onenter_data.is_story_mode;
-		var selected_id = select_background_group_id(background_groups.length);
-		background.background_group = background_groups[selected_id];
+		background.background_group = select_background_group_id();
 	}
 	
-	function select_background_group_id( num_groups : Int ) : Int
+	function select_background_group_id() : BackgroundGroup
 	{
 		// background group 0 is for story mode
-		if ( game_state_onenter_data.is_story_mode ) return 0;
+		if ( game_state_onenter_data.is_story_mode ) return background_groups[0];
 		// otherwise random selected from unlocked background
-		return Luxe.utils.random.int(1, num_groups); 
+		var unlocked_backgrounds = Main.achievement_manager.unlocked_backgrounds;
+		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
+		
+		// if we not yet unlock any background, it will be the first group
+		var bg_group = Lambda.find(background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		
+		return bg_group;
 	}
 	
 	function select_background_group_name(s : String) : BackgroundGroup
