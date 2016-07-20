@@ -374,7 +374,7 @@ class BeatManager extends Entity
 	{
 		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
-		audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		//audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
 		
 		// we need to reload it if it is already been loaded as a stream
 		var res = Luxe.resources.audio(audio_id);
