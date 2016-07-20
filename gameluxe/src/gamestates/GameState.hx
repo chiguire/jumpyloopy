@@ -551,6 +551,7 @@ class GameState extends State
 			pl.stepped_on_by_player = true;
 		}
 		
+		score_component.reset_multiplier();
 		level.activate_countdown_text();
 		Main.beat_manager.on_player_respawn_end();
 	}

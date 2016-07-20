@@ -358,4 +358,72 @@ class Main extends luxe.Game
 			
 		File.saveBytes(global_info.user_storage_filename, bytes_data);
 	}
+	
+	public static function submit_score(score:ScoreRun)
+	{
+		var song_id = score.song_id;
+		score.song_id = null;
+		
+		if (!user_data.score_list.exists(song_id))
+		{
+			user_data.score_list.set(song_id, {
+				name: song_id,
+				scores: [
+					{
+						name: "AAA",
+						score: 10000,
+						distance: 100,
+						time: 0,
+					},
+					{
+						name: "AAA",
+						score: 9000,
+						distance: 90,
+						time: 0,
+					},
+					{
+						name: "AAA",
+						score: 8000,
+						distance: 80,
+						time: 0,
+					},
+					{
+						name: "AAA",
+						score: 7000,
+						distance: 70,
+						time: 0,
+					},
+					{
+						name: "AAA",
+						score: 6000,
+						distance: 60,
+						time: 0,
+					},
+				],
+			});
+		}
+		var arr : Array<ScoreRun> = user_data.score_list.get(song_id).scores;
+		
+		var found = -1;
+		for (i in 0...arr.length)
+		{
+			if (score.score > arr[i].score)
+			{
+				found = i;
+				break;
+			}
+		}
+		
+		if (found == -1)
+		{
+			return;
+		}
+		
+		arr.insert(found, score);
+		arr.pop();
+		
+		user_data.score_list.get(song_id).scores = arr;
+		
+		save_user_data();
+	}
 }

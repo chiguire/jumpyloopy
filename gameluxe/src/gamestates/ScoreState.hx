@@ -8,6 +8,7 @@ import luxe.States.State;
 import luxe.Input;
 import mint.TextEdit;
 import mint.types.Types.TextAlign;
+import ui.MintImageButton;
 import ui.MintLabel;
 import ui.MintLabelPanel;
 import luxe.Sprite;
@@ -21,6 +22,8 @@ class ScoreState extends State
 	private var game_info : GameInfo;
 	
 	var scene : Scene;
+	
+	var text_edit : TextEdit;
 	
 	private var bg_image : Sprite;
 	
@@ -37,6 +40,7 @@ class ScoreState extends State
 	
 	override function onleave<T>(_value:T)
 	{
+		text_edit.unfocus();
 		bg_image.destroy();
 		scene.empty();
 		scene.destroy();
@@ -44,6 +48,7 @@ class ScoreState extends State
 		bg_image = null;
 		
 		Main.canvas.destroy_children();	
+		text_edit = null;
 	}
 	
 	override function onenter<T>(_value:T)
@@ -76,7 +81,7 @@ class ScoreState extends State
 		{
 			new MintLabel({
 				parent: Main.canvas,
-				mouse_input:false, x:495, y:200 + i*72, w:450, h:72, text_size: 48,
+				mouse_input:false, x:520, y:200 + (i+1)*72, w:400, h:72, text_size: 48,
 				align: TextAlign.left, align_vertical: TextAlign.center,
 				text: name[i],
 				color: Main.global_info.text_color,
@@ -85,47 +90,33 @@ class ScoreState extends State
 			
 			new MintLabel({
 				parent: Main.canvas,
-				mouse_input:false, x:495, y:200 + i*72, w:450, h:72, text_size: 48,
+				mouse_input:false, x:520, y:200 + (i+1)*72, w:400, h:72, text_size: 48,
 				align: TextAlign.right, align_vertical: TextAlign.center,
 				text: val[i],
 				color: Main.global_info.text_color,
 			});
 		}
 		
-		new TextEdit({
+		new MintLabel({
+			parent: Main.canvas,
+			mouse_input:false, x:520, y:200, w:400, h:72, text_size: 48,
+			align: TextAlign.left, align_vertical: TextAlign.center,
+			text: "Your name:",
+			color: Main.global_info.text_color,
+		});
+		
+		text_edit = new TextEdit({
 			text: game_info.current_score.name,
-			x: 495, y:200 + name.length * 72, text_size: 48,
-			w: 450, h: 72,
+			x: 690, y:200, text_size: 48,
+			w: 230, h: 72,
 			parent: Main.canvas,
 		});
 		
-		/*
-		var panel = new MintLabelPanel({
-			x: 495, y: 200, w: 450, h: 600, 
-			text: "-Your Score-\n\n
-				Score\t\t\t\t\t200\n
-				Distance\t\t\t\t\t225\n
-				PlayTime\t\t\t\t\t0:3:12\n\n
-				Total Score\t\t\t\t\t1000\n
-				Total Distance\t\t\t\t\t3425\n
-				Total PlayTime\t\t\t\t\t10:11:44\n\n\n
-				Thanks For Playing!\nPress Esc to go back to the Main Menu"
-		});
-		*/
-	}
-	
-	override function update(dt:Float) 
-	{
-		var go_to_menu = false;
-			//Luxe.input.mousepressed(MouseButton.left) ||
-			//Luxe.input.mousepressed(MouseButton.right) ||
-			//Luxe.input.keypressed(Key.space) ||
-			//Luxe.input.keypressed(Key.escape) ||
-			//Luxe.input.keypressed(Key.backspace);
-			
-		if (go_to_menu)
-		{
+		var button = new MintImageButton(Main.canvas, "MainMenu", new Vector(620, 200 + (name.length + 2) * 72), new Vector(202, 42), "assets/image/ui/UI_score_Mainmenu.png");
+		button.onmouseup.listen(function(e, c) {
+			game_info.current_score.name = text_edit.text;
+			Main.submit_score(game_info.current_score);
 			machine.set("MenuState");
-		}
+		});
 	}
 }
