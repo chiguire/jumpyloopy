@@ -532,6 +532,9 @@ class GameState extends State
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
 		}
+		
+		level.activate_countdown_text();
+		Main.beat_manager.on_player_respawn_end();
 	}
 	
 	function on_platform_time_out(e:PlatformTimeoutEvent)
