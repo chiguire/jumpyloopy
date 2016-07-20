@@ -718,6 +718,7 @@ class GameState extends State
 		mouse_pos.set_xy(w.x, w.y);
 	}
 	
+	var rand_target = 0.0;
 	function OnLevelStart( e:LevelStartEvent )
 	{
 		var peg_y = e.pos.y;
@@ -801,12 +802,14 @@ class GameState extends State
 			story_end_disp = new Sprite({
 				scene : scene,
 				texture : Luxe.resources.texture("assets/image/collectables/letter.png"),
-				size : new Vector(250, 150),
-				pos : new Vector(lanes[2], -background.story_end_distance),
+				size : new Vector(250 * 1.5, 150 * 1.5),
+				pos : new Vector(lanes[2], -800),//-background.story_end_distance),
 				depth : 2,
 			});
 			
 			trace( story_end_disp.pos );
+			story_end_disp.rotation_z  = -3;
+			Actuate.tween(story_end_disp, 2.0, { rotation_z : 3 }).reflect().repeat();
 		}
 	}
 	

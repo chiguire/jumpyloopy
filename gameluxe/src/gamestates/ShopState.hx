@@ -17,6 +17,8 @@ import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import mint.List;
+import mint.Panel;
+import mint.Scroll;
 import ui.MintGridPanel;
 import ui.MintImageButton;
 import ui.MintImageButton_Store;
@@ -106,10 +108,41 @@ class ShopState extends State
 		// UI layer	
 		var window_w = 500;
 		var window_y = 200;
+		var grid_padding = 10;
 		
-		var character_panel = new MintGridPanel(Main.canvas, "Characters", 
-			new Vector((Main.canvas.w / 2) - (window_w / 2), window_y), window_w, 3, 5);	
+		var _scroll : Scroll = new mint.Scroll({
+            parent: Main.canvas,
+            name: 'scroll1',
+            options: { color_handles:new Color().rgb(0xffffff) },
+            x:(Main.canvas.w / 2) - (window_w / 2), y:window_y, 
+			w: window_w, h: 400,
+        });
+		
+		var grid_panel : Panel = new Panel({
+			parent: _scroll,
+            name: "panel",
+            options: { color:new Color(), color_bar:new Color().rgb(0x121219) },
+            x: grid_padding, y:grid_padding , w:_scroll.w - (grid_padding * 2), h: 10,
+			mouse_input: true,
+		});
+		
+		var character_panel : MintGridPanel = new MintGridPanel(grid_panel, "Characters", 
+			new Vector(0, 0), grid_panel.w, 3, 5);	
 			
+		load_character_grid(character_panel);
+		
+		var background_panel : MintGridPanel = new MintGridPanel(grid_panel, "Background", 
+			new Vector(0, character_panel.h + grid_padding), grid_panel.w, 3, 5);
+		
+		load_background_grid(background_panel);
+		
+		//Reupdate here as we now know what size we are ^_^
+		grid_panel.set_size(grid_panel.w, grid_panel.children_bounds.real_h);
+		_scroll.refresh_scroll();
+	}
+
+	private function load_character_grid(character_panel : MintGridPanel)
+	{
 		for (i in 0...Main.achievement_manager.character_groups.length)
 		{
 			var item : MintImageButton_Store = new MintImageButton_Store(character_panel, Main.achievement_manager.character_groups[i].name, 
@@ -137,10 +170,10 @@ class ShopState extends State
 				
 			character_panel.add_item(item);
 		}
-		
-		var background_panel = new MintGridPanel(Main.canvas, "Background", 
-			new Vector((Main.canvas.w / 2) - (window_w / 2), window_y + character_panel.h), window_w, 3, 5);
-			
+	}
+	
+	private function load_background_grid(background_panel : MintGridPanel)
+	{
 		for (i in 0...Main.achievement_manager.background_groups.length)
 		{
 			var item : MintImageButton_Store = new MintImageButton_Store(background_panel, Main.achievement_manager.background_groups[i].name, 
@@ -169,7 +202,7 @@ class ShopState extends State
 			background_panel.add_item(item);
 		}
 	}
-
+	
 	private function clicked_character(button : MintImageButton_Store, character : CharacterGroup)
 	{
 		if (Main.achievement_manager.is_character_unlocked(character.name))
