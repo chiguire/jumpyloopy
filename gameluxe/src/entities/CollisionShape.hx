@@ -21,13 +21,13 @@ class CollisionShape extends Polygon
 	public var offsetX : Float;
 	public var offsetY : Float;
 	
-	public function new(sprite : Sprite, updatePos : Bool, offset_x : Float = 0, offset_y : Float = 0, 
+	public function new(sprite : Sprite, size: Vector, updatePos : Bool, offset_x : Float = 0, offset_y : Float = 0, 
 		pct_x : Float = 1, pct_y : Float = 1) 
 	{
 		offsetX = offset_x;
 		offsetY = offset_y;
 		
-		var polyArray : Array<Vector> = buildPolygon(sprite.size, pct_x, pct_y);
+		var polyArray : Array<Vector> = buildPolygon(size, pct_x, pct_y);
 		super(sprite.pos.x + offsetX, sprite.pos.y + offsetY, polyArray);
 		
 		//We use our parent sprite to set the position of the collision each frame.

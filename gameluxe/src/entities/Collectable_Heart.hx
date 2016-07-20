@@ -12,7 +12,7 @@ class Collectable_Heart extends Collectable
 {
 	public function new(c_manager : CollectableManager, name : String, position : Vector )
 	{
-		super(c_manager, name, "assets/image/collectables/letter_collectible.png", '', new Vector(40, 40), position);
+		super(c_manager, name, "assets/image/collectables/letter_collectible.png", '', new Vector(75, 45), position, new Vector(40, 40));
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

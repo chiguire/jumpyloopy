@@ -11,7 +11,7 @@ class Collectable_Letter extends Collectable
 {
 	public function new(c_manager : CollectableManager, name : String, position : Vector) 
 	{
-		super(c_manager, name, "assets/image/collectables/letter_collectible.png", '', new Vector(50, 50), position);
+		super(c_manager, name, "assets/image/collectables/letter_collectible.png", '', new Vector(75, 45), position, new Vector(50, 50));
 	}
 		
 	override function onCollisionEnter(player:Avatar):Void 

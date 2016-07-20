@@ -11,10 +11,10 @@ import mint.types.Types.MouseEvent;
 class MintImageButton extends Image
 {
 	public var is_active : Bool = true;
-	var callback : Void->Void;
+	var callback : MintImageButton->Void;
 	
 	
-	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String, ?onclick : Void->Void) 
+	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String, ?onclick : MintImageButton->Void) 
 	{
 		super(
 		{
@@ -53,7 +53,12 @@ class MintImageButton extends Image
 	
 	override public function mousedown(e:MouseEvent) 
 	{
-		callback();
+		callback(this);
 		super.mousedown(e);
+	}
+	
+	public function update_button()
+	{
+		
 	}
 }

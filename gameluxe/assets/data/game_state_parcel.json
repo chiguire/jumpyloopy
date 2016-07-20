@@ -32,6 +32,8 @@
 		{ "id" : "assets/image/collectables/letter_chunk_05.png" },
 		{ "id" : "assets/image/collectables/letter_collectible.png" },
 		{ "id" : "assets/image/collectables/spiky_ball.png" },
+		{ "id" : "assets/image/collectables/paper_hole_01.png" },
+		{ "id" : "assets/image/collectables/paper_hole_02.png" },
 		{ "id" : "assets/image/collectables/spiky_cross.png" }
 	],
 	
