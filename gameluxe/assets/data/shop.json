@@ -1,10 +1,10 @@
 {
 	"characters":[ 
-		{ "name":"Aviator", 	"tex_path":"assets/image/unlockables/aviator", 	"game_texture": "assets/image/aviator_sprite_color.png", 			"cost":250 },
-		{ "name":"Astronaut",	"tex_path":"assets/image/unlockables/astro", 	"game_texture": "assets/image/skins/astronaut_sprite_color.png", 	"cost":500 },
-		{ "name":"Diver", 		"tex_path":"assets/image/unlockables/diver", 	"game_texture": "assets/image/skins/diver_sprite_color.png", 		"cost":500 },
-		{ "name":"Icarus", 		"tex_path":"assets/image/unlockables/icar", 	"game_texture": "assets/image/skins/icarus_sprite.png", 			"cost":500 },
-		{ "name":"Miner", 		"tex_path":"assets/image/unlockables/miner", 	"game_texture": "assets/image/skins/minor_sprite_color.png", 		"cost":500 }
+		{ "name":"Aviator", 	"tex_path":"assets/image/unlockables/characters/aviator", 	"game_texture": "assets/image/aviator_sprite_color.png", 			"cost":250 },
+		{ "name":"Astronaut",	"tex_path":"assets/image/unlockables/characters/astro", 	"game_texture": "assets/image/skins/astronaut_sprite_color.png", 	"cost":500 },
+		{ "name":"Diver", 		"tex_path":"assets/image/unlockables/characters/diver", 	"game_texture": "assets/image/skins/diver_sprite_color.png", 		"cost":500 },
+		{ "name":"Icarus", 		"tex_path":"assets/image/unlockables/characters/icar", 	"game_texture": "assets/image/skins/icarus_sprite.png", 			"cost":500 },
+		{ "name":"Miner", 		"tex_path":"assets/image/unlockables/characters/miner", 	"game_texture": "assets/image/skins/minor_sprite_color.png", 		"cost":500 }
 	]
 }
 

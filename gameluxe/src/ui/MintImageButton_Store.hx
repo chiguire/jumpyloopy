@@ -20,6 +20,7 @@ class MintImageButton_Store extends MintImageButton
 	{
 		is_unlocked = Main.achievement_manager.is_item_unlocked(name);
 		is_equipped = name == Main.achievement_manager.current_character_name ? true : false;
+		is_over = false;
 		
 		textures = new MintImageButton_StoreData(image_path);
 
@@ -52,13 +53,16 @@ class MintImageButton_Store extends MintImageButton
 	
 	private function change_texture(texture : String)
 	{	
-		trace(texture);
+		//trace(texture);
 		var renderer = cast(renderer, mint.render.luxe.Image);
 		renderer.visual.texture = Luxe.resources.texture(texture);
 	}
 	
 	override public function update_button() 
 	{
+		is_unlocked = Main.achievement_manager.is_item_unlocked(name);
+		is_equipped = name == Main.achievement_manager.current_character_name ? true : false;
+		
 		change_texture(get_texture());
 		
 		super.update_button();
