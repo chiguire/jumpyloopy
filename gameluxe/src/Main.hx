@@ -239,7 +239,8 @@ class Main extends luxe.Game
 			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
 			fullscreen : false,
 			borderless : false,
-			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0
+			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0,
+			text_color: new Color(0x3f/255.0, 0x24/255.0, 0x14/255.0, 1.0), 
 		};
 		
 		config.window.title = 'Rise';

@@ -69,7 +69,14 @@ class CreditsState extends State
 	
 	override function update(dt:Float) 
 	{
-		if (Luxe.input.mousepressed(MouseButton.left))
+		var go_to_menu =
+			Luxe.input.mousepressed(MouseButton.left) ||
+			Luxe.input.mousepressed(MouseButton.right) ||
+			Luxe.input.keypressed(Key.space) ||
+			Luxe.input.keypressed(Key.escape) ||
+			Luxe.input.keypressed(Key.backspace);
+			
+		if (go_to_menu)
 		{
 			machine.set("MenuState");
 		}

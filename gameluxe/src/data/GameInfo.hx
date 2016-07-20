@@ -1,6 +1,7 @@
 package data;
 
 import haxe.ds.Vector;
+import luxe.Color;
 import luxe.Rectangle;
 
 typedef ScoreList = Array<{name:String, score:Int}>;
@@ -15,6 +16,7 @@ typedef GlobalGameInfo =
 	var fullscreen : Bool;
 	var borderless : Bool;
 	var platform_lifetime : Float;
+	var text_color : Color;
 };
 
 typedef GameInfo =

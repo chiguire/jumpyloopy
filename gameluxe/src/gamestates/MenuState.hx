@@ -50,12 +50,6 @@ class MenuState extends State
 		
 	}
 	
-	override function onkeyup(e:KeyEvent) 
-	{
-		if(e.keycode == Key.escape)
-			Luxe.shutdown();
-	}
-	
 	override function onleave<T>(_value:T)
 	{
 		trace("Exiting menu");
@@ -224,6 +218,11 @@ class MenuState extends State
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
+		
+		if (Luxe.input.keypressed(Key.escape))
+		{
+			Luxe.shutdown();
+		}
 		
 		if (change_to != "")
 		{
