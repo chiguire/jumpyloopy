@@ -26,6 +26,8 @@ class AchievementManager
 		unlocked_items = new Array();
 		unlocked_items.push("Aviator");
 		current_character_name = "Aviator";
+		
+		unlocked_backgrounds.push("paper");
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )
