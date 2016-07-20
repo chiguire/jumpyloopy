@@ -1,5 +1,6 @@
 {
 	"groups":[{
+		"name": "story",
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
 			, "assets/image/bg/cave_02_tiling.png"
@@ -37,6 +38,60 @@
 			, 1
 			, 1
 			, 2
+			, 1
+			, 1
+		],
+		"unlockables" : [""
+			, ""
+			, "cave"
+			, ""
+			, ""
+			, ""
+			, "sky"
+			, ""
+			, ""
+			, ""
+			, ""
+			, ""
+			, "space"
+			, ""
+			, ""
+			, ""
+			, ""
+			, ""
+			, ""
+		]
+	},
+	
+	{
+		"name" : "paper",
+		"textures": ["assets/image/bg/cave_01_paper.png"
+		],
+		"distances": [1
+		]
+	},
+	
+	{
+		"name" : "cave",
+		"textures": ["assets/image/bg/cave_02_tiling.png"
+		],
+		"distances": [1
+		]
+	},
+	
+	{
+		"name" : "sky",
+		"textures": ["assets/image/bg/sky_03_clouds01.png"
+			, "assets/image/bg/sky_03_clouds02.png"
+			, "assets/image/bg/sky_04_airballon01.png"
+			, "assets/image/bg/sky_04_airballon02.png"
+			, "assets/image/bg/sky_05_islands01.png"
+			, "assets/image/bg/sky_05_islands02.png"
+		],
+		"distances": [1
+			, 1
+			, 1
+			, 1
 			, 1
 			, 1
 		]

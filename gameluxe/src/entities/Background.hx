@@ -20,12 +20,20 @@ typedef HVector<T> = haxe.ds.Vector<T>;
  * ...
  * @author Aik
  */
+typedef UnlockableBackgroundData = 
+{
+	var name : String;
+	var dist : Float;
+}
+ 
 class Background extends Visual
 {
 	public var background_group : BackgroundGroup;
 	
-	//var tiling_textures : Array<Texture>;
-	//var transition_textures : Array<Texture>;
+	public var is_story_mode = false;
+	
+	// unlockable trigger
+	var unlockable_triggers : Array<UnlockableBackgroundData>;
 	
 	var textures : Array<Texture>;
 	var tile_map : Array<Int>;
@@ -37,8 +45,6 @@ class Background extends Visual
 	var bg_size_x = 0.0;
 	var bg_size_y = 0.0;
 	
-	/// transition_pos (should come from level, data)
-	var transition_pos = 1500;
 	var transition_pos_counter = 0.0;
 	var curr_state = 0;
 	
@@ -55,10 +61,10 @@ class Background extends Visual
 		// Background don't have to be Visual, fix this later! [Aik]
 		visible = false;
 		
-		//tiling_textures = new Array<Texture>();
-		//transition_textures = new Array<Texture>();
 		textures = new Array<Texture>();
 		tile_map = new Array<Int>();
+		
+		unlockable_triggers = new Array<UnlockableBackgroundData>();
 		
 		bg_size_x = Main.global_info.ref_window_size_y / Main.ref_window_aspect();
 		bg_size_y = Main.global_info.ref_window_size_y;
@@ -107,12 +113,27 @@ class Background extends Visual
 		}
 		
 		// create tile map
+		var total_dist = 0.0;
 		for (i in 0...background_group.distances.length)
 		{
 			var num_screen = Std.int(background_group.distances[i]);
-			for ( j in 0...num_screen ) tile_map.push(i);
+			
+			if (background_group.unlockables != null && is_story_mode)
+			{
+				var unlockable_str = background_group.unlockables[i];
+				if (unlockable_str != "")
+				{
+					unlockable_triggers.push( { name: unlockable_str, dist: total_dist } );
+				}
+			}
+			
+			for ( j in 0...num_screen )
+			{
+				tile_map.push(i);
+				total_dist += bg_size_y;
+			}
 		}
-		trace(tile_map);
+		trace(unlockable_triggers);
 		
 		curr_state = 0;
 		for (i in 0...geoms.length)
@@ -125,6 +146,23 @@ class Background extends Visual
 		transition_geom_id = 0;
 		
 		//trace(Main.global_info.ref_window_size_y * (geoms.length - 1));
+	}
+	
+	public function test_unlockable( distance : Int )
+	{
+		var d = distance;// + transition_pos_counter;
+		//trace(d);
+		for ( i in 0...unlockable_triggers.length )
+		{
+			var id = unlockable_triggers.length -1 - i;
+			
+			var name = unlockable_triggers[id].name;
+			if (d >= unlockable_triggers[id].dist && Main.achievement_manager.is_background_unlocked(name) == false)
+			{
+				Main.achievement_manager.unlock_background(name);
+				Luxe.events.fire("activate_report_text", {s : "Unlocked! Background: " + name});
+			}
+		}
 	}
 	
 	var speed_mul = 0.0;	
@@ -164,33 +202,7 @@ class Background extends Visual
 					update_textures();
 				}
 			}
-			
-			if ( transition_pos_counter > Main.global_info.ref_window_size_y )
-			{			
-				//update_textures();
-				//transition_pos_counter = 0;
-				
-				//trace(curr_state);
-			}
 		}
-		
-		
-		/*
-		if (transitioning_state)
-		{
-			//trace( geoms[transition_geom_id].transform.pos.y );
-			if (geoms[transition_geom_id].transform.pos.y > Main.global_info.ref_window_size_y)
-			{
-				//trace(geoms[transition_geom_id].transform.pos.y);
-				transitioning_state = false;
-				
-				for (i in 0...geoms.length)
-				{
-					geoms[i].texture = tiling_textures[curr_state];
-				}
-			}
-		}
-		*/
 	}
 	
 	function update_textures()

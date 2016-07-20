@@ -24,6 +24,7 @@ import luxe.Text;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
+import luxe.utils.Random;
 import mint.Label;
 import mint.Panel;
 import phoenix.Batcher;
@@ -667,6 +668,8 @@ class GameState extends State
 		
 		// update UI elements
 		var travelled_distance = beat_n;
+		// test unlockable backgrounds
+		if(background != null) background.test_unlockable(beat_n * level.beat_height);
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
 		
 		var score = score_component.get_score();
@@ -1021,7 +1024,17 @@ class GameState extends State
 		}
 		
 		background = new Background({scene : scene});
-		background.background_group = background_groups[0];
+		background.is_story_mode = game_state_onenter_data.is_story_mode;
+		var selected_id = select_background_group_id(background_groups.length);
+		background.background_group = background_groups[selected_id];
+	}
+	
+	function select_background_group_id( num_groups : Int ) : Int
+	{
+		// background group 0 is for story mode
+		if ( game_state_onenter_data.is_story_mode ) return 0;
+		// otherwise random selected from unlocked background
+		return Luxe.utils.random.int(1, num_groups); 
 	}
 	
 	function create_pause_panel()
