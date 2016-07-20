@@ -16,6 +16,7 @@ import luxe.Text;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
+import mint.Canvas;
 import mint.List;
 import mint.Panel;
 import mint.Scroll;
@@ -34,6 +35,7 @@ class ShopState extends State
 	private var title_text : Text;
 	var parcel : Parcel;
 	var change_to : String = "";
+	var canvas : Canvas;
 	
 	private var equipped_character_button : MintImageButton_Store;
 	private var equipped_background_button : MintImageButton_Store;
@@ -67,6 +69,8 @@ class ShopState extends State
 		super.onenter(d);
 		trace("Entering Shop");
 		
+		canvas = Main.canvas;
+		
 		scene = new Scene("ShopScene");
 		
 		// Background Layer
@@ -91,8 +95,9 @@ class ShopState extends State
 		super.onleave(d);
 		trace("Leaving Shop. Come again!");
 		
-		Main.canvas.destroy_children();
+		canvas.destroy_children();
 		
+		canvas = null;
 		scene.empty();
 		scene.destroy();
 		scene = null;
@@ -106,39 +111,60 @@ class ShopState extends State
 		trace("Loaded Shop");
 		
 		// UI layer	
-		var window_w = 500;
-		var window_y = 200;
-		var grid_padding = 10;
 		
-		var _scroll : Scroll = new mint.Scroll({
-            parent: Main.canvas,
+		var window_y = 0;
+		var window_w = 500;
+		var window_h = canvas.h - window_y;
+		var grid_padding = 10;
+		/*
+		var _scdroll = new mint.Scroll({
+            parent: canvas,
             name: 'scroll1',
             options: { color_handles:new Color().rgb(0xffffff) },
-            x:(Main.canvas.w / 2) - (window_w / 2), y:window_y, 
-			w: window_w, h: 400,
+            x:0, y:0, w: 128, h: 128,
         });
-		
+
+        new mint.Image({
+            parent: _scdroll,
+            name: 'image_other',
+            x:0, y:100, w:512, h: 512,
+            path: 'assets/image.png'
+        });
+
+
+		var _scroll : Scroll = new mint.Scroll({
+            parent: canvas,
+            name: 'shop_scroll',
+            options: { 
+				color_handles:new Color().rgb(0xffffff) 
+			},
+            x:(canvas.w / 2) - (window_w / 2), y:window_y, 
+			w: window_w, h: window_h,
+        });
+		_scroll.scrollv.set_size(_scroll.scrollv.w, 30);
+		*/
 		var grid_panel : Panel = new Panel({
-			parent: _scroll,
+			parent: canvas,
             name: "panel",
             options: { color:new Color(), color_bar:new Color().rgb(0x121219) },
-            x: grid_padding, y:grid_padding , w:_scroll.w - (grid_padding * 2), h: 10,
+            x: (canvas.w / 2) - (window_w / 2) + grid_padding, y:window_y + grid_padding, 
+			w:window_w - (grid_padding * 2), h: window_h,
 			mouse_input: true,
 		});
 		
 		var character_panel : MintGridPanel = new MintGridPanel(grid_panel, "Characters", 
 			new Vector(0, 0), grid_panel.w, 3, 5);	
-			
+
 		load_character_grid(character_panel);
 		
 		var background_panel : MintGridPanel = new MintGridPanel(grid_panel, "Background", 
 			new Vector(0, character_panel.h + grid_padding), grid_panel.w, 3, 5);
-		
+
 		load_background_grid(background_panel);
-		
+
 		//Reupdate here as we now know what size we are ^_^
 		grid_panel.set_size(grid_panel.w, grid_panel.children_bounds.real_h);
-		_scroll.refresh_scroll();
+		//_scroll.refresh_scroll();
 	}
 
 	private function load_character_grid(character_panel : MintGridPanel)
