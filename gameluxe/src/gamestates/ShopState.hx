@@ -90,8 +90,6 @@ class ShopState extends State
 		title_text = null;
 		
 		parcel = null;
-		
-		characters = new Array();
 	}
 	
 	function on_loaded( p: Parcel )
@@ -107,21 +105,21 @@ class ShopState extends State
 		var window_w = 500;
 		character_panel = new MintGridPanel(Main.canvas, "Characters", new Vector((Main.canvas.w / 2) - (window_w/2), 200), window_w, 3, 5);
 		
-		for (i in 0...characters.length)
+		for (i in 0...Main.achievement_manager.character_groups.length)
 		{
-			var item : MintImageButton_Store = new MintImageButton_Store(character_panel, characters[i].name, 
+			var item : MintImageButton_Store = new MintImageButton_Store(character_panel, Main.achievement_manager.character_groups[i].name, 
 				new Vector(0, 0), new Vector(143, 193), 
-				characters[i].tex_path);
+				Main.achievement_manager.character_groups[i].tex_path);
 			
 			//Check if character was unlocked here as we don't update.
-			if (Main.achievement_manager.is_character_unlocked(characters[i].name))
+			if (Main.achievement_manager.is_character_unlocked(Main.achievement_manager.character_groups[i].name))
 			{
 				item.is_unlocked = true;
 				
 				item.update_button();
 			}
 			
-			if (Main.achievement_manager.selected_character == characters[i].name)
+			if (Main.achievement_manager.selected_character == Main.achievement_manager.character_groups[i].name)
 			{
 				
 				item.is_equipped = true;

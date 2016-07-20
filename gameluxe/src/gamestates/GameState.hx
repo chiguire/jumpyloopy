@@ -512,8 +512,7 @@ class GameState extends State
 	{
 		create_pause_panel();
 		create_game_over_panel();
-		create_background_groups();
-		create_character_data();
+		create_background_group();
 		
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 1;
@@ -1028,20 +1027,8 @@ class GameState extends State
 		pause_panel.visible = false;
 	}
 	
-	function create_background_groups()
-	{
-		var json = Luxe.resources.json("assets/data/background_groups.json").asset.json;
-		
-		background_groups = new Array<BackgroundGroup>();
-		var groups : Array<Dynamic> = json.groups;
-		for (i in 0...groups.length)
-		{
-			//trace(groups[i]);
-			var group = new BackgroundGroup();
-			group.load_group(groups[i]);
-			background_groups.push(group);
-		}
-		
+	function create_background_group()
+	{	
 		background = new Background({scene : scene});
 		background.is_story_mode = game_state_onenter_data.is_story_mode;
 		background.background_group = select_background_group_id();
@@ -1050,23 +1037,23 @@ class GameState extends State
 	function select_background_group_id() : BackgroundGroup
 	{
 		// background group 0 is for story mode
-		if ( game_state_onenter_data.is_story_mode ) return background_groups[0];
+		if ( game_state_onenter_data.is_story_mode ) return Main.achievement_manager.background_groups[0];
 		// otherwise random selected from unlocked background
 		var unlocked_backgrounds = Main.achievement_manager.unlocked_backgrounds;
 		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
 		
 		// if we not yet unlock any background, it will be the first group
-		var bg_group = Lambda.find(background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		var bg_group = Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
 		
 		return bg_group;
 	}
 	
 	function select_background_group_name(s : String) : BackgroundGroup
 	{
-		for (i in 0...background_groups.length)
+		for (i in 0...Main.achievement_manager.background_groups.length)
 		{
-			if (background_groups[i].name == s)
-				return background_groups[i];
+			if (Main.achievement_manager.background_groups[i].name == s)
+				return Main.achievement_manager.background_groups[i];
 		}
 		
 		return null;
@@ -1074,27 +1061,13 @@ class GameState extends State
 	
 	function select_character_data_name(s : String) : CharacterGroup
 	{
-		for (i in 0...character_groups.length)
+		for (i in 0...Main.achievement_manager.character_groups.length)
 		{
-			if (character_groups[i].name == s)
-				return character_groups[i];
+			if (Main.achievement_manager.character_groups[i].name == s)
+				return Main.achievement_manager.character_groups[i];
 		}
 		
 		return null;
-	}
-	
-	function create_character_data()
-	{
-		var json_resource = Luxe.resources.json("assets/data/shop.json");
-		var data : Array<Dynamic> = json_resource.asset.json.characters;
-		
-		character_groups = new Array<CharacterGroup>();
-		
-		for (i in 0...data.length)
-		{
-			var n = data[i];
-			character_groups.push(new CharacterGroup(n.name, n.tex_path, n.game_texture, n.cost));
-		}
 	}
 	
 	function create_pause_panel()

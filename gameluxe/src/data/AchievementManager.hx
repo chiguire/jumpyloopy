@@ -29,13 +29,19 @@ class AchievementManager
 #if debug
 		//Debugging stuff;
 		current_coins = 2000;
-#end
+#end	
 		//Default unlockables.
-
 		unlocked_characters.push("Aviator");
 		selected_character = "Aviator";
 		
 		unlocked_backgrounds.push("paper");
+	}
+	
+	public function OnParcelLoaded()
+	{
+		//Load unlockables data
+		load_background_groups();
+		load_character_data();
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )
@@ -85,6 +91,35 @@ class AchievementManager
 		if (is_background_unlocked(s) == true)
 		{
 			selected_background = s;
+		}
+	}
+	
+	private function load_background_groups()
+	{
+		var json = Luxe.resources.json("assets/data/background_groups.json").asset.json;
+		
+		background_groups = new Array<BackgroundGroup>();
+		var groups : Array<Dynamic> = json.groups;
+		for (i in 0...groups.length)
+		{
+			//trace(groups[i]);
+			var group = new BackgroundGroup();
+			group.load_group(groups[i]);
+			background_groups.push(group);
+		}
+	}
+	
+	private function load_character_data()
+	{
+		var json_resource = Luxe.resources.json("assets/data/character_groups.json");
+		var data : Array<Dynamic> = json_resource.asset.json.characters;
+		
+		character_groups = new Array<CharacterGroup>();
+		
+		for (i in 0...data.length)
+		{
+			var n = data[i];
+			character_groups.push(new CharacterGroup(n.name, n.tex_path, n.game_texture, n.cost));
 		}
 	}
 }

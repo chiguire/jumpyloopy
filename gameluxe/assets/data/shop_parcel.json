@@ -30,10 +30,5 @@
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked_equipped.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked_selected.png" }
-	],
-	
-	"json" : 
-	[
-		{ "id" : "assets/data/shop.json" }
 	]
 }

@@ -222,6 +222,8 @@ class Main extends luxe.Game
 #else
 			machine.set("SplashState");
 #end
+			//Loading here as we need the groups to have been loaded at this point.
+			achievement_manager.OnParcelLoaded();
 		});
 	}
 
