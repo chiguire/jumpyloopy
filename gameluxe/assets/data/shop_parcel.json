@@ -1,33 +1,35 @@
 {
 	"textures" : 
 	[ 
-		{ "id" : "assets/image/unlockables/astro_locked.png" },
-		{ "id" : "assets/image/unlockables/astro_locked_selected.png"},
-		{ "id" : "assets/image/unlockables/astro_unlocked.png" },
-		{ "id" : "assets/image/unlockables/astro_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/astro_unlocked_selected.png" },
+		{ "id" : "assets/image/bg/cave_01_paper.png" },
+	
+		{ "id" : "assets/image/unlockables/characters/astro_locked.png" },
+		{ "id" : "assets/image/unlockables/characters/astro_locked_selected.png"},
+		{ "id" : "assets/image/unlockables/characters/astro_unlocked.png" },
+		{ "id" : "assets/image/unlockables/characters/astro_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/characters/astro_unlocked_selected.png" },
 		
-		{ "id" : "assets/image/unlockables/aviator_unlocked.png" },
-		{ "id" : "assets/image/unlockables/aviator_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/aviator_unlocked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/aviator_unlocked.png" },
+		{ "id" : "assets/image/unlockables/characters/aviator_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/characters/aviator_unlocked_selected.png" },
 		
-		{ "id" : "assets/image/unlockables/diver_locked.png" },
-		{ "id" : "assets/image/unlockables/diver_locked_selected.png" },
-		{ "id" : "assets/image/unlockables/diver_unlocked.png" },
-		{ "id" : "assets/image/unlockables/diver_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/diver_unlocked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/diver_locked.png" },
+		{ "id" : "assets/image/unlockables/characters/diver_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/diver_unlocked.png" },
+		{ "id" : "assets/image/unlockables/characters/diver_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/characters/diver_unlocked_selected.png" },
 		
-		{ "id" : "assets/image/unlockables/icar_locked.png" },
-		{ "id" : "assets/image/unlockables/icar_locked_selected.png" },
-		{ "id" : "assets/image/unlockables/icar_unlocked.png" },
-		{ "id" : "assets/image/unlockables/icar_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/icar_unlocked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/icar_locked.png" },
+		{ "id" : "assets/image/unlockables/characters/icar_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/icar_unlocked.png" },
+		{ "id" : "assets/image/unlockables/characters/icar_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/characters/icar_unlocked_selected.png" },
 		
-		{ "id" : "assets/image/unlockables/miner_locked.png" },
-		{ "id" : "assets/image/unlockables/miner_locked_selected.png" },
-		{ "id" : "assets/image/unlockables/miner_unlocked.png" },
-		{ "id" : "assets/image/unlockables/miner_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/miner_unlocked_selected.png" }
+		{ "id" : "assets/image/unlockables/characters/miner_locked.png" },
+		{ "id" : "assets/image/unlockables/characters/miner_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/characters/miner_unlocked.png" },
+		{ "id" : "assets/image/unlockables/characters/miner_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/characters/miner_unlocked_selected.png" }
 	],
 	
 	"json" : 

@@ -18,7 +18,10 @@ class AchievementManager
 	public function new() 
 	{
 		collected_fragments = new Vector<Bool>(10);
-		
+#if debug
+			//Debugging stuff;
+			current_coins = 2000;
+#end
 		//Default unlockables.
 		unlocked_items = new Array();
 		unlocked_items.push("Aviator");
