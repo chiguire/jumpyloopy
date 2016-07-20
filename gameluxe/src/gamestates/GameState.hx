@@ -2,6 +2,7 @@ package gamestates;
 
 import cpp.Function;
 import data.BackgroundGroup;
+import data.CharacterGroup;
 import data.GameInfo;
 import components.GameCameraComponent;
 import entities.Avatar;
@@ -21,6 +22,7 @@ import luxe.Parcel;
 import luxe.ParcelProgress;
 import luxe.Rectangle;
 import luxe.Text;
+import luxe.importers.bitmapfont.BitmapFontData.Character;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
@@ -64,9 +66,9 @@ class GameState extends State
 	var parcel : Parcel;
 	
 	var fader_overlay_sprite : Sprite;
-	var background_groups : Array<BackgroundGroup>;
+	
 	var background : Background;
-
+	
 	public static var player_sprite: Avatar;
 	
 	private var absolute_floor : Sprite;
@@ -137,6 +139,9 @@ class GameState extends State
 	
 	var event_id : Array<String>;
 	
+	// Time
+	private var starting_time : Float;
+	
 	//Game Mode Type
 	public var game_state_onenter_data : GameStateOnEnterData;
 	
@@ -181,7 +186,7 @@ class GameState extends State
 		
 		if ( e.keycode == Key.key_o)
 		{
-			on_audio_track_finished({});
+			//on_audio_track_finished({});
 		}
 	}
 	
@@ -339,7 +344,7 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture(Main.player_avatar_texture_id),
+			texture: Luxe.resources.texture(select_character_data_name(Main.achievement_manager.selected_character).game_texture),
 			pos: Luxe.screen.mid,
 			size: new Vector(140, 140),
 			scene: scene,
@@ -488,6 +493,13 @@ class GameState extends State
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
+			game_info.current_score =
+			{
+				name: "",
+				score: score_component.current_score,
+				distance: beat_n,
+				time: Std.int(Luxe.time - starting_time),
+			};
 			machine.set(next_state);
 		});
 	}
@@ -496,7 +508,7 @@ class GameState extends State
 	{
 		create_pause_panel();
 		create_game_over_panel();
-		create_background_groups();
+		create_background_group();
 		
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 1;
@@ -510,20 +522,6 @@ class GameState extends State
 		var tex = Luxe.resources.texture('assets/image/platforms/platform_straight02.png');
 		absolute_floor.texture = tex;
 		absolute_floor.size = new Vector( calc_lanes_distance() * num_internal_lanes,  tex.height);
-		
-		// initialize ending object
-		if (game_state_onenter_data.is_story_mode)
-		{
-			story_end_disp = new Sprite({
-				scene : scene,
-				texture : Luxe.resources.texture("assets/image/collectables/letter.png"),
-				size : new Vector(250, 150),
-				pos : new Vector(Main.global_info.ref_window_size_x / 2, -1000),
-				depth : 2,
-			});
-			
-			trace( story_end_disp.pos );
-		}
 	}
 	
 	function on_player_respawn_end(e)
@@ -543,6 +541,8 @@ class GameState extends State
 			pl.eternal = true;
 			pl.stepped_on_by_player = true;
 		}
+		
+		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
 		
 		level.activate_countdown_text();
 		Main.beat_manager.on_player_respawn_end();
@@ -572,6 +572,10 @@ class GameState extends State
 			return;
 		}
 		
+		if ( story_mode_ended )
+		{
+			
+		}
 		
 		if (level.can_put_platforms && !player_sprite.respawning)
 		{
@@ -691,7 +695,7 @@ class GameState extends State
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
 		
 		// test story ending state
-		if(background != null) story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
+		if (background != null) story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
 	}
 	
 	private function connect_input()
@@ -786,6 +790,22 @@ class GameState extends State
 		list_of_platforms_bg.visible = true;
 		
 		player_sprite.gamecamera._highest_y = starting_y - 2 * level.beat_height;
+		
+		starting_time = Luxe.time;
+		
+		// initialize ending object
+		if (game_state_onenter_data.is_story_mode)
+		{
+			story_end_disp = new Sprite({
+				scene : scene,
+				texture : Luxe.resources.texture("assets/image/collectables/letter.png"),
+				size : new Vector(250, 150),
+				pos : new Vector(lanes[2], -background.story_end_distance),
+				depth : 2,
+			});
+			
+			trace( story_end_disp.pos );
+		}
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
@@ -1025,20 +1045,8 @@ class GameState extends State
 		pause_panel.visible = false;
 	}
 	
-	function create_background_groups()
-	{
-		var json = Luxe.resources.json("assets/data/background_groups.json").asset.json;
-		
-		background_groups = new Array<BackgroundGroup>();
-		var groups : Array<Dynamic> = json.groups;
-		for (i in 0...groups.length)
-		{
-			//trace(groups[i]);
-			var group = new BackgroundGroup();
-			group.load_group(groups[i]);
-			background_groups.push(group);
-		}
-		
+	function create_background_group()
+	{	
 		var selected_group = select_background_group_id();
 		background = new Background({scene : scene, background_group: selected_group});
 		background.is_story_mode = game_state_onenter_data.is_story_mode;
@@ -1047,15 +1055,37 @@ class GameState extends State
 	function select_background_group_id() : BackgroundGroup
 	{
 		// background group 0 is for story mode
-		if ( game_state_onenter_data.is_story_mode ) return background_groups[0];
+		if ( game_state_onenter_data.is_story_mode ) return Main.achievement_manager.background_groups[0];
 		// otherwise random selected from unlocked background
 		var unlocked_backgrounds = Main.achievement_manager.unlocked_backgrounds;
 		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
 		
 		// if we not yet unlock any background, it will be the first group
-		var bg_group = Lambda.find(background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		var bg_group = Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
 		
 		return bg_group;
+	}
+	
+	function select_background_group_name(s : String) : BackgroundGroup
+	{
+		for (i in 0...Main.achievement_manager.background_groups.length)
+		{
+			if (Main.achievement_manager.background_groups[i].name == s)
+				return Main.achievement_manager.background_groups[i];
+		}
+		
+		return null;
+	}
+	
+	function select_character_data_name(s : String) : CharacterGroup
+	{
+		for (i in 0...Main.achievement_manager.character_groups.length)
+		{
+			if (Main.achievement_manager.character_groups[i].name == s)
+				return Main.achievement_manager.character_groups[i];
+		}
+		
+		return null;
 	}
 	
 	function create_pause_panel()

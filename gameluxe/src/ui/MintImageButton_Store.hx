@@ -13,32 +13,26 @@ class MintImageButton_Store extends MintImageButton
 	var textures : MintImageButton_StoreData;
 	public var is_unlocked : Bool;
 	public var is_equipped : Bool;
-	
 	private var is_over : Bool;
 	
-	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String, ?onclick : MintImageButton->Void) 
+	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String) 
 	{
-		is_unlocked = Main.achievement_manager.is_item_unlocked(name);
-		is_equipped = name == Main.achievement_manager.current_character_name ? true : false;
 		is_over = false;
 		
 		textures = new MintImageButton_StoreData(image_path);
-
-		super(parent, name, pos, size, get_texture(), onclick);
+		super(parent, name, pos, size, get_texture());
 	}
 	
 	override public function mouseenter(e:MouseEvent) 
 	{
-		update_button();
 		is_over = true;
-		//super.mouseenter(e);
+		update_button();
 	}
 	
 	override public function mouseleave(e:MouseEvent) 
 	{
+		is_over = false;
 		update_button();
-		is_over = false;	
-		//super.mouseleave(e);
 	}
 	
 	override public function mousedown(e:MouseEvent) 
@@ -47,8 +41,7 @@ class MintImageButton_Store extends MintImageButton
 			change_texture(textures.tex_unlocked_selected);
 		else
 			change_texture(textures.tex_locked);
-		
-		super.mousedown(e);
+		//super.mousedown(e);
 	}
 	
 	private function change_texture(texture : String)
@@ -60,9 +53,6 @@ class MintImageButton_Store extends MintImageButton
 	
 	override public function update_button() 
 	{
-		is_unlocked = Main.achievement_manager.is_item_unlocked(name);
-		is_equipped = name == Main.achievement_manager.current_character_name ? true : false;
-		
 		change_texture(get_texture());
 		
 		super.update_button();
@@ -70,24 +60,34 @@ class MintImageButton_Store extends MintImageButton
 	
 	private function get_texture() : String
 	{
-		var tex = textures.tex_locked_over;
+		var tex;
 		
-		if (is_over)
+		if (is_equipped)
 		{
-			if (is_unlocked)
+			tex = textures.tex_unlocked_selected;
+		}
+		else if(is_unlocked)
+		{
+			if (is_over)
+			{
 				tex = textures.tex_unlocked_over;
-			if (is_equipped)
-				tex = textures.tex_unlocked_selected;
+			}
+			else
+			{
+				tex = textures.tex_unlocked;
+			}
 		}
 		else
 		{
-			tex = textures.tex_locked;
-			if (is_unlocked)
-				tex = textures.tex_unlocked;
-			if (is_equipped)
-				tex = textures.tex_unlocked_selected;
+			if (is_over)
+			{
+				tex = textures.tex_locked_over;
+			}
+			else
+			{
+				tex = textures.tex_locked;
+			}
 		}
-		
 		
 		return tex;
 	}

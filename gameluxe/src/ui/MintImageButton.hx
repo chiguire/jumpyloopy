@@ -11,10 +11,9 @@ import mint.types.Types.MouseEvent;
 class MintImageButton extends Image
 {
 	public var is_active : Bool = true;
-	var callback : MintImageButton->Void;
 	
 	
-	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String, ?onclick : MintImageButton->Void) 
+	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String) 
 	{
 		super(
 		{
@@ -26,7 +25,6 @@ class MintImageButton extends Image
 			mouse_input: true
 		});
 		
-		callback = onclick;
 	}
 	
 	override public function mouseenter(e:MouseEvent) 
@@ -53,7 +51,6 @@ class MintImageButton extends Image
 	
 	override public function mousedown(e:MouseEvent) 
 	{
-		callback(this);
 		super.mousedown(e);
 	}
 	

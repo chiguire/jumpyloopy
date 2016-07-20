@@ -4,7 +4,32 @@ import haxe.ds.Vector;
 import luxe.Color;
 import luxe.Rectangle;
 
-typedef ScoreList = Array<{name:String, score:Int}>;
+
+/// user data
+typedef UserDataHeader = 
+{
+	version : Float,
+};
+
+typedef UserDataV1 = 
+{
+	?score_list : ScoreList,
+	//unlockables : Unlockables,
+};
+
+typedef ScoreRun = {
+	name:String,
+	score:Int,
+	distance:Int,
+	time:Int,
+};
+
+typedef SongSignature = String;
+typedef SongInfo = {
+	name : String,
+	scores : Array<ScoreRun>,
+}
+typedef ScoreList = Map<SongSignature, SongInfo>;
 typedef VolumeUnit = Float;
 
 typedef GlobalGameInfo = 
@@ -17,23 +42,12 @@ typedef GlobalGameInfo =
 	var borderless : Bool;
 	var platform_lifetime : Float;
 	var text_color : Color;
+	var user_storage_filename : String;
 };
 
 typedef GameInfo =
 {
-	score_list : ScoreList,
 	music_volume : VolumeUnit,
 	effects_volume : VolumeUnit,
-	?current_score : Int,
-};
-
-/// user data
-typedef UserDataHeader = 
-{
-	var version : Float;
-};
-
-typedef UserDataV1 = 
-{
-	var total_score : Int;
+	?current_score : ScoreRun,
 };

@@ -29,11 +29,37 @@
 		{ "id" : "assets/image/unlockables/characters/miner_locked_selected.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/characters/miner_unlocked_selected.png" }
-	],
-	
-	"json" : 
-	[
-		{ "id" : "assets/data/shop.json" }
+		{ "id" : "assets/image/unlockables/characters/miner_unlocked_selected.png" },
+
+		{ "id" : "assets/image/unlockables/backgrounds/cave_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/cave_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/cave_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/cave_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/cave_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/greece_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/greece_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/greece_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/greece_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/greece_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/sky_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/sky_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/sky_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/sky_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/sky_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/space_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/space_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/space_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/space_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/space_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/water_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/water_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked_selected.png" }
+
 	]
 }

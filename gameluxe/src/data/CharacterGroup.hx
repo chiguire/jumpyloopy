@@ -4,7 +4,7 @@ package data;
  * ...
  * @author ...
  */
-class CharacterData
+class CharacterGroup
 {
 	public var name : String;
 	public var game_texture : String;

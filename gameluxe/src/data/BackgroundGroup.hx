@@ -7,6 +7,8 @@ package data;
 class BackgroundGroup
 {
 	public var name : String;
+	public var cost : Int;
+	public var tex_path : String;
 	public var textures : Array<String>;
 	public var distances : Array<Float>;
 	public var unlockables : Array<String>;
@@ -21,7 +23,8 @@ class BackgroundGroup
 	{
 		//trace(data.textures);
 		name = data.name;
-		
+		cost = data.cost;
+		tex_path = data.tex_path;
 		for ( i in 0...data.textures.length )
 		{
 			textures.push(data.textures[i]);
