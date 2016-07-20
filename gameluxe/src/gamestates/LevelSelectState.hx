@@ -18,6 +18,7 @@ import mint.Label;
 import mint.render.luxe.Panel;
 import mint.types.Types.TextAlign;
 import snow.types.Types.AudioHandle;
+import ui.MintImageButton;
 
 #if (cpp || neko)
 import systools.Dialogs;
@@ -48,7 +49,7 @@ class LevelSelectState extends State
 	var audio_fft_params_id = "";
 	
 	/// panel text
-	var desc_label : Label;
+	var desc_sprite : Sprite;
 
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -94,45 +95,6 @@ class LevelSelectState extends State
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
-	function create_button( desc: Dynamic, layout_data: Dynamic ) : Button
-	{
-		var button = MenuState.create_button( desc );
-		
-		button.onmouseenter.listen(
-			function(e, c)
-			{
-				// update track description
-				desc_label.text = layout_data.desc_table[desc.desc_id];
-				
-				if (Luxe.audio.state_of(music_handle) == AudioState.as_playing)
-				{
-					return;
-				}
-				
-				var audio_name = desc.track;
-		
-				var load = snow.api.Promise.all([
-					Luxe.resources.load_audio(audio_name, {is_stream:true})
-				]);
-		
-				load.then(function(_)
-				{
-					var music = Luxe.resources.audio(audio_name);
-					music_handle = Luxe.audio.play(music.source, music_volume, false);
-					
-					Actuate.tween(this, 0.5, {music_volume:1.0});
-				});
-			});
-			
-		button.onmouseleave.listen( function(e, c)
-		{
-			Actuate.tween(this, 0.5, {music_volume:0.0})
-				.onComplete(function() {Luxe.audio.stop(music_handle);});
-		});
-		
-		return button;
-	}
-	
 	function on_loaded( p: Parcel )
 	{
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
@@ -140,98 +102,132 @@ class LevelSelectState extends State
 		
 		//MenuState.create_image(layout_data.background);
 		
-		var button0 = create_button( layout_data.level_0, layout_data );
-		button0.onmouseup.listen(
-			function(e,c) 
-			{
-				Main.beat_manager.load_song(layout_data.level_0.track);
-				game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
-				next_state = "GameState";
-			});
+		var item : MintImageButton = new MintImageButton(Main.canvas, "Tutorial", new Vector(470+150, 250), new Vector(203, 50), "assets/image/ui/UI_track_selection_training.png");
+		item.onmouseup.listen(function(e,c) {
+			Main.beat_manager.load_song("assets/music/Warchild_SimpleDrums.ogg");
+			game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
+			next_state = "GameState";
+		});
+		item.onmouseenter.listen(function(e, c) {
+			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_training_text.png");
+			desc_sprite.size.set_xy(196, 95);
+			desc_sprite.origin.set_xy(0, 0);
+			desc_sprite.pos.set_xy(470+153, 547);
+			desc_sprite.visible = true;
+		});
+		item.onmouseleave.listen(function(e, c) {
+		});
 		
-		var button1 = create_button( layout_data.level_1, layout_data );
-		button1.onmouseup.listen(
-			function(e,c) 
-			{
-				Main.beat_manager.load_song(layout_data.level_1.track);
-				next_state = "StoryIntroState";
-			});
+		item = new MintImageButton(Main.canvas, "Story", new Vector(470+150, 335), new Vector(205, 52), "assets/image/ui/UI_track_selection_story.png");
+		item.onmouseup.listen(function(e,c) {
+			Main.beat_manager.load_song("assets/music/Warchild_Music_Prototype.ogg");
+			next_state = "StoryIntroState";
+		});
+		item.onmouseenter.listen(function(e, c) {
+			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_story_text.png");
+			desc_sprite.size.set_xy(401, 127);
+			desc_sprite.origin.set_xy(0, 0);
+			desc_sprite.pos.set_xy(470+50, 535);
+			desc_sprite.visible = true;
+		});
+		item.onmouseleave.listen(function(e, c) {
+		});
 		
-		var button2 = MenuState.create_button( layout_data.level_x );
-		button2.onmouseup.listen(
-			function(e,c) 
-			{
-				//change_to = "GameState";
-				#if cpp
-				var filters: FILEFILTERS = { count: 1
-				, descriptions: ["OGG files"]
-				, extensions: ["*.ogg"]	
-				
-				};	
-				var result:Array<String> = Dialogs.openFile(
-				"Select a file please!"
-				, "Please select one or more files, so we can see if this method works"
-				, filters
-				);
-				
-				trace(result);
-				if (result != null)
-				{
-					// if we have the audio tweak file
-					audio_fn = result[0];
-					audio_fft_params_id = StringTools.replace(audio_fn, "ogg", "json");
-					
-					// reload resource
-					var json_data = Luxe.resources.json(audio_fft_params_id);
-					if (json_data != null)
-					{
-						Luxe.resources.destroy(audio_fft_params_id, true);
-					}
-					
-					next_state = "GameState";
-					game_state_on_enter_data = { is_story_mode: false, play_audio_loop: false };
-					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
-				}
-				#end
-			}
-		);
-		
-		button2.onmouseenter.listen(
-			function(e, c)
-			{
-				// update track description
-				desc_label.text = layout_data.desc_table[layout_data.level_x.desc_id];
-			});
-		
-		var button_back = MenuState.create_button( layout_data.back );
-		button_back.onmouseup.listen(
-			function(e,c) 
-			{
-				next_state = "MenuState";
-				change_state_signal = true;
-			});
-		button_back.onmouseenter.listen(
-			function(e, c)
-			{
-				// update track description
-				desc_label.text = layout_data.desc_table[layout_data.back.desc_id];
-			});
+		item = new MintImageButton(Main.canvas, "Arcade", new Vector(470+150, 420), new Vector(204, 44), "assets/image/ui/UI_track_selection_arcade.png");
+		item.onmouseup.listen(function(e,c) {
+			//change_to = "GameState";
+			#if cpp
+			var filters: FILEFILTERS = { count: 1
+			, descriptions: ["OGG files"]
+			, extensions: ["*.ogg"]	
 			
-		// description panel
-		var panel = new mint.Panel({
-			parent: Main.canvas,
-			name: 'panel',
-			mouse_input: false,
-			x: 710, y: 250, w: 225, h: 400,
+			};	
+			var result:Array<String> = Dialogs.openFile(
+			"Select a file please!"
+			, "Please select one or more files, so we can see if this method works"
+			, filters
+			);
+			
+			trace(result);
+			if (result != null)
+			{
+				// if we have the audio tweak file
+				audio_fn = result[0];
+				audio_fft_params_id = StringTools.replace(audio_fn, "ogg", "json");
+				
+				// reload resource
+				var json_data = Luxe.resources.json(audio_fft_params_id);
+				if (json_data != null)
+				{
+					Luxe.resources.destroy(audio_fft_params_id, true);
+				}
+				
+				next_state = "GameState";
+				game_state_on_enter_data = { is_story_mode: false, play_audio_loop: false };
+				var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
+			}
+			#end
 		});
-		cast(panel.renderer, Panel).color.a = 0.5;
+		item.onmouseenter.listen(function(e, c) {
+			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_arcade_text.png");
+			desc_sprite.size.set_xy(386, 108);
+			desc_sprite.origin.set_xy(0, 0);
+			desc_sprite.pos.set_xy(470+50, 540);
+			desc_sprite.visible = true;
+		});
+		item.onmouseleave.listen(function(e, c) {
+		});
 		
-		desc_label = new mint.Label({
-			parent: panel, name: 'label',
-			mouse_input:false, x:0, y:25, w:225, h:400, //text_size: 32,
-			align: TextAlign.center, align_vertical: TextAlign.top,
-			text: "",
+		item = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
+		item.onmouseup.listen(function(e, c) {
+			next_state = "MenuState";
+			change_state_signal = true;
 		});
+		item.onmouseenter.listen(function(e, c) {
+			desc_sprite.visible = false;
+		});
+		item.onmouseleave.listen(function(e, c) {
+		});
+		
+		desc_sprite = new Sprite({
+		});
+		desc_sprite.visible = false;
+		//button2.onmouseenter.listen(
+		//	function(e, c)
+		//	{
+		//		// update track description
+		//		desc_label.text = layout_data.desc_table[layout_data.level_x.desc_id];
+		//	});
+		//
+		//var button_back = MenuState.create_button( layout_data.back );
+		//button_back.onmouseup.listen(
+		//	function(e,c) 
+		//	{
+		//		next_state = "MenuState";
+		//		change_state_signal = true;
+		//	});
+		//button_back.onmouseenter.listen(
+		//	function(e, c)
+		//	{
+		//		// update track description
+		//		desc_label.text = layout_data.desc_table[layout_data.back.desc_id];
+		//	});
+		//	
+		//// description panel
+		//var panel = new mint.Panel({
+		//	parent: Main.canvas,
+		//	name: 'panel',
+		//	mouse_input: false,
+		//	x: 710, y: 250, w: 225, h: 400,
+		//});
+		//cast(panel.renderer, Panel).color.a = 0.5;
+		//
+		//desc_label = new mint.Label({
+		//	parent: panel, name: 'label',
+		//	mouse_input:false, x:0, y:25, w:225, h:400, //text_size: 32,
+		//	align: TextAlign.center, align_vertical: TextAlign.top,
+		//	text: "",
+		//});
 	}
 	
 	function on_audio_cfg_loaded(e)

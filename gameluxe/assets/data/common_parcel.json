@@ -23,7 +23,14 @@
 		{ "id" : "assets/image/bg/cave_01_paper.png" },
 		{ "id" : "assets/image/frontend_bg.png" },
 		{ "id" : "assets/image/track_selection.png" },
-		{ "id" : "assets/image/paper-top.png" }
+		{ "id" : "assets/image/paper-top.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_training.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_training_text.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_story.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_story_text.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_arcade.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_arcade_text.png" },
+		{ "id" : "assets/image/ui/UI_track_selection_back.png" }
 	],
 	
 	"json" : 

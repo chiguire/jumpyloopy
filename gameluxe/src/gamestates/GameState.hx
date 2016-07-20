@@ -130,6 +130,7 @@ class GameState extends State
 	
 	// Score
 	var score_component : entities.Score;
+	var travelled_distance : Int = 0;
 	
 	var restart_signal = false;
 	var state_change_menu_signal = false;
@@ -448,6 +449,7 @@ class GameState extends State
 		current_txt_popping = 0;
 		
 		beat_n = 0;
+		travelled_distance = 0;
 	}
 	
 	function on_player_damage(e)
@@ -544,8 +546,6 @@ class GameState extends State
 			pl.stepped_on_by_player = true;
 		}
 		
-		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
-		
 		level.activate_countdown_text();
 		Main.beat_manager.on_player_respawn_end();
 	}
@@ -591,7 +591,7 @@ class GameState extends State
 				//trace("Switching platform!");
 				switch_platform();
 			}
-			
+			/*
 			if (Luxe.input.keypressed(Key.key_1))
 			{
 				current_platform_type = LEFT;
@@ -607,6 +607,7 @@ class GameState extends State
 				current_platform_type = RIGHT;
 				mouse_platform.set_type(current_platform_type, true);
 			}
+			*/
 		} 	
 		
 		
@@ -686,7 +687,7 @@ class GameState extends State
 		//debug_text.text = 'player (${player_sprite.current_lane}, $beat_n) / cursor (${mouse_index_x}, $mouse_index_y) / index ${(platform_points.length + ((mouse_index_y) * num_internal_lanes + (mouse_index_x - 1))) % platform_points.length} / beat_bottom_y $beat_bottom_y \ncamera (${Luxe.camera.pos.x}, ${Luxe.camera.pos.y}) / maxtile $max_tile / mouse (${mouse_pos.x}, ${mouse_pos.y})\n mouse_platform (${mouse_platform_x}, ${mouse_platform_y})';
 		
 		// update UI elements
-		var travelled_distance = beat_n;
+		travelled_distance = Std.int(Math.max(beat_n, travelled_distance));
 		// test unlockable backgrounds
 		if(background != null) background.test_unlockable(beat_n * level.beat_height);
 		ui_distance_panel.set_text('Travelled Distance\n${travelled_distance}');
@@ -815,7 +816,7 @@ class GameState extends State
 	
 	function OnLevelSetCamera(e:LevelStartEvent)
 	{
-		player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
+		//player_sprite.gamecamera._highest_y = Math.min(starting_y - 2 * level.beat_height, player_sprite.pos.y);
 	}
 	
 	function OnPlayerMove( e:BeatEvent )
