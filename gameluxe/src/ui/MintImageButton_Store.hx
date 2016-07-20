@@ -63,7 +63,8 @@ class MintImageButton_Store extends MintImageButton
 	private function change_texture(texture : String)
 	{	
 		trace(texture);
-		this.path = texture;
+		var renderer = cast(renderer, mint.render.luxe.Image);
+		renderer.visual.texture = Luxe.resources.texture(texture);
 	}
 }
 
