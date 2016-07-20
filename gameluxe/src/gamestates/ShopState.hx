@@ -2,7 +2,7 @@ package gamestates;
 
 import analysis.DFT;
 import data.GameInfo;
-import gamestates.ShopState.CharacterData;
+import data.CharacterData;
 import luxe.Color;
 import luxe.Input;
 import luxe.Input.KeyEvent;
@@ -104,38 +104,45 @@ class ShopState extends State
 			trace("Loaded: " + n);
 		}
 		
-		// UI layer
-		var canvas = Main.canvas;
-		
+		// UI layer	
 		var window_w = 500;
-		var character_panel = new MintGridPanel(canvas, "Characters", new Vector((Main.canvas.w / 2) - (window_w/2), 200), window_w, 3,  100, 5);
+		var character_panel = new MintGridPanel(Main.canvas, "Characters", new Vector((Main.canvas.w / 2) - (window_w/2), 200), window_w, 3,  100, 5);
 		
 		for (i in 0...characters.length)
 		{
 			var item : MintImageButton_Store = new MintImageButton_Store(character_panel, characters[i].name, 
 				new Vector(0, 0), new Vector(100, 100), 
-				characters[i].tex_path, function(){trace("hi");});
+				characters[i].tex_path, function(b){ click_character(b); });
 
 			character_panel.add_item(item);
 		}
 		
-		var background_panel = new MintGridPanel(canvas, "Backgrounds", new Vector((Main.canvas.w / 2) - (window_w/2), character_panel.bottom), window_w, 3,  100, 5);
+		var background_panel = new MintGridPanel(Main.canvas, "Backgrounds", new Vector((Main.canvas.w / 2) - (window_w/2), character_panel.bottom), window_w, 3,  100, 5);
 	}
-
-}
-
-class CharacterData
-{
-	public var name : String;
-	public var game_texture : String;
-	public var cost : Int;
-	public var tex_path : String;
 	
-	public function new(n : String, tp : String, t : String, c: Int)
+	function click_character(b : MintImageButton )
 	{
-		name = n;
-		tex_path = tp;
-		game_texture = t;
-		cost = c;
+		trace("clicked character");
+		for (i in 0...characters.length)
+		{
+			if (b.name == characters[i].name)
+			{
+				if (Main.achievement_manager.is_item_unlocked(characters[i].name))
+				{
+					trace("Set active");
+					Main.achievement_manager.current_character_name = characters[i].name;
+				}
+				else if (Main.achievement_manager.current_coins > characters[i].cost)
+				{
+					trace("Purchased");
+					Main.achievement_manager.unlocked_items.push(characters[i].name);
+					Main.achievement_manager.current_coins -= characters[i].cost;
+				}
+				
+				break;
+			}
+		}
+
+		b.update_button();
 	}
 }
