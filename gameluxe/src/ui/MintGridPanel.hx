@@ -2,13 +2,14 @@ package ui;
 import luxe.Color;
 import luxe.Vector;
 import mint.Control;
+import mint.Panel;
 import mint.Window;
 
 /**
  * ...
  * @author ...
  */
-class MintGridPanel extends Window
+class MintGridPanel extends Panel
 {
 	var num_columns : Int;
 	var padding : Float;
@@ -20,17 +21,8 @@ class MintGridPanel extends Window
 		super({
             parent: parent,
             name: title,
-            title: title,
-            options: {
-                color:new Color().rgb(0xFFFFFF),
-                color_titlebar:new Color().rgb(0x191919),
-                label: { color:new Color().rgb(0x06b4fb), text_size : 24 }
-            },
             x: pos.x, y: pos.y, w: width, h: padding,
-            collapsible: true,
-			closable: false,
-			moveable: false,
-			resizable: false
+			mouse_input: true,
         });
 		
 		num_columns = num_col;
@@ -47,12 +39,12 @@ class MintGridPanel extends Window
 		item.x_local += padding;
 
 		item.y_local = get_row(items.length) * item.h;
-		item.y_local += title.h + title.y_local;
 		item.y_local += padding;
 		
 		resize();
 		
-		trace("x: " + item.x_local + ", y: " + item.y_local + ", this.h: " + this.h + ", item.h: " + item.h);
+		//trace("x: " + item.x_local + ", y: " + item.y_local + ", this.h: " + this.h + ", item.h: " + item.h);
+		//trace("x: " + item.x_local + ", y: " + item.y_local + ", this.h: " + this.h + ", item.h: " + item.h);
 		items.push(item);
 	}
 		
@@ -81,5 +73,10 @@ class MintGridPanel extends Window
 			var num_rows = get_row(items.length) + 1;
 			this.h = (num_rows * items[0].h) + (num_rows * padding) + padding + padding;
 		}
+		
+		if (parent != null)
+			parent.refresh_bounds();
+
+		refresh_bounds();
 	}
 }
