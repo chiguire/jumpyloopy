@@ -2,6 +2,7 @@ package gamestates;
 
 import cpp.Function;
 import data.BackgroundGroup;
+import data.CharacterGroup;
 import data.GameInfo;
 import components.GameCameraComponent;
 import entities.Avatar;
@@ -21,6 +22,7 @@ import luxe.Parcel;
 import luxe.ParcelProgress;
 import luxe.Rectangle;
 import luxe.Text;
+import luxe.importers.bitmapfont.BitmapFontData.Character;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.tween.easing.Back;
@@ -64,9 +66,9 @@ class GameState extends State
 	var parcel : Parcel;
 	
 	var fader_overlay_sprite : Sprite;
-	var background_groups : Array<BackgroundGroup>;
+	
 	var background : Background;
-
+	
 	public static var player_sprite: Avatar;
 	
 	private var absolute_floor : Sprite;
@@ -333,7 +335,7 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture(Main.player_avatar_texture_id),
+			texture: Luxe.resources.texture(select_character_data_name(Main.achievement_manager.selected_character).game_texture),
 			pos: Luxe.screen.mid,
 			size: new Vector(140, 140),
 			scene: scene,
@@ -501,6 +503,7 @@ class GameState extends State
 		create_pause_panel();
 		create_game_over_panel();
 		create_background_groups();
+		create_character_data();
 		
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 1;
@@ -1037,6 +1040,42 @@ class GameState extends State
 		if ( game_state_onenter_data.is_story_mode ) return 0;
 		// otherwise random selected from unlocked background
 		return Luxe.utils.random.int(1, num_groups); 
+	}
+	
+	function select_background_group_name(s : String) : BackgroundGroup
+	{
+		for (i in 0...background_groups.length)
+		{
+			if (background_groups[i].name == s)
+				return background_groups[i];
+		}
+		
+		return null;
+	}
+	
+	function select_character_data_name(s : String) : CharacterGroup
+	{
+		for (i in 0...character_groups.length)
+		{
+			if (character_groups[i].name == s)
+				return character_groups[i];
+		}
+		
+		return null;
+	}
+	
+	function create_character_data()
+	{
+		var json_resource = Luxe.resources.json("assets/data/shop.json");
+		var data : Array<Dynamic> = json_resource.asset.json.characters;
+		
+		character_groups = new Array<CharacterGroup>();
+		
+		for (i in 0...data.length)
+		{
+			var n = data[i];
+			character_groups.push(new CharacterGroup(n.name, n.tex_path, n.game_texture, n.cost));
+		}
 	}
 	
 	function create_pause_panel()
