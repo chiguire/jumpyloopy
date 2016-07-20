@@ -8,6 +8,7 @@ import luxe.Color;
 import luxe.Parcel;
 import luxe.ParcelProgress;
 import luxe.Scene;
+import luxe.Sprite;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
@@ -83,6 +84,13 @@ class LevelSelectState extends State
 		
 		Main.create_background(scene);
 		
+		var background1 = new Sprite({
+			texture: Luxe.resources.texture("assets/image/track_selection.png"),
+			pos: new Vector(720, 450),
+			size: new Vector(500, 900),
+			scene: scene,
+		});
+		
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
@@ -130,15 +138,7 @@ class LevelSelectState extends State
 		var json_resource = Luxe.resources.json("assets/data/level_select.json");
 		var layout_data = json_resource.asset.json;
 		
-		MenuState.create_image(layout_data.background);
-		/*
-		var title = new mint.Label({
-			parent: Main.canvas, name: 'label',
-			mouse_input:false, x:layout_data.title.pos_x, y:layout_data.title.pos_y, w:Main.global_info.ref_window_size_x, h:100, text_size: 48,
-			align: TextAlign.center, align_vertical: TextAlign.center,
-			text: layout_data.title.text,
-		});
-		*/
+		//MenuState.create_image(layout_data.background);
 		
 		var button0 = create_button( layout_data.level_0, layout_data );
 		button0.onmouseup.listen(

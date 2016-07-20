@@ -444,6 +444,8 @@ class GameState extends State
 			txt_poppings[txt_poppings.length - 1].visible = false;
 		}
 		current_txt_popping = 0;
+		
+		beat_n = 0;
 	}
 	
 	function on_player_damage(e)
@@ -478,7 +480,7 @@ class GameState extends State
 		
 		if (pl != null)
 		{
-			trace('Touching platform at (${player_sprite.current_lane}, $beat_n)');
+			//trace('Touching platform at (${player_sprite.current_lane}, $beat_n)');
 			pl.touch();
 		}
 	}

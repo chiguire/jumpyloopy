@@ -15,7 +15,7 @@ import luxe.Sprite;
  * ...
  * @author 
  */
-class ScoreState extends State
+class HighScoreState extends State
 {
 	private var game_info : GameInfo;
 	
@@ -80,7 +80,6 @@ class ScoreState extends State
 				text: name[i],
 				color: Main.global_info.text_color,
 			});
-			
 			
 			new MintLabel({
 				parent: Main.canvas,
