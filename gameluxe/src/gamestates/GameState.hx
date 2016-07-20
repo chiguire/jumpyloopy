@@ -1027,16 +1027,21 @@ class GameState extends State
 		
 		background = new Background({scene : scene});
 		background.is_story_mode = game_state_onenter_data.is_story_mode;
-		var selected_id = select_background_group_id(background_groups.length);
-		background.background_group = background_groups[selected_id];
+		background.background_group = select_background_group_id();
 	}
 	
-	function select_background_group_id( num_groups : Int ) : Int
+	function select_background_group_id() : BackgroundGroup
 	{
 		// background group 0 is for story mode
-		if ( game_state_onenter_data.is_story_mode ) return 0;
+		if ( game_state_onenter_data.is_story_mode ) return background_groups[0];
 		// otherwise random selected from unlocked background
-		return Luxe.utils.random.int(1, num_groups); 
+		var unlocked_backgrounds = Main.achievement_manager.unlocked_backgrounds;
+		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
+		
+		// if we not yet unlock any background, it will be the first group
+		var bg_group = Lambda.find(background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		
+		return bg_group;
 	}
 	
 	function create_pause_panel()
