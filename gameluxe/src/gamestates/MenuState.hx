@@ -77,6 +77,14 @@ class MenuState extends State
 		
 		// Background Layer
 		Main.create_background(scene);
+		
+		var background1 = new Sprite({
+			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
+			pos: new Vector(720, 450),
+			size: new Vector(500, 900),
+			scene: scene,
+		});
+		
 		//FFT.test_fft();
 	}
 	
@@ -121,13 +129,6 @@ class MenuState extends State
 		var json_resource = Luxe.resources.json("assets/data/frontend.json");
 		var layout_data = json_resource.asset.json;
 		//trace(layout_data);
-		
-		var background1 = new Sprite({
-			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
-			pos: new Vector(layout_data.background.pos_x, layout_data.background.pos_y),
-			size: new Vector(layout_data.background.width, layout_data.background.height),
-			scene: scene,
-		});
 		
 		// UI layer
 		var canvas = Main.canvas;
