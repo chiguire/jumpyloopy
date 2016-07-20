@@ -33,8 +33,7 @@ class Platform extends Sprite
 	public var anim : SpriteAnimation;
 	
 	public var type (default,null): PlatformType;
-	public var touches : Float = 0.0;
-	public var initialTouches = 0.0; // Change this to increase or reduce the duration of the platforms. Set to -1 for eternal platforms.
+	public var time_alive : Float = 0.0;
 	public var eternal : Bool = false;
 	public var stepped_on_by_player : Bool = false;
 	
@@ -49,8 +48,6 @@ class Platform extends Sprite
 		options.size = max_size;
 		
 		super(options);
-		
-		initialTouches = Main.global_info.platform_lifetime;
 		
 		visual_flashing_comp = new VisualFlashingComponent();
 		add(visual_flashing_comp);
@@ -68,7 +65,7 @@ class Platform extends Sprite
 	{
 		visual_flashing_comp.deactivate();
 		visible = (t != NONE);
-		touches = initialTouches;
+		time_alive = if (t != NONE) Main.global_info.platform_lifetime else 0.0;
 		
 		var animation_name = select_platform_animation(t);
 		if (animation_name != "")
@@ -104,24 +101,21 @@ class Platform extends Sprite
 	{
 		super.update(dt);
 		
-		if (type == NONE || eternal || touches == -1)
+		if (type == NONE || eternal || time_alive <= 0)
 		{
 			return;
 		}
 		
-		touches -= dt;
+		time_alive -= dt;
 		
-		if (touches <= 1.5 && !visual_flashing_comp.is_activated())
+		if (time_alive <= 1.5 && !visual_flashing_comp.is_activated())
 		{
-			trace(touches);
 			visual_flashing_comp.activate();
 		}
 		
-		if (touches <= 0)
+		if (time_alive <= 0)
 		{
-			//trace(type);
-			//Luxe.events.fire("platform_time_out", {pos: pos});
-			type = NONE;
+			set_type(NONE, true);
 			stepped_on_by_player = false;
 		}
 	}
