@@ -25,6 +25,12 @@ typedef UnlockableBackgroundData =
 	var name : String;
 	var dist : Float;
 }
+
+typedef BackgroundOptions = 
+{
+	> VisualOptions,
+	var background_group : BackgroundGroup;
+}
  
 class Background extends Visual
 {
@@ -34,6 +40,7 @@ class Background extends Visual
 	
 	// unlockable trigger
 	var unlockable_triggers : Array<UnlockableBackgroundData>;
+	public var story_end_distance = 0.0;
 	
 	var textures : Array<Texture>;
 	var tile_map : Array<Int>;
@@ -55,7 +62,7 @@ class Background extends Visual
 	
 	var level_start_ev : String;
 	
-	public function new(options:VisualOptions) 
+	public function new(options:BackgroundOptions) 
 	{
 		super(options);
 		// Background don't have to be Visual, fix this later! [Aik]
@@ -86,22 +93,8 @@ class Background extends Visual
 		}
 		
 		level_start_ev = Luxe.events.listen("Level.Start", on_level_start );
-	}
-	
-	override public function ondestroy() 
-	{
-		Luxe.events.unlisten(level_start_ev);
 		
-		for (i in 0...geoms.length) 
-			geoms[i].drop();
-		
-		super.ondestroy();
-	}
-	
-	override public function init() 
-	{		
-		super.init();
-		
+		background_group = options.background_group;
 		for (i in 0...background_group.textures.length)
 		{
 			//trace(background_group.textures[i]);
@@ -133,7 +126,8 @@ class Background extends Visual
 				total_dist += bg_size_y;
 			}
 		}
-		trace(unlockable_triggers);
+		story_end_distance = total_dist - bg_size_y * 2;
+		//trace(unlockable_triggers);
 		
 		curr_state = 0;
 		for (i in 0...geoms.length)
@@ -146,6 +140,21 @@ class Background extends Visual
 		transition_geom_id = 0;
 		
 		//trace(Main.global_info.ref_window_size_y * (geoms.length - 1));
+	}
+	
+	override public function ondestroy() 
+	{
+		Luxe.events.unlisten(level_start_ev);
+		
+		for (i in 0...geoms.length) 
+			geoms[i].drop();
+		
+		super.ondestroy();
+	}
+	
+	override public function init() 
+	{		
+		super.init();
 	}
 	
 	public function test_unlockable( distance : Int )
@@ -163,6 +172,21 @@ class Background extends Visual
 				Luxe.events.fire("activate_report_text", {s : "Unlocked! Background: " + name});
 			}
 		}
+	}
+	
+	public function test_story_mode_end( distance : Int ) : Bool
+	{
+		var d = distance + transition_pos_counter;
+		//trace(d);
+		if ( d >= story_end_distance )
+		{
+			Main.achievement_manager.finished_story_mode = true;
+			Main.achievement_manager.unlock_background("story");
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	var speed_mul = 0.0;	
@@ -189,7 +213,7 @@ class Background extends Visual
 			var delta_pos = Luxe.camera.pos.y - prev_camera_pos_y;
 			prev_camera_pos_y = Luxe.camera.pos.y;
 			
-			if (curr_state < tile_map.length) transition_pos_counter += dt * speed_mul - delta_pos;
+			transition_pos_counter += dt * speed_mul - delta_pos;
 			
 			// move background
 			for (i in 0...geoms.length)

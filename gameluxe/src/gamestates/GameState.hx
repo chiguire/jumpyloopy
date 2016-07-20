@@ -140,6 +140,10 @@ class GameState extends State
 	//Game Mode Type
 	public var game_state_onenter_data : GameStateOnEnterData;
 	
+	//story mode has ended
+	public var story_mode_ended = false;
+	public var story_end_disp : Sprite;
+	
 	public function new(_name:String, game_info : GameInfo) 
 	{
 		super({name: _name});
@@ -254,6 +258,8 @@ class GameState extends State
 		var state_change_menu_signal = false;
 		
 		game_state_onenter_data = cast d;
+		
+		story_mode_ended = false;
 		
 		// events
 		event_id = new Array<String>();
@@ -416,16 +422,6 @@ class GameState extends State
 		
 		mouse_pos = new Vector();
 		
-		/*
-		debug_text = new Text({
-			pos: new Vector(10, 10),
-			text: "",
-			color: new Color(120/255.0, 120/255.0, 120/255.0),
-			point_size: 18,
-			scene: scene,
-		});
-		*/
-		
 		damage_feedback = new DamageFeedback(scene);
 		
 		txt_poppings = new Array<Text>();
@@ -514,6 +510,20 @@ class GameState extends State
 		var tex = Luxe.resources.texture('assets/image/platforms/platform_straight02.png');
 		absolute_floor.texture = tex;
 		absolute_floor.size = new Vector( calc_lanes_distance() * num_internal_lanes,  tex.height);
+		
+		// initialize ending object
+		if (game_state_onenter_data.is_story_mode)
+		{
+			story_end_disp = new Sprite({
+				scene : scene,
+				texture : Luxe.resources.texture("assets/image/collectables/letter.png"),
+				size : new Vector(250, 150),
+				pos : new Vector(Main.global_info.ref_window_size_x / 2, -1000),
+				depth : 2,
+			});
+			
+			trace( story_end_disp.pos );
+		}
 	}
 	
 	function on_player_respawn_end(e)
@@ -591,7 +601,8 @@ class GameState extends State
 				current_platform_type = RIGHT;
 				mouse_platform.set_type(current_platform_type, true);
 			}
-		}
+		} 	
+		
 		
 		if (player_out_of_bound() && !player_sprite.respawning)
 		{
@@ -678,6 +689,9 @@ class GameState extends State
 		ui_score.set_text('Score\n${score}');
 		
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
+		
+		// test story ending state
+		if(background != null) story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
 	}
 	
 	private function connect_input()
@@ -1025,9 +1039,9 @@ class GameState extends State
 			background_groups.push(group);
 		}
 		
-		background = new Background({scene : scene});
+		var selected_group = select_background_group_id();
+		background = new Background({scene : scene, background_group: selected_group});
 		background.is_story_mode = game_state_onenter_data.is_story_mode;
-		background.background_group = select_background_group_id();
 	}
 	
 	function select_background_group_id() : BackgroundGroup
