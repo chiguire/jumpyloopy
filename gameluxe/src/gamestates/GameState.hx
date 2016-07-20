@@ -400,7 +400,7 @@ class GameState extends State
 		
 		next_platforms = new Array<Platform>();
 		
-		var platform_scale = 0.7;
+		var platform_scale = 0.9;
 		var distance_scale = 0.93;
 		for (i in 0...4)
 		{
