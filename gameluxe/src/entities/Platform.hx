@@ -122,6 +122,6 @@ class Platform extends Sprite
 	
 	public static function get_random_center_type()
 	{
-		return Std.int(Math.random() * 2) + 1;
+		return Std.int(Luxe.utils.random.float(1.0) * 2) + 1;
 	}
 }
