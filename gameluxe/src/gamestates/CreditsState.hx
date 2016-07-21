@@ -8,6 +8,7 @@ import luxe.Scene;
 import luxe.Input;
 import luxe.Vector;
 import luxe.Color;
+import ui.MintImageButton;
 
 /**
  * ...
@@ -47,6 +48,8 @@ class CreditsState extends State
 		scene.destroy();
 		scene = null;
 		credits_image = null;
+		
+		Main.canvas.destroy_children();	
 	}
 	
 	override function onenter<T>(_value:T)
@@ -65,6 +68,9 @@ class CreditsState extends State
 			pos: new Vector(data.pos_x, data.pos_y),
 			scene: scene,
 		});
+		
+		//Back Button	
+		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
 	}
 	
 	override function update(dt:Float) 

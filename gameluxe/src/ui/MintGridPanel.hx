@@ -17,14 +17,14 @@ class MintGridPanel extends Panel
 	
 	public var items : Array<Control> = new Array();
 	
-	public function new(parent : Control, title: String, pos : Vector, width : Float, num_col : Int, pad : Float, scaling : Float) 
+	public function new(parent : Control, title: String, pos : Vector, width : Float, num_col : Int, pad : Float, scaling : Float, panel_colour : Color) 
 	{
 		super({
             parent: parent,
             name: title,
             x: pos.x, y: pos.y, w: width, h: padding,
 			mouse_input: true,
-			options: { color:new Color(), color_bar:new Color().rgb(0xFFFFFF) },
+			options: { color:panel_colour },
         });
 		
 		num_columns = num_col;
