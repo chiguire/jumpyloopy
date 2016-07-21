@@ -185,7 +185,8 @@ class ShopState extends State
 				equipped_character_button = item;
 			}
 			
-			item.update_button();
+			// AIK fixed crash, probably cannot change the texture yet until geometry setup, which is a few frames later
+			//item.update_button();
 			
 			item.onmouseup.listen(
 			function(e,c) 
@@ -216,7 +217,8 @@ class ShopState extends State
 				equipped_background_button = item;
 			}
 			
-			item.update_button();
+			// AIK fixed crash, probably cannot change the texture yet until geometry setup, which is a few frames later
+			//item.update_button();
 			
 			item.onmouseup.listen(
 			function(e,c) 

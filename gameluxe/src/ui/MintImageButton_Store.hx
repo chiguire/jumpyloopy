@@ -45,9 +45,11 @@ class MintImageButton_Store extends MintImageButton
 	}
 	
 	private function change_texture(texture : String)
-	{	
+	{		
 		//trace(texture);
 		var renderer = cast(renderer, mint.render.luxe.Image);
+		//trace(renderer.visual.texture);
+		//return;
 		renderer.visual.texture = Luxe.resources.texture(texture);
 	}
 	
@@ -60,7 +62,7 @@ class MintImageButton_Store extends MintImageButton
 	
 	private function get_texture() : String
 	{
-		var tex;
+		var tex = textures.tex_locked;
 		
 		if (is_equipped)
 		{

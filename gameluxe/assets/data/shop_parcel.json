@@ -9,6 +9,8 @@
 		{ "id" : "assets/image/unlockables/characters/astro_unlocked_equipped.png" },
 		{ "id" : "assets/image/unlockables/characters/astro_unlocked_selected.png" },
 		
+		{ "id" : "assets/image/unlockables/characters/aviator_locked.png" },
+		{ "id" : "assets/image/unlockables/characters/aviator_locked_selected.png" },
 		{ "id" : "assets/image/unlockables/characters/aviator_unlocked.png" },
 		{ "id" : "assets/image/unlockables/characters/aviator_unlocked_equipped.png" },
 		{ "id" : "assets/image/unlockables/characters/aviator_unlocked_selected.png" },
