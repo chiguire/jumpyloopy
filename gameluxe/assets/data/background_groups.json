@@ -1,7 +1,7 @@
 {
 	"groups":[{
 		"name": "story",
-		"cost": 250,
+		"cost": 1000,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
@@ -106,6 +106,65 @@
 			, 1
 			, 1
 		]
+	},
+	
+	{
+		"name" : "space",
+		"cost": 250,
+		"tex_path":"assets/image/unlockables/backgrounds/space",
+		"textures": ["assets/image/bg/space_02_tiling.png"
+			, "assets/image/bg/space_03_planet01.png"
+			, "assets/image/bg/space_03_planet02.png"
+			, "assets/image/bg/space_03_planet03.png"
+			, "assets/image/bg/space_02_tiling.png"
+		],
+		"distances": [1
+			, 1
+			, 1
+			, 1
+			, 1
+		]
+	},
+	
+	{
+		"name" : "greece",
+		"cost": 350,
+		"tex_path":"assets/image/unlockables/backgrounds/greece",
+		"textures": ["assets/image/bg/greece/Greece_01_ground.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+		],
+		"distances": [1
+			, 1
+			, 1
+			, 10
+			, 5
+			, 99
+		]
+	},
+	
+	{
+		"name" : "water",
+		"cost": 350,
+		"tex_path":"assets/image/unlockables/backgrounds/water",
+		"textures": ["assets/image/bg/water/water_01_sand.png"
+			, "assets/image/bg/water/water_02_tilling01.png"
+			, "assets/image/bg/water/water_03_shark.png"
+			, "assets/image/bg/water/water_02_tilling01.png"
+			, "assets/image/bg/water/water_04_submarin.png"
+			, "assets/image/bg/water/water_02_tilling01.png"
+		],
+		"distances": [1
+			, 2
+			, 1
+			, 2
+			, 1
+			, 99
+		]
 	}
+	
 	]
 }

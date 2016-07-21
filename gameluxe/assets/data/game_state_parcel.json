@@ -21,6 +21,16 @@
 		{ "id" : "assets/image/bg/space_03_planet03.png" },
 		{ "id" : "assets/image/bg/end_01_transition.png" },
 		{ "id" : "assets/image/bg/end_02.png" },
+		
+		{ "id" : "assets/image/bg/greece/Greece_01_ground.png" },
+		{ "id" : "assets/image/bg/greece/Greece_02_tilling01.png" },
+		{ "id" : "assets/image/bg/greece/Greece_03_cloudtemples.png" },
+		
+		{ "id" : "assets/image/bg/water/water_01_sand.png" },
+		{ "id" : "assets/image/bg/water/water_02_tilling01.png" },
+		{ "id" : "assets/image/bg/water/water_03_shark.png" },
+		{ "id" : "assets/image/bg/water/water_04_submarin.png" },
+		
 		{ "id" : "assets/image/platforms/platform_left01.png" },
 		{ "id" : "assets/image/platforms/platform_right01.png" },
 		{ "id" : "assets/image/platforms/platform_straight01.png" },
