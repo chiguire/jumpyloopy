@@ -492,6 +492,11 @@ class GameState extends State
 			//trace('Touching platform at (${player_sprite.current_lane}, $beat_n)');
 			pl.touch();
 		}
+		
+		if (story_mode_ended)
+		{
+			player_sprite.on_story_end();
+		}
 	}
 	
 	function on_audio_track_finished(e)
@@ -514,7 +519,7 @@ class GameState extends State
 	}
 	
 	function on_story_finished()
-	{		
+	{
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color = new Color(1, 1, 1, 0);
 		Actuate.tween(fader_overlay_sprite.color, 6.0, {a:1}).onComplete(function() {
@@ -818,7 +823,7 @@ class GameState extends State
 		starting_time = Luxe.time;
 		
 		// initialize ending object
-		//background.story_end_distance = 2000;
+		//background.story_end_distance = 1000;
 		var finish_y = Math.fround((starting_y - background.story_end_distance) / level.beat_height) * level.beat_height;
 		background.story_end_distance = -finish_y;
 		if (game_state_onenter_data.is_story_mode)
@@ -831,7 +836,7 @@ class GameState extends State
 				depth : 2,
 			});
 			
-			trace( story_end_disp.pos );
+			//trace( story_end_disp.pos );
 			story_end_disp.rotation_z  = -3;
 			Actuate.tween(story_end_disp, 2.0, { rotation_z : 3 }).reflect().repeat();
 		}

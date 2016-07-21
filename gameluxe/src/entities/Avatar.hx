@@ -15,6 +15,8 @@ import luxe.Sprite;
 import luxe.tween.Actuate;
 import luxe.tween.MotionPath;
 import luxe.tween.actuators.GenericActuator.IGenericActuator;
+import luxe.tween.easing.Bounce;
+import luxe.tween.easing.Bounce.BounceEaseInOut;
 import luxe.tween.easing.Cubic;
 
 /**
@@ -154,6 +156,18 @@ class Avatar extends Sprite
 		}
 		
 		super.ondestroy();
+	}
+	
+	public function on_story_end()
+	{	
+		remove(gamecamera.name);
+		
+		// stop the current tweening, and start a new one
+		Actuate.stop(pos);
+		Actuate.tween(pos, 4.0, { y: pos.y - 900 }).ease(Cubic.easeInOut);
+		
+		anim.animation = 'big_jump';
+		anim.play();
 	}
 	
 	public function respawn_begin( p:Vector)

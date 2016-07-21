@@ -73,7 +73,7 @@ class StoryIntroState extends State
 		story_end_disp.pos.y = 900;
 		Actuate.tween(story_end_disp.pos, 15.0, { y : -900 });
 		
-		story_end_disp.pos.x = Luxe.utils.random.float(320, 1120);
+		story_end_disp.pos.x = 720 + Luxe.utils.random.float( -100, 100);
 		Actuate.tween(story_end_disp.pos, 5.0, { x : 720 }).reflect().repeat();
 	
 		var collected_fragments = Main.achievement_manager.collected_fragments;
