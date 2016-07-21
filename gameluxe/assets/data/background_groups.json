@@ -8,6 +8,7 @@
 			, "assets/image/bg/cave_02_tiling.png"
 			, "assets/image/bg/sky_01_forest_transition.png"
 			, "assets/image/bg/sky_01_forest.png"
+			, "assets/image/bg/sky_01_tiling.png"
 			, "assets/image/bg/sky_03_clouds01.png"
 			, "assets/image/bg/sky_03_clouds02.png"
 			, "assets/image/bg/sky_04_airballon01.png"
@@ -29,6 +30,7 @@
 			, 1
 			, 1
 			, 1
+			, 1
 			, 2
 			, 1
 			, 2
@@ -46,6 +48,7 @@
 		"unlockables" : [""
 			, ""
 			, "cave"
+			, ""
 			, ""
 			, ""
 			, ""

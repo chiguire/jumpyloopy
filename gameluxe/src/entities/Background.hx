@@ -29,6 +29,7 @@ typedef UnlockableBackgroundData =
 typedef BackgroundOptions = 
 {
 	> VisualOptions,
+	var is_story_mode : Bool;
 	var background_group : BackgroundGroup;
 }
  
@@ -67,6 +68,8 @@ class Background extends Visual
 		super(options);
 		// Background don't have to be Visual, fix this later! [Aik]
 		visible = false;
+		
+		is_story_mode = options.is_story_mode;
 		
 		textures = new Array<Texture>();
 		tile_map = new Array<Int>();

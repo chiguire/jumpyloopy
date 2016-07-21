@@ -1096,8 +1096,7 @@ class GameState extends State
 	function create_background_group()
 	{	
 		var selected_group = select_background_group_id();
-		background = new Background({scene : scene, background_group: selected_group});
-		background.is_story_mode = game_state_onenter_data.is_story_mode;
+		background = new Background({scene : scene, background_group: selected_group, is_story_mode: game_state_onenter_data.is_story_mode });
 	}
 	
 	function select_background_group_id() : BackgroundGroup

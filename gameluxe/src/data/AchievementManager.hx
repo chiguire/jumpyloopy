@@ -83,6 +83,7 @@ class AchievementManager
 		if (is_background_unlocked(s) == false)
 		{
 			unlocked_backgrounds.push(s);
+			trace("unlocked bg " + s);
 		}
 	}
 	
