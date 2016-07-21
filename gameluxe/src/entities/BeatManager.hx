@@ -313,6 +313,22 @@ class BeatManager extends Entity
 		});
 	}
 	
+	var music_volume = 0.0;
+	public function on_game_state_ending()
+	{
+		request_next_beat = false;
+		cooldown_counter = 9999.0;
+		curr_update_state = BMUpdateState.Idle;
+		curr_beat_idx = -1;
+		
+		var org_volume = Luxe.audio.volume_of(music_handle);
+		music_volume = org_volume;
+		var tween = Actuate.tween(this, 3.0, {music_volume:0.0});
+		tween.onUpdate( function(){
+			Luxe.audio.volume(music_handle, music_volume); 
+		});
+	}
+	
 	public function on_player_respawn_begin()
 	{
 		request_next_beat = false;

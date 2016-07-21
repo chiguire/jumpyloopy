@@ -4,6 +4,7 @@ import data.GameInfo;
 import luxe.Color;
 import luxe.Input.Key;
 import luxe.Input.KeyEvent;
+import luxe.Input.MouseButton;
 import luxe.Scene;
 import luxe.Sprite;
 import luxe.Text;
@@ -85,13 +86,27 @@ class StoryEndingState extends State
 		
 		for (i in 0...collected_fragments.length )
 		{
-			var txt = collected_fragments[i] ? "...The quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog..." : "...-Missing Fragment-..."; 
+			var txt = collected_fragments[i] ? "...The quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog..." : "...-Missing Story Fragment-..."; 
 			
 			var frag = story_fragment_disp[i];
 			frag.visible = true;
 			frag.color.a = 0;
 			frag.text = txt;
 			Actuate.tween(frag.color, fade_in_duration, { a: 1.0 }).delay(first_delay + first_delay * i);
+		}
+	}
+	
+	override function update(dt:Float) 
+	{
+		var change_state = Luxe.input.mousepressed(MouseButton.left) ||
+			Luxe.input.mousepressed(MouseButton.right) ||
+			Luxe.input.keypressed(Key.space) ||
+			Luxe.input.keypressed(Key.escape) ||
+			Luxe.input.keypressed(Key.backspace);
+			
+		if(change_state)
+		{
+			machine.set("MenuState");
 		}
 	}
 }

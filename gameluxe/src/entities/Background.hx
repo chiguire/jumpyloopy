@@ -182,6 +182,7 @@ class Background extends Visual
 		{
 			Main.achievement_manager.finished_story_mode = true;
 			Main.achievement_manager.unlock_background("story");
+			Luxe.events.fire("activate_report_text", {s : "Story Mode Finished! Unlocked Background: story"});
 			
 			return true;
 		}
@@ -213,7 +214,7 @@ class Background extends Visual
 			var delta_pos = Luxe.camera.pos.y - prev_camera_pos_y;
 			prev_camera_pos_y = Luxe.camera.pos.y;
 			
-			transition_pos_counter += dt * speed_mul - delta_pos;
+			transition_pos_counter += dt * speed_mul;
 			
 			// move background
 			for (i in 0...geoms.length)

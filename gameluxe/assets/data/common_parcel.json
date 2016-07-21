@@ -21,6 +21,7 @@
 		{ "id" : "assets/image/platforms/platform_anim.png" },
 		{ "id" : "assets/image/splash/audio.png" },
 		{ "id" : "assets/image/bg/cave_01_paper.png" },
+		{ "id" : "assets/image/collectables/letter.png" },
 		{ "id" : "assets/image/frontend_bg.png" },
 		{ "id" : "assets/image/track_selection.png" },
 		{ "id" : "assets/image/paper-top.png" },

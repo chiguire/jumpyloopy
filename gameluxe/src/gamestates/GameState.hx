@@ -513,6 +513,23 @@ class GameState extends State
 		});
 	}
 	
+	function on_story_finished()
+	{		
+		fader_overlay_sprite.visible = true;
+		fader_overlay_sprite.color = new Color(1, 1, 1, 0);
+		Actuate.tween(fader_overlay_sprite.color, 6.0, {a:1}).onComplete(function() {
+			game_info.current_score =
+			{
+				name: Main.user_data.user_name,
+				score: score_component.current_score,
+				distance: beat_n,
+				time: Std.int(Luxe.time - starting_time),
+				song_id: Main.beat_manager.song_id,
+			};
+			machine.set("StoryEndingState");
+		});
+	}
+	
 	function on_parcel_loaded( p: Parcel )
 	{
 		create_pause_panel();
@@ -702,9 +719,6 @@ class GameState extends State
 		ui_score.set_text('Score\n${score}');
 		
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
-		
-		// test story ending state
-		if (background != null) story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
 	}
 	
 	private function connect_input()
@@ -804,13 +818,16 @@ class GameState extends State
 		starting_time = Luxe.time;
 		
 		// initialize ending object
+		//background.story_end_distance = 2000;
+		var finish_y = Math.fround((starting_y - background.story_end_distance) / level.beat_height) * level.beat_height;
+		background.story_end_distance = -finish_y;
 		if (game_state_onenter_data.is_story_mode)
 		{
 			story_end_disp = new Sprite({
 				scene : scene,
 				texture : Luxe.resources.texture("assets/image/collectables/letter.png"),
 				size : new Vector(250 * 1.5, 150 * 1.5),
-				pos : new Vector(lanes[2], -800),//-background.story_end_distance),
+				pos : new Vector(lanes[2], finish_y - level.beat_height*1.25),
 				depth : 2,
 			});
 			
@@ -938,6 +955,14 @@ class GameState extends State
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;
+		}
+		
+		// test story ending state
+		story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
+		if (story_mode_ended)
+		{
+			on_story_finished();
+			Main.beat_manager.on_game_state_ending();
 		}
 	}
 	

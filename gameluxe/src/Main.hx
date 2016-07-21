@@ -122,7 +122,8 @@ class Main extends luxe.Game
 	{
 		var s = new Sprite({
 			pos: Main.mid_screen_pos(),
-			size : new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
+			//size : new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y),
+			size : new Vector(500, Main.global_info.ref_window_size_y),
 			color: new Color(0, 0, 0, 1),
 			batcher: Main.batcher_ui,
 			scene: scene,
