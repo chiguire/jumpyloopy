@@ -234,6 +234,7 @@ class BeatManager extends Entity
 						
 						if (search_next_beat(audio_time) == true)
 						{
+							trace("jump");
 							curr_update_state = BMUpdateState.PreBeat;
 							prebeat_counter = jump_interval * 0.25;
 							Luxe.events.fire("bm_prebeat_event", {}, false );
@@ -316,6 +317,7 @@ class BeatManager extends Entity
 	var music_volume = 0.0;
 	public function on_game_state_ending()
 	{
+		trace("game end");
 		request_next_beat = false;
 		cooldown_counter = 9999.0;
 		curr_update_state = BMUpdateState.Idle;

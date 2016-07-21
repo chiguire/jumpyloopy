@@ -494,9 +494,15 @@ class GameState extends State
 			pl.touch();
 		}
 		
-		if (story_mode_ended)
+		// test story ending state
+		story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
+		if (story_mode_ended == true)
 		{
 			player_sprite.on_story_end();
+			on_story_finished();
+			Main.beat_manager.on_game_state_ending();
+			// clear all the pending events here, shouldn't need them anymore 
+			Luxe.events.clear();
 		}
 	}
 	
@@ -601,11 +607,6 @@ class GameState extends State
 			state_change_menu_signal = false;
 			machine.set("MenuState");
 			return;
-		}
-		
-		if ( story_mode_ended )
-		{
-			
 		}
 		
 		if (level.can_put_platforms && !player_sprite.respawning)
@@ -961,14 +962,6 @@ class GameState extends State
 			
 			player_sprite.trajectory_movement.nextPos.x = lanes[player_sprite.current_lane];
 			player_sprite.trajectory_movement.nextPos.y = - platform_destination_y * level.beat_height;
-		}
-		
-		// test story ending state
-		story_mode_ended = background.test_story_mode_end(beat_n * level.beat_height);
-		if (story_mode_ended)
-		{
-			on_story_finished();
-			Main.beat_manager.on_game_state_ending();
 		}
 	}
 	

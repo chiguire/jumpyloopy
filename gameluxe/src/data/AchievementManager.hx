@@ -27,6 +27,8 @@ class AchievementManager
 	{
 		collected_fragments = new Vector<Bool>(10);
 		
+		//for (i in 1...collected_fragments.length) collected_fragments[i] = true;
+		
 #if debug
 		//Debugging stuff;
 		current_coins = 2000;
@@ -50,6 +52,7 @@ class AchievementManager
 	{
 		if (completed_story_mode == true) return;
 		
+		trace(story_mode_end);
 		completed_story_mode = story_mode_end;
 		for (i in 0...collected_fragments.length)
 		{
@@ -58,6 +61,8 @@ class AchievementManager
 				completed_story_mode = false;
 			}
 		}
+		
+		trace(completed_story_mode);
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )
@@ -66,6 +71,8 @@ class AchievementManager
 		{
 			collected_fragments[i] = (collected_fragments[i] == false) ? fragment_states[i] : collected_fragments[i];
 		}
+		
+		trace(collected_fragments);
 	}
 	
 	public function is_character_unlocked( s :String ) : Bool
