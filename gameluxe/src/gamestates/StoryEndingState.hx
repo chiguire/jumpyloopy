@@ -107,7 +107,8 @@ class StoryEndingState extends State
 			
 		if(change_state)
 		{
-			machine.set("MenuState");
+			var next_state = Main.achievement_manager.completed_story_mode ? "StoryCompleteState" : "MenuState";
+			machine.set(next_state);
 		}
 	}
 }

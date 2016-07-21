@@ -12,7 +12,7 @@ class AchievementManager
 	public var current_coins : Int;
 	
 	public var collected_fragments : Vector<Bool>;
-	public var finished_story_mode = false;
+	public var completed_story_mode = false;
 	
 	public var character_groups : Array<CharacterGroup>;
 	public var background_groups : Array<BackgroundGroup>;
@@ -26,11 +26,6 @@ class AchievementManager
 	public function new() 
 	{
 		collected_fragments = new Vector<Bool>(10);
-		
-		for (i in 0...collected_fragments.length)
-		{
-			collected_fragments[i] = true;
-		}
 		
 #if debug
 		//Debugging stuff;
@@ -49,6 +44,20 @@ class AchievementManager
 		//Load unlockables data
 		load_background_groups();
 		load_character_data();
+	}
+	
+	public function update_completed_story_mode( story_mode_end : Bool )
+	{
+		if (completed_story_mode == true) return;
+		
+		completed_story_mode = story_mode_end;
+		for (i in 0...collected_fragments.length)
+		{
+			if (collected_fragments[i] == false)
+			{
+				completed_story_mode = false;
+			}
+		}
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )

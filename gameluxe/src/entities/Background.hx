@@ -184,7 +184,6 @@ class Background extends Visual
 		//trace(d);
 		if ( d >= story_end_distance )
 		{
-			Main.achievement_manager.finished_story_mode = true;
 			Main.achievement_manager.unlock_background("story");
 			Luxe.events.fire("activate_report_text", {s : "Story Mode Finished! Unlocked Background: story"});
 			

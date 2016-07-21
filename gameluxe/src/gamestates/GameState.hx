@@ -222,6 +222,7 @@ class GameState extends State
 		
 		// update player achievements
 		Main.achievement_manager.update_collected_fragments(collectable_manager.story_fragment_array);
+		Main.achievement_manager.update_completed_story_mode(story_mode_ended);
 		
 		is_pause = false;
 		
