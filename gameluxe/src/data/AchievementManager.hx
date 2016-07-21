@@ -26,6 +26,12 @@ class AchievementManager
 	public function new() 
 	{
 		collected_fragments = new Vector<Bool>(10);
+		
+		for (i in 0...collected_fragments.length)
+		{
+			collected_fragments[i] = true;
+		}
+		
 #if debug
 		//Debugging stuff;
 		current_coins = 2000;

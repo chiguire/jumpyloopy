@@ -159,6 +159,8 @@ class Background extends Visual
 	
 	public function test_unlockable( distance : Int )
 	{
+		if (is_story_mode == false) return;
+		
 		var d = distance;// + transition_pos_counter;
 		//trace(d);
 		for ( i in 0...unlockable_triggers.length )
@@ -176,6 +178,8 @@ class Background extends Visual
 	
 	public function test_story_mode_end( distance : Int ) : Bool
 	{
+		if (is_story_mode == false) return false;
+		
 		var d = distance + transition_pos_counter;
 		//trace(d);
 		if ( d >= story_end_distance )
