@@ -126,6 +126,7 @@ class ShopState extends State
 		panel_colour.rgb(0x000000);
 		panel_colour.a = 0;
 		
+		//Main Panel
 		var grid_panel : Panel = new Panel({
 			parent: canvas,
             name: "panel",
@@ -135,6 +136,7 @@ class ShopState extends State
 			mouse_input: true,
 		});
 
+		//Header Text
 		coins_text = new MintLabel({
                 parent: grid_panel, name: "coins",
 				x:0, y:grid_padding, 
@@ -143,10 +145,19 @@ class ShopState extends State
                 text: "coins",
 				color : Main.global_info.text_color,
 				align: TextAlign.center, align_vertical: TextAlign.center,
-            });
-			
+            });		
 		update_coins_text();
-			
+		
+		//Back Button	
+		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
+		//On click action
+		back_button.onmouseup.listen(
+		function(e,c) 
+		{
+			change_to = "MenuState";
+		});
+		
+		//Characters
 		var char_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgc",
                 x:0, y:coins_text.y_local + coins_text.h + grid_padding, 
@@ -158,6 +169,7 @@ class ShopState extends State
 			new Vector(0, char_header.y_local + char_header.h + grid_padding), grid_panel.w, 5, 5, 1, panel_colour);		
 		load_character_grid(character_panel);
 
+		//Backgrounds
 		var background_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgh",
                 x:0, y:character_panel.y_local + character_panel.h + grid_padding, 

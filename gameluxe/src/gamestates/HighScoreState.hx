@@ -7,6 +7,7 @@ import luxe.options.StateOptions;
 import luxe.States.State;
 import luxe.Input;
 import mint.types.Types.TextAlign;
+import ui.MintImageButton;
 import ui.MintLabel;
 import ui.MintLabelPanel;
 import luxe.Sprite;
@@ -60,6 +61,9 @@ class HighScoreState extends State
 			pos: new Vector(data.pos_x, data.pos_y),
 			scene: scene,
 		});
+		
+		//Back Button	
+		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
 		
 		create_panel();
 	}
