@@ -27,6 +27,10 @@ class ScoreState extends State
 	
 	private var bg_image : Sprite;
 	
+	/// deferred state transition
+	var change_state_signal = false;
+	var next_state = "";
+	
 	public function new(_name:String, game_info : GameInfo) 
 	{
 		super({name: _name});
@@ -40,6 +44,9 @@ class ScoreState extends State
 	
 	override function onleave<T>(_value:T)
 	{
+		change_state_signal = false;
+		next_state = "";
+		
 		text_edit.unfocus();
 		bg_image.destroy();
 		scene.empty();
@@ -116,7 +123,21 @@ class ScoreState extends State
 		button.onmouseup.listen(function(e, c) {
 			game_info.current_score.name = text_edit.text;
 			Main.submit_score(game_info.current_score);
-			machine.set("MenuState");
+			
+			change_state_signal = true;
+			next_state = "MenuState";
+			
+			//machine.set("MenuState");
 		});
+	}
+	
+	override public function update(dt:Float) 
+	{
+		super.update(dt);
+		
+		if (change_state_signal)
+		{
+			machine.set(next_state);
+		}
 	}
 }
