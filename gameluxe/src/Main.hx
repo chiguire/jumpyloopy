@@ -11,6 +11,7 @@ import gamestates.HighScoreState;
 import gamestates.LevelSelectState;
 import gamestates.MenuState;
 import gamestates.ScoreState;
+import gamestates.StoryCompleteState;
 import gamestates.StoryEndingState;
 import gamestates.StoryIntroState;
 import gamestates.SplashState;
@@ -213,6 +214,7 @@ class Main extends luxe.Game
 		machine.add(new LevelSelectState("LevelSelect", game_info));
 		machine.add(new StoryIntroState("StoryIntroState", game_info));
 		machine.add(new StoryEndingState("StoryEndingState", game_info));
+		machine.add(new StoryCompleteState("StoryCompleteState", game_info));
 		machine.add(new GameState("GameState", game_info));
 		machine.add(new ScoreState("ScoreState", game_info));
 		machine.add(new HighScoreState("HighScoreState", game_info));
