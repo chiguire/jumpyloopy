@@ -46,6 +46,7 @@
 	
 	"json" : 
 	[
+		{ "id" : "assets/data/letter.json" },
 		{ "id" : "assets/animation/animation_jumper.json" },
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
 		{ "id" : "assets/collectable_groups/collectable_groups.json" },

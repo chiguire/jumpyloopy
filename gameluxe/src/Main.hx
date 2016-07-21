@@ -52,6 +52,8 @@ class Main extends luxe.Game
 	public static var rise_font_id = "assets/image/font/later_on.fnt";
 	public static var letter_font_id = "assets/image/font/jenna_sue.fnt";
 	
+	public static var letter_id = "assets/data/letter.json";
+	
 	/// Camera
 	public static var batcher_bg : Batcher;
 	public static var camera_bg : Camera;

@@ -97,9 +97,10 @@ class StoryIntroState extends State
 			}));	
 		}
 		
+		var letter_content = Luxe.resources.json(Main.letter_id).asset.json;
 		for (i in 0...collected_fragments.length )
 		{
-			var txt = collected_fragments[i] ? "...The quick brown fox jumps over the lazy dog\nThe quick brown fox jumps over the lazy dog..." : "...-Missing Story Fragment-..."; 
+			var txt = collected_fragments[i] ? letter_content.letter[i] : "...-Missing Story Fragment-..."; 
 			
 			var frag = story_fragment_disp[i];
 			frag.visible = true;
