@@ -17,6 +17,8 @@ import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
 import mint.Canvas;
+import mint.Image;
+import mint.Label;
 import mint.List;
 import mint.Panel;
 import mint.Scroll;
@@ -36,6 +38,7 @@ class ShopState extends State
 	var parcel : Parcel;
 	var change_to : String = "";
 	var canvas : Canvas;
+	var coins_text : Label;
 	
 	private var equipped_character_button : MintImageButton_Store;
 	private var equipped_background_button : MintImageButton_Store;
@@ -79,13 +82,6 @@ class ShopState extends State
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 		
-		var background1 = new Sprite({
-			texture: Luxe.resources.texture('assets/image/frontend_bg.png'),
-			pos: new Vector(720, 450),
-			size: new Vector(500, 900),
-			scene: scene,
-		});
-		
 		// load parcels
 		Main.load_parcel(parcel, "assets/data/shop_parcel.json", on_loaded);
 	}
@@ -111,60 +107,62 @@ class ShopState extends State
 		trace("Loaded Shop");
 		
 		// UI layer	
+				
+		var background1 = new Sprite({
+			texture: Luxe.resources.texture("assets/image/ui/unlockables_background.png"),
+			pos: new Vector(720, 450),
+			size: new Vector(500, 900),
+			scene: scene,
+		});
 		
-		var window_y = 0;
+		var window_y = 250;
 		var window_w = 500;
 		var window_h = canvas.h - window_y;
 		var grid_padding = 10;
-		/*
-		var _scdroll = new mint.Scroll({
-            parent: canvas,
-            name: 'scroll1',
-            options: { color_handles:new Color().rgb(0xffffff) },
-            x:0, y:0, w: 128, h: 128,
-        });
 
-        new mint.Image({
-            parent: _scdroll,
-            name: 'image_other',
-            x:0, y:100, w:512, h: 512,
-            path: 'assets/image.png'
-        });
-
-
-		var _scroll : Scroll = new mint.Scroll({
-            parent: canvas,
-            name: 'shop_scroll',
-            options: { 
-				color_handles:new Color().rgb(0xffffff) 
-			},
-            x:(canvas.w / 2) - (window_w / 2), y:window_y, 
-			w: window_w, h: window_h,
-        });
-		_scroll.scrollv.set_size(_scroll.scrollv.w, 30);
-		*/
 		var grid_panel : Panel = new Panel({
 			parent: canvas,
             name: "panel",
-            options: { color:new Color(), color_bar:new Color().rgb(0x121219) },
+            options: { color:new Color(), color_bar:new Color().rgb(0xFFFFFF) },
             x: (canvas.w / 2) - (window_w / 2) + grid_padding, y:window_y + grid_padding, 
 			w:window_w - (grid_padding * 2), h: window_h,
 			mouse_input: true,
 		});
-		
-		var character_panel : MintGridPanel = new MintGridPanel(grid_panel, "Characters", 
-			new Vector(0, 0), grid_panel.w, 3, 5);	
 
+		coins_text = new mint.Label({
+                parent: grid_panel, name: "coins",
+				x:grid_panel.w/2 - 100, y:0, 
+				w:100, h:18, 
+				text_size: 16,
+                text: "coins",
+            });
+			
+		update_coins_text();
+			
+		var char_header : mint.Image = new mint.Image({
+                parent: grid_panel, name: "bgc",
+                x:0, y:coins_text.y_local + coins_text.h, 
+				w:grid_panel.w, h:80,
+                path: "assets/image/ui/unlockables_characters_button.png"
+            });
+
+		var character_panel : MintGridPanel = new MintGridPanel(grid_panel, "Characters", 
+			new Vector(0, char_header.y_local + char_header.h), grid_panel.w, 5, 5, 1);		
 		load_character_grid(character_panel);
+
+		var background_header : mint.Image = new mint.Image({
+                parent: grid_panel, name: "bgh",
+                x:0, y:character_panel.y_local + character_panel.h, 
+				w:grid_panel.w, h:80,
+                path: "assets/image/ui/unlockables_environments_button.png"
+            });
 		
 		var background_panel : MintGridPanel = new MintGridPanel(grid_panel, "Background", 
-			new Vector(0, character_panel.h + grid_padding), grid_panel.w, 3, 5);
-
+			new Vector(0, background_header.y_local + background_header.h), grid_panel.w, 5, 5, 1);
 		load_background_grid(background_panel);
 
 		//Reupdate here as we now know what size we are ^_^
 		grid_panel.set_size(grid_panel.w, grid_panel.children_bounds.real_h);
-		//_scroll.refresh_scroll();
 	}
 
 	private function load_character_grid(character_panel : MintGridPanel)
@@ -175,17 +173,15 @@ class ShopState extends State
 				new Vector(0, 0), new Vector(143, 193), 
 				Main.achievement_manager.character_groups[i].tex_path);
 			
-			//Check if character was unlocked here as we don't update.
-			if (Main.achievement_manager.is_character_unlocked(Main.achievement_manager.character_groups[i].name))
-				item.is_unlocked = true;
-			
-			if (Main.achievement_manager.selected_character == Main.achievement_manager.character_groups[i].name)
-			{
-				item.is_equipped = true;
-				equipped_character_button = item;
-			}
-			
-			item.update_button();
+			var item_text : Label = new mint.Label({
+                parent: item, 
+				name: Main.achievement_manager.character_groups[i].name + "_coins",
+				x:item.x_local, y:item.y_local, 
+				w:10, h:18, 
+				text_size: 16,
+                text: "Cost: " + Main.achievement_manager.character_groups[i].cost,
+            });
+
 			
 			item.onmouseup.listen(
 			function(e,c) 
@@ -195,6 +191,28 @@ class ShopState extends State
 			});
 				
 			character_panel.add_item(item);
+			
+						
+				
+			var is_dirty = false;	
+			//Check if character was unlocked here as we don't update.
+			if (Main.achievement_manager.is_character_unlocked(Main.achievement_manager.character_groups[i].name))
+			{
+				item.is_unlocked = true;
+				is_dirty = true;
+			}
+			if (Main.achievement_manager.selected_character == Main.achievement_manager.character_groups[i].name)
+			{
+				item.is_equipped = true;
+				equipped_character_button = item;
+				is_dirty = true;
+			}
+			
+			//Update the button!			
+			if (is_dirty)
+			{
+				//item.update_button();
+			}
 		}
 	}
 	
@@ -206,17 +224,15 @@ class ShopState extends State
 				new Vector(0, 0), new Vector(143, 193), 
 				Main.achievement_manager.background_groups[i].tex_path);
 			
-			//Check if character was unlocked here as we don't update.
-			if (Main.achievement_manager.is_background_unlocked(Main.achievement_manager.background_groups[i].name))
-				item.is_unlocked = true;
+			var item_text : Label = new mint.Label({
+                parent: item, 
+				name: Main.achievement_manager.background_groups[i].name + "_coins",
+				x:item.w/2, y:item.h*0.9, 
+				w:10, h:18, 
+				text_size: 16,
+                text: "Cost: " + Main.achievement_manager.background_groups[i].cost,
+            });
 			
-			if (Main.achievement_manager.selected_background == Main.achievement_manager.background_groups[i].name)
-			{
-				item.is_equipped = true;
-				equipped_background_button = item;
-			}
-			
-			item.update_button();
 			
 			item.onmouseup.listen(
 			function(e,c) 
@@ -226,6 +242,26 @@ class ShopState extends State
 			});
 				
 			background_panel.add_item(item);
+			
+			
+			var is_dirty = false;
+			//Check if character was unlocked here as we don't update.
+			if (Main.achievement_manager.is_background_unlocked(Main.achievement_manager.background_groups[i].name))
+			{	
+				item.is_unlocked = true;
+				is_dirty = true;
+			}
+			if (Main.achievement_manager.selected_background == Main.achievement_manager.background_groups[i].name)
+			{
+				item.is_equipped = true;
+				equipped_background_button = item;
+				is_dirty = true;
+			}
+			
+			if (is_dirty)
+			{
+				//item.update_button();
+			}
 		}
 	}
 	
@@ -259,6 +295,8 @@ class ShopState extends State
 				button.update_button();
 			}
 		}
+		
+		update_coins_text();
 	}
 	
 	private function clicked_background(button : MintImageButton_Store, background : BackgroundGroup)
@@ -292,5 +330,12 @@ class ShopState extends State
 				button.update_button();
 			}
 		}
+		
+		update_coins_text();
+	}
+	
+	function update_coins_text()
+	{
+		coins_text.text = "Coins: " + Main.achievement_manager.current_coins;
 	}
 }

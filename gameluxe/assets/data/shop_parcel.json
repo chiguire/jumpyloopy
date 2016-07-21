@@ -1,7 +1,9 @@
 {
 	"textures" : 
 	[ 
-		{ "id" : "assets/image/bg/cave_01_paper.png" },
+		{ "id" : "assets/image/ui/unlockables_background.png" },
+		{ "id" : "assets/image/ui/unlockables_characters_button.png" },
+		{ "id" : "assets/image/ui/unlockables_environments_button.png" },
 	
 		{ "id" : "assets/image/unlockables/characters/astro_locked.png" },
 		{ "id" : "assets/image/unlockables/characters/astro_locked_selected.png"},
