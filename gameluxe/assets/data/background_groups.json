@@ -1,7 +1,18 @@
-{
-	"groups":[{
+{	
+	"groups":[
+	{
+		"name" : "paper",
+		"cost": 0,
+		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"textures": ["assets/image/bg/cave_01_paper.png"
+		],
+		"distances": [1
+		]
+	},
+	
+	{
 		"name": "story",
-		"cost": 1000,
+		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
@@ -69,18 +80,8 @@
 	},
 	
 	{
-		"name" : "paper",
-		"cost": 250,
-		"tex_path":"assets/image/unlockables/backgrounds/cave",
-		"textures": ["assets/image/bg/cave_01_paper.png"
-		],
-		"distances": [1
-		]
-	},
-	
-	{
 		"name" : "cave",
-		"cost": 250,
+		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
 		"textures": ["assets/image/bg/cave_02_tiling.png"
 		],
@@ -90,7 +91,7 @@
 	
 	{
 		"name" : "sky",
-		"cost": 250,
+		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/sky",
 		"textures": ["assets/image/bg/sky_03_clouds01.png"
 			, "assets/image/bg/sky_03_clouds02.png"
@@ -110,7 +111,7 @@
 	
 	{
 		"name" : "space",
-		"cost": 250,
+		"cost": 150,
 		"tex_path":"assets/image/unlockables/backgrounds/space",
 		"textures": ["assets/image/bg/space_02_tiling.png"
 			, "assets/image/bg/space_03_planet01.png"
@@ -127,28 +128,8 @@
 	},
 	
 	{
-		"name" : "greece",
-		"cost": 350,
-		"tex_path":"assets/image/unlockables/backgrounds/greece",
-		"textures": ["assets/image/bg/greece/Greece_01_ground.png"
-			, "assets/image/bg/greece/Greece_02_tilling01.png"
-			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
-			, "assets/image/bg/greece/Greece_02_tilling01.png"
-			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
-			, "assets/image/bg/greece/Greece_02_tilling01.png"
-		],
-		"distances": [1
-			, 1
-			, 1
-			, 10
-			, 5
-			, 99
-		]
-	},
-	
-	{
 		"name" : "water",
-		"cost": 350,
+		"cost": 300,
 		"tex_path":"assets/image/unlockables/backgrounds/water",
 		"textures": ["assets/image/bg/water/water_01_sand.png"
 			, "assets/image/bg/water/water_02_tilling01.png"
@@ -162,6 +143,26 @@
 			, 1
 			, 2
 			, 1
+			, 99
+		]
+	},
+		
+	{
+		"name" : "greece",
+		"cost": 500,
+		"tex_path":"assets/image/unlockables/backgrounds/greece",
+		"textures": ["assets/image/bg/greece/Greece_01_ground.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
+			, "assets/image/bg/greece/Greece_02_tilling01.png"
+		],
+		"distances": [1
+			, 1
+			, 1
+			, 10
+			, 5
 			, 99
 		]
 	}
