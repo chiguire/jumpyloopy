@@ -1101,11 +1101,14 @@ class GameState extends State
 		// background group 0 is for story mode
 		if ( game_state_onenter_data.is_story_mode ) return Main.achievement_manager.background_groups[0];
 		// otherwise random selected from unlocked background
-		var unlocked_backgrounds = Main.achievement_manager.unlockables.unlocked_backgrounds;
-		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
 		
+		var unlocked_backgrounds = Main.achievement_manager.unlockables.unlocked_backgrounds;
+		//var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
 		// if we not yet unlock any background, it will be the first group
-		var bg_group = Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		// var bg_group = Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == unlocked_backgrounds[selected_id]; });
+		
+		// selected background from unlockables
+		var bg_group = Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == Main.achievement_manager.unlockables.selected_background; });
 		
 		return bg_group;
 	}

@@ -277,6 +277,12 @@ class Background extends Visual
 		{
 			prev_camera_pos_y = Luxe.camera.pos.y;
 		}
+		
+		// readjusting geom related to the player start position
+		for (i in 0...geoms.length)
+		{
+			geoms[i].transform.pos.y += - bg_size_y + e.beat_height;
+		}
 	}
 
 	public function get_percent_through_background() : Float
