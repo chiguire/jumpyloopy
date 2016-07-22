@@ -136,11 +136,12 @@ class ScoreState extends State
 		
 		if (change_state_signal)
 		{
+			change_state_signal = false;
 			machine.set(next_state);
 		}
 	}
 	
-	private static function time_to_string(seconds:Int)
+	public static function time_to_string(seconds:Int)
 	{
 		var s = seconds % 60;
 		var m = Math.floor(seconds / 60);

@@ -32,6 +32,8 @@
 		{ "id" : "assets/image/ui/UI_track_selection_arcade.png" },
 		{ "id" : "assets/image/ui/UI_track_selection_arcade_text.png" },
 		{ "id" : "assets/image/ui/UI_track_selection_back.png" },
+		{ "id" : "assets/image/ui/UI_highscore_next.png" },
+		{ "id" : "assets/image/ui/UI_highscore_prev.png" },
 		{ "id" : "assets/image/ui/UI_score_Mainmenu.png" },
 		{ "id" : "assets/image/ui/UI_Game_Pause_Mainmenu.png" },
 		{ "id" : "assets/image/ui/UI_Game_Pause_paper.png" },
