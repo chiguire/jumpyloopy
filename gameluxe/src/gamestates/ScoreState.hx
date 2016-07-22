@@ -63,6 +63,7 @@ class ScoreState extends State
 		// load parcels
 		scene = new Scene();
 		
+		trace('Entered for song_id ${game_info.current_score.song_id}, and song_name ${game_info.current_score.song_name}');
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 		
 		var data : Dynamic = { pos_x: 720, pos_y: 450 };
@@ -82,7 +83,7 @@ class ScoreState extends State
 		Main.create_background(scene);
 		
 		var name = ["Score", "Distance", "Time"];
-		var val = [Std.string(game_info.current_score.score), Std.string(game_info.current_score.distance), Std.string(game_info.current_score.time)];
+		var val = [Std.string(game_info.current_score.score), Std.string(game_info.current_score.distance), time_to_string(game_info.current_score.time)];
 		
 		for (i in 0...name.length)
 		{
@@ -126,8 +127,6 @@ class ScoreState extends State
 			
 			change_state_signal = true;
 			next_state = "MenuState";
-			
-			//machine.set("MenuState");
 		});
 	}
 	
@@ -139,5 +138,16 @@ class ScoreState extends State
 		{
 			machine.set(next_state);
 		}
+	}
+	
+	private static function time_to_string(seconds:Int)
+	{
+		var s = seconds % 60;
+		var m = Math.floor(seconds / 60);
+		
+		var ss = StringTools.lpad(Std.string(s), "0", 2);
+		var mm = StringTools.lpad(Std.string(m), "0", 2);
+		
+		return '$mm:$ss';
 	}
 }

@@ -322,6 +322,8 @@ class Main extends luxe.Game
 	{
 		if (!FileSystem.exists(global_info.user_storage_filename))
 		{
+			trace("Initializing user data");
+			
 			// Initialize data
 			var userdata_header : UserDataHeader = { version: 1.0 };
 			
@@ -333,32 +335,32 @@ class Main extends luxe.Game
 			var score_run_a : Array<ScoreRun> = [
 				{
 					name: "AAA",
-					score: 10000,
-					distance: 100,
+					score: 1500,
+					distance: 50,
 					time: 0,
 				},
 				{
 					name: "AAA",
-					score: 9000,
-					distance: 90,
+					score: 1200,
+					distance: 40,
 					time: 0,
 				},
 				{
 					name: "AAA",
-					score: 8000,
-					distance: 80,
+					score: 900,
+					distance: 30,
 					time: 0,
 				},
 				{
 					name: "AAA",
-					score: 7000,
-					distance: 70,
+					score: 600,
+					distance: 20,
 					time: 0,
 				},
 				{
 					name: "AAA",
-					score: 6000,
-					distance: 60,
+					score: 300,
+					distance: 10,
 					time: 0,
 				},
 			];
@@ -384,16 +386,22 @@ class Main extends luxe.Game
 			File.saveBytes(global_info.user_storage_filename, bytes_data);
 		}
 		
+		trace("Reading user data");
+		
 		var fin = File.read(global_info.user_storage_filename);
 		var bytes_data = fin.readAll();
 		
 		var unserializer = new Unserializer(bytes_data.toString());
 		var user_data_header = unserializer.unserialize();
 		user_data = unserializer.unserialize();
+		
+		trace(user_data_to_string(user_data));
 	}
 	
 	public static function save_user_data()
 	{
+		trace("Writing user data");
+		
 		var serializer = new Serializer();
 		
 		var userdata_header : UserDataHeader = { version: 1.0 };
@@ -408,41 +416,43 @@ class Main extends luxe.Game
 	public static function submit_score(score:ScoreRun)
 	{
 		var song_id = score.song_id;
+		var song_name = score.song_name;
 		score.song_id = null;
+		score.song_name = null;
 		
 		if (!user_data.score_list.exists(song_id))
 		{
 			user_data.score_list.set(song_id, {
-				name: song_id,
+				name: song_name,
 				scores: [
 					{
 						name: "AAA",
-						score: 10000,
-						distance: 100,
+						score: 1500,
+						distance: 50,
 						time: 0,
 					},
 					{
 						name: "AAA",
-						score: 9000,
-						distance: 90,
+						score: 1200,
+						distance: 40,
 						time: 0,
 					},
 					{
 						name: "AAA",
-						score: 8000,
-						distance: 80,
+						score: 900,
+						distance: 30,
 						time: 0,
 					},
 					{
 						name: "AAA",
-						score: 7000,
-						distance: 70,
+						score: 600,
+						distance: 20,
 						time: 0,
 					},
 					{
 						name: "AAA",
-						score: 6000,
-						distance: 60,
+						score: 300,
+						distance: 10,
 						time: 0,
 					},
 				],
@@ -460,16 +470,48 @@ class Main extends luxe.Game
 			}
 		}
 		
-		if (found == -1)
+		if (found != -1)
 		{
-			return;
+			arr.insert(found, score);
+			arr.pop();
 		}
 		
-		arr.insert(found, score);
-		arr.pop();
-		
 		user_data.score_list.get(song_id).scores = arr;
+		user_data.user_name = score.name;
 		
 		save_user_data();
+	}
+	
+	public static function user_data_to_string(ud:UserDataV1)
+	{
+		var score_list_str = "";
+		var slt = '\t\t';
+		
+		for (slk in ud.score_list.keys())
+		{
+			var sl = ud.score_list.get(slk);
+			
+			var score_list_scores_str = "[";
+			
+			for (slssr in sl.scores)
+			{
+				score_list_scores_str += '(name:${slssr.name}, score:${slssr.score}, distance:${slssr.distance}, time:${slssr.time}),';
+			}
+			score_list_scores_str += "]";
+			
+			var sltt = '\t\t\t';
+			score_list_str += '$slt{\n' +
+			'${sltt}song_id: ${slk},\n' +
+			'${sltt}song_name: ${sl.name},\n' +
+			'${sltt}scores: $score_list_scores_str,\n' +
+			'$slt}\n';
+		}
+		
+		return 'user_data v1: {\n' +
+		'\tuser_name: ${ud.user_name},\n' +
+		'\tscore_list: {\n' +
+		'$score_list_str' +
+		'\t},\n' +
+		'}\n';
 	}
 }

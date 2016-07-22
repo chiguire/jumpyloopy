@@ -517,6 +517,8 @@ class GameState extends State
 		fader_overlay_sprite.visible = true;
 		fader_overlay_sprite.color.a = 0;
 		Actuate.tween(fader_overlay_sprite.color, 3.0, {a:1}).onComplete(function() {
+			var song_name = if (game_state_onenter_data.is_story_mode) "Story" else if (game_state_onenter_data.play_audio_loop) "Training" else Main.beat_manager.song_name;
+			
 			game_info.current_score =
 			{
 				name: Main.user_data.user_name,
@@ -524,6 +526,7 @@ class GameState extends State
 				distance: beat_n,
 				time: Std.int(Luxe.time - starting_time),
 				song_id: Main.beat_manager.song_id,
+				song_name: song_name,
 			};
 			machine.set(next_state);
 		});

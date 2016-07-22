@@ -47,7 +47,7 @@ class Score extends Entity
 	
 	public function add_multiplier(e : ScoreEvent)
 	{
-		trace("Player Multiplier increased!");
+		//trace("Player Multiplier increased!");
 		current_multiplier += 1;
 	}
 	

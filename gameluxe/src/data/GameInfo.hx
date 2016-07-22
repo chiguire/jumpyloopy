@@ -35,6 +35,7 @@ typedef ScoreRun = {
 	distance:Int,
 	time:Int,
 	?song_id:SongSignature,
+	?song_name:String,
 };
 
 typedef SongSignature = String;

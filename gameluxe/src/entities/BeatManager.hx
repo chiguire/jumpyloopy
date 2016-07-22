@@ -105,6 +105,7 @@ class BeatManager extends Entity
 	public var beat : Vector<Float>;
 	public var beat_pos(default, null) : Array<Int>;
 	public var song_id(default, null) : SongSignature;
+	public var song_name(default, null) : String;
 		
 	/// renderer
 	public var batcher: Batcher;
@@ -395,6 +396,7 @@ class BeatManager extends Entity
 		//var audio_name = "assets/music/Warchild_Music_Prototype.ogg";
 		//var audio_name = "assets/music/Warchild_SimpleDrums.ogg";
 		//audio_id = "assets/music/160711_snapper4298_90-bpm-funky-break.ogg";
+		song_name = audio_id.substr(audio_id.lastIndexOf("\\") + 1);
 		
 		// we need to reload it if it is already been loaded as a stream
 		var res = Luxe.resources.audio(audio_id);
