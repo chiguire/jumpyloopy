@@ -164,8 +164,8 @@ class ShopState extends State
 		//Characters
 		var char_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgc",
-                x:0, y:coins_text.y_local + coins_text.h + grid_padding, 
-				w:grid_panel.w, h:80,
+                x:(grid_panel.w / 2) - (201/2), y:coins_text.y_local + coins_text.h + grid_padding, 
+				w:201, h:45,
                 path: "assets/image/ui/unlockables_characters_button.png"
             });
 
@@ -176,8 +176,8 @@ class ShopState extends State
 		//Backgrounds
 		var background_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgh",
-                x:0, y:character_panel.y_local + character_panel.h + grid_padding, 
-				w:grid_panel.w, h:80,
+                x:(grid_panel.w / 2) - (201/2), y:character_panel.y_local + character_panel.h + grid_padding, 
+				w:201, h:45,
                 path: "assets/image/ui/unlockables_environments_button.png"
             });
 		
