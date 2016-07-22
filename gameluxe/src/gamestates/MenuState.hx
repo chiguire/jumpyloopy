@@ -155,6 +155,11 @@ class MenuState extends State
 			change_to = "ShopState";
 		});
 		
+		button = new MintImageButton(canvas, "Quit", new Vector(620, 578), new Vector(203, 43), "assets/image/ui/UI_Game_Pause_quit.png");
+		button.onmouseup.listen(function(e, c) {
+			Luxe.shutdown();
+		});
+		
 		var warchild_tex_id = "assets/image/war-child-logo-home.png";
 		var warchild_tex = Luxe.resources.texture(warchild_tex_id); 
 		var warchild_img = new mint.Image({
