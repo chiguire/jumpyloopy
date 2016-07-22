@@ -405,7 +405,7 @@ class ShopState extends State
 	
 	function update_text_assets()
 	{
-		coins_text.text = "Coins: " + Main.achievement_manager.unlockables.current_coins + "\n Earn Coins by playing songs";
+		coins_text.text = "Coins: " + Main.achievement_manager.unlockables.current_coins + "\n Earn Coins by playing.";
 		selected_char_text.text = "Selected Character: " + Main.achievement_manager.unlockables.selected_character;
 		selected_background_text.text = "Selected Background: " + Main.achievement_manager.unlockables.selected_background;
 	}
