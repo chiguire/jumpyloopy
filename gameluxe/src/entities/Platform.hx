@@ -123,7 +123,7 @@ class Platform extends Sprite
 	{
 		super.update(dt);
 		
-		if (type == NONE || eternal || time_alive <= 0)
+		if (type == NONE || eternal || time_alive <= 0 || paused)
 		{
 			return;
 		}
