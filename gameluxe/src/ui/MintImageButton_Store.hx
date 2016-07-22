@@ -15,11 +15,13 @@ class MintImageButton_Store extends MintImageButton
 	public var is_equipped : Bool;
 	private var is_over : Bool;
 	
+	var is_initialized = false;
+	
 	public function new(parent : Control, name : String, pos : Vector, size : Vector, image_path : String) 
 	{
 		is_over = false;
 		
-		textures = new MintImageButton_StoreData(image_path);
+		textures = new MintImageButton_StoreData(image_path);		
 		super(parent, name, pos, size, get_texture());
 	}
 	
@@ -92,6 +94,17 @@ class MintImageButton_Store extends MintImageButton
 		}
 		
 		return tex;
+	}
+	
+	override public function update(dt:Float) 
+	{
+		super.update(dt);
+				
+		if (!is_initialized)
+		{
+			is_initialized = true;
+			update_button();
+		}
 	}
 }
 

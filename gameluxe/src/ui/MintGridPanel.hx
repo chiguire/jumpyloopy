@@ -90,4 +90,14 @@ class MintGridPanel extends Panel
 
 		refresh_bounds();
 	}
+	
+	override public function update(dt:Float) 
+	{
+		super.update(dt);
+		
+		for (item in items)
+		{
+			item.update(dt);
+		}
+	}
 }

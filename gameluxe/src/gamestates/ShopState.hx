@@ -27,6 +27,7 @@ import ui.MintImageButton;
 import ui.MintImageButton_Store;
 import ui.MintLabel;
 import mint.types.Types.TextAlign;
+import ui.MintPanel;
 
 /**
  * ...
@@ -131,7 +132,7 @@ class ShopState extends State
 		panel_colour.a = 0;
 		
 		//Main Panel
-		var grid_panel : Panel = new Panel({
+		var grid_panel = new MintPanel({
 			parent: canvas,
             name: "panel",
             options: { color:panel_colour },
@@ -240,7 +241,7 @@ class ShopState extends State
 			//Update the button!			
 			if (is_dirty)
 			{
-				item.update_button();
+				//item.update_button();
 			}
 		}
 	}
@@ -297,7 +298,7 @@ class ShopState extends State
 			
 			if (is_dirty)
 			{
-				item.update_button();
+				//item.update_button();
 			}
 		}
 	}
