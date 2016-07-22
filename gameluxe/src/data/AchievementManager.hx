@@ -37,10 +37,10 @@ class AchievementManager
 	
 	public function OnParcelLoaded()
 	{		
-//#if debug
+#if debug
 		//Debugging stuff;
 		unlockables.current_coins += 2000;
-//#end	
+#end	
 		
 		//Load unlockables data
 		load_background_groups();
