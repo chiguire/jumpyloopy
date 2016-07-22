@@ -243,7 +243,7 @@ class Main extends luxe.Game
 			ref_window_size_y : config.user.ref_window_size[1] ? config.user.ref_window_size[1] : 900,
 			window_size_x : config.user.window_size[0] ? config.user.window_size[0] : 1440,
 			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
-			fullscreen : false,
+			fullscreen : false, // current broken in fullscreen mode
 			borderless : false,
 			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0,
 			text_color: new Color(0x3f / 255.0, 0x24 / 255.0, 0x14 / 255.0, 1.0), 
@@ -258,6 +258,8 @@ class Main extends luxe.Game
 		config.window.width = global_info.window_size_x;// 405;
 		config.window.height = global_info.window_size_y;// 720;
 		config.window.borderless = global_info.borderless;
+		config.window.fullscreen = global_info.fullscreen;
+		config.window.resizable = false;
 #end
 	
 		// preload all parcel description

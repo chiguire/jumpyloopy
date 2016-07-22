@@ -234,7 +234,7 @@ class BeatManager extends Entity
 						
 						if (search_next_beat(audio_time) == true)
 						{
-							trace("jump");
+							//trace("jump");
 							curr_update_state = BMUpdateState.PreBeat;
 							prebeat_counter = jump_interval * 0.25;
 							Luxe.events.fire("bm_prebeat_event", {}, false );
