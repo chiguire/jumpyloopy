@@ -184,7 +184,7 @@ class Background extends Visual
 		if (is_story_mode == false) return false;
 		
 		var d = distance + transition_pos_counter;
-		//trace(d);
+		//trace(story_end_distance);
 		if ( d >= story_end_distance )
 		{
 			Main.achievement_manager.unlock_background("story");

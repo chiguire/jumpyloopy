@@ -1102,7 +1102,7 @@ class GameState extends State
 	function select_background_group_id() : BackgroundGroup
 	{
 		// background group 0 is for story mode
-		if ( game_state_onenter_data.is_story_mode ) return Main.achievement_manager.background_groups[0];
+		if ( game_state_onenter_data.is_story_mode ) return Lambda.find(Main.achievement_manager.background_groups, function(obj) { return obj.name == "story"; });
 		// otherwise random selected from unlocked background
 		
 		var unlocked_backgrounds = Main.achievement_manager.unlockables.unlocked_backgrounds;
