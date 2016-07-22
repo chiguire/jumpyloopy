@@ -56,11 +56,11 @@ typedef GlobalGameInfo =
 	var platform_lifetime : Float;
 	var text_color : Color;
 	var user_storage_filename : String;
+	var audio_volume : Float;
 };
 
 typedef GameInfo =
 {
-	music_volume : VolumeUnit,
 	effects_volume : VolumeUnit,
 	?current_score : ScoreRun,
 };

@@ -19,6 +19,8 @@ import gamestates.ShopState;
 import haxe.Serializer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
+import luxe.Audio.AudioHandle;
+import luxe.Audio.AudioState;
 import luxe.Camera;
 import luxe.Color;
 import luxe.Parcel;
@@ -31,6 +33,7 @@ import haxe.xml.Fast;
 import luxe.Rectangle;
 import luxe.Input;
 import luxe.Vector;
+import luxe.resource.Resource.AudioResource;
 import luxe.tween.Actuate;
 import mint.Canvas;
 import mint.focus.Focus;
@@ -72,6 +75,11 @@ class Main extends luxe.Game
 	
 	/// Achievement
 	public static var achievement_manager (default, null) : AchievementManager;
+	
+	/// Frontend audio
+	public static var fe_audio_res : AudioResource;
+	public static var fe_audio_handle : AudioHandle;
+	public static var fe_audio_volume = 0.0;
 	
 	public static function gameplay_area_size() : Vector
 	{
@@ -155,6 +163,29 @@ class Main extends luxe.Game
 		});
 	}
 	
+	public static function simple_fe_audio_begin()
+	{
+		// audio
+		if (fe_audio_handle == null || Luxe.audio.state_of(fe_audio_handle) != AudioState.as_playing)
+		{
+			fe_audio_res = Luxe.resources.audio("assets/music/Warchild_Menu.ogg");
+			fe_audio_handle = Luxe.audio.loop(fe_audio_res.source);
+			
+			Luxe.audio.volume(fe_audio_handle, 0.0);
+			var tween = Actuate.tween(Main, 3.0, {fe_audio_volume: global_info.audio_volume});
+			tween.onUpdate( function(){ Luxe.audio.volume(fe_audio_handle, fe_audio_volume); });
+			
+			trace("fe_audio");
+		}
+	}
+	
+	public static function simple_fe_audio_end()
+	{
+		// audio
+		var tween = Actuate.tween(Main, 3.0, {fe_audio_volume: 0.0});
+		tween.onUpdate( function(){ Luxe.audio.volume(fe_audio_handle, fe_audio_volume); });
+		tween.onComplete( function(){ Luxe.audio.stop(fe_audio_handle); });
+	}
 	
 	override function ready() 
 	{
@@ -202,10 +233,8 @@ class Main extends luxe.Game
 		// audio/ beat manager
 		beat_manager = new BeatManager({batcher : batcher_ui});
 		
-		var music_volume = Std.parseFloat(Luxe.io.string_load("music_volume"));
 		var effects_volume = Std.parseFloat(Luxe.io.string_load("effects_volume"));
 		game_info = {
-			music_volume: if (Math.isNaN(music_volume)) 0.5 else music_volume,
 			effects_volume: if (Math.isNaN(effects_volume)) 0.8 else effects_volume,
 		};
 		
@@ -232,6 +261,7 @@ class Main extends luxe.Game
 #end
 			//Loading here as we need the groups to have been loaded at this point.
 			achievement_manager.OnParcelLoaded();
+			
 		});
 	}
 
@@ -248,6 +278,7 @@ class Main extends luxe.Game
 			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0,
 			text_color: new Color(0x3f / 255.0, 0x24 / 255.0, 0x14 / 255.0, 1.0), 
 			user_storage_filename: "storage.bin",
+			audio_volume: config.user.audio_volume ? config.user.audio_volume : 1.0,
 		};
 		
 		config.window.title = 'Rise';

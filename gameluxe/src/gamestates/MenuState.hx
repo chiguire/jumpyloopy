@@ -86,7 +86,8 @@ class MenuState extends State
 			scene: scene,
 		});
 		
-		//FFT.test_fft();
+		// Audio 
+		Main.simple_fe_audio_begin();
 	}
 	
 	public static function create_image( data : Dynamic ) : Image

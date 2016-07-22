@@ -62,5 +62,10 @@
 	[
 		{ "id" : "assets/image/font/later_on.fnt" },
 		{ "id" : "assets/image/font/jenna_sue.fnt" }
+	],
+	
+	"sounds" : 
+	[
+		{ "id" : "assets/music/Warchild_Menu.ogg", "is_stream" : true }
 	]
 }

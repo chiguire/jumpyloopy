@@ -73,6 +73,9 @@ class LevelSelectState extends State
 		scene.destroy();
 		scene = null;
 		parcel = null;
+		
+		// Audio 
+		Main.simple_fe_audio_end();
 	}
 	
 	override function onenter<T>(_value:T)
