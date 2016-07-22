@@ -42,6 +42,8 @@ class ShopState extends State
 	var change_to : String = "";
 	var canvas : Canvas;
 	var coins_text : MintLabel;
+	var selected_char_text : MintLabel;
+	var selected_background_text : MintLabel;
 	
 	private var equipped_character_button : MintImageButton_Store;
 	private var equipped_background_button : MintImageButton_Store;
@@ -151,7 +153,6 @@ class ShopState extends State
 				color : Main.global_info.text_color,
 				align: TextAlign.center, align_vertical: TextAlign.center,
             });		
-		update_coins_text();
 		
 		//Back Button	
 		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
@@ -161,33 +162,64 @@ class ShopState extends State
 		{
 			change_to = "MenuState";
 		});
+	
+		
 		
 		//Characters
 		var char_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgc",
-                x:0, y:coins_text.y_local + coins_text.h + grid_padding, 
-				w:grid_panel.w, h:80,
+                x:(grid_panel.w / 2) - (201/2), y:coins_text.y_local + coins_text.h + grid_padding, 
+				w:201, h:45,
                 path: "assets/image/ui/unlockables_characters_button.png"
             });
+		
+		//Selected char Text
+		selected_char_text = new MintLabel({
+                parent: grid_panel, name: "selected_char",
+				x:0, y:char_header.y_local + char_header.h + (grid_padding*0.5), 
+				w:grid_panel.w, h:36, 
+				text_size: 36,
+                text: "coins",
+				color : Main.global_info.text_color,
+				align: TextAlign.center, align_vertical: TextAlign.center,
+            });		
 
+		//Char Panel
 		var character_panel : MintGridPanel = new MintGridPanel(grid_panel, "Characters", 
-			new Vector(0, char_header.y_local + char_header.h + grid_padding), grid_panel.w, 5, 5, 1, panel_colour);		
+			new Vector(0, selected_char_text.y_local + selected_char_text.h + (grid_padding*0.5)), 
+			grid_panel.w, 5, 5, 1, panel_colour);		
 		load_character_grid(character_panel);
 
+		
+		
 		//Backgrounds
 		var background_header : mint.Image = new mint.Image({
                 parent: grid_panel, name: "bgh",
-                x:0, y:character_panel.y_local + character_panel.h + grid_padding, 
-				w:grid_panel.w, h:80,
+                x:(grid_panel.w / 2) - (201/2), y:character_panel.y_local + character_panel.h + grid_padding, 
+				w:201, h:45,
                 path: "assets/image/ui/unlockables_environments_button.png"
             });
+			
+		//Selected bg Text
+		selected_background_text = new MintLabel({
+                parent: grid_panel, name: "selected_bg",
+				x:0, y:background_header.y_local + background_header.h + (grid_padding*0.5), 
+				w:grid_panel.w, h:36, 
+				text_size: 36,
+                text: "coins",
+				color : Main.global_info.text_color,
+				align: TextAlign.center, align_vertical: TextAlign.center,
+            });	
 		
+		//BG Panel
 		var background_panel : MintGridPanel = new MintGridPanel(grid_panel, "Background", 
-			new Vector(0, background_header.y_local + background_header.h + grid_padding), grid_panel.w, 5, 5, 1, panel_colour);
+			new Vector(0, selected_background_text.y_local + selected_background_text.h + (grid_padding*0.5)), 
+			grid_panel.w, 5, 5, 1, panel_colour);
 		load_background_grid(background_panel);
 
 		//Reupdate here as we now know what size we are ^_^
 		grid_panel.set_size(grid_panel.w, grid_panel.children_bounds.real_h);
+		update_text_assets();
 	}
 
 	private function load_character_grid(character_panel : MintGridPanel)
@@ -334,7 +366,7 @@ class ShopState extends State
 			}
 		}
 		
-		update_coins_text();
+		update_text_assets();
 	}
 	
 	private function clicked_background(button : MintImageButton_Store, background : BackgroundGroup)
@@ -369,11 +401,13 @@ class ShopState extends State
 			}
 		}
 		
-		update_coins_text();
+		update_text_assets();
 	}
 	
-	function update_coins_text()
+	function update_text_assets()
 	{
-		coins_text.text = "Coins: " + Main.achievement_manager.unlockables.current_coins + "\n Earn Coins by playing songs";
+		coins_text.text = "Coins: " + Main.achievement_manager.unlockables.current_coins + "\n Earn Coins by playing.";
+		selected_char_text.text = "Selected Character: " + Main.achievement_manager.unlockables.selected_character;
+		selected_background_text.text = "Selected Background: " + Main.achievement_manager.unlockables.selected_background;
 	}
 }
