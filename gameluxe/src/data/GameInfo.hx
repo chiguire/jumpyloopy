@@ -15,7 +15,18 @@ typedef UserDataV1 =
 {
 	?user_name : String,
 	?score_list : ScoreList,
-	//unlockables : Unlockables,
+	unlockables : Unlockables,
+};
+
+typedef Unlockables = {
+	var total_coins : Int;
+	var current_coins : Int;
+	var collected_fragments : Array<Bool>;
+	var completed_story_mode : Bool;
+	var selected_character : String;
+	var selected_background : String;
+	var unlocked_backgrounds : Array<String>;
+	var unlocked_characters : Array<String>; 
 };
 
 typedef ScoreRun = {

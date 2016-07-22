@@ -62,7 +62,7 @@ class StoryEndingState extends State
 			batcher: Main.batcher_ui,
 		});
 		
-		var collected_fragments = Main.achievement_manager.collected_fragments;
+		var collected_fragments = Main.achievement_manager.unlockables.collected_fragments;
 		trace(collected_fragments.length);
 		
 		story_fragment_disp = new Array<Text>();
@@ -107,7 +107,7 @@ class StoryEndingState extends State
 			
 		if(change_state)
 		{
-			var next_state = Main.achievement_manager.completed_story_mode ? "StoryCompleteState" : "MenuState";
+			var next_state = Main.achievement_manager.unlockables.completed_story_mode ? "StoryCompleteState" : "MenuState";
 			machine.set(next_state);
 		}
 	}

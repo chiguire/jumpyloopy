@@ -251,6 +251,10 @@ class GameState extends State
 			var res = Luxe.events.unlisten(event_id[i]);
 		}
 		event_id = null;
+		
+		// save userdata
+		Main.user_data.unlockables = Main.achievement_manager.unlockables;
+		Main.save_user_data();
 	}
 	
 	function calc_lane_width() : Float
@@ -352,7 +356,7 @@ class GameState extends State
 		
 		player_sprite = new Avatar(lanes[2], {
 			name: 'Player',
-			texture: Luxe.resources.texture(select_character_data_name(Main.achievement_manager.selected_character).game_texture),
+			texture: Luxe.resources.texture(select_character_data_name(Main.achievement_manager.unlockables.selected_character).game_texture),
 			pos: Luxe.screen.mid,
 			size: new Vector(140, 140),
 			scene: scene,
@@ -1097,7 +1101,7 @@ class GameState extends State
 		// background group 0 is for story mode
 		if ( game_state_onenter_data.is_story_mode ) return Main.achievement_manager.background_groups[0];
 		// otherwise random selected from unlocked background
-		var unlocked_backgrounds = Main.achievement_manager.unlocked_backgrounds;
+		var unlocked_backgrounds = Main.achievement_manager.unlockables.unlocked_backgrounds;
 		var selected_id = Luxe.utils.random.int(0, unlocked_backgrounds.length);
 		
 		// if we not yet unlock any background, it will be the first group

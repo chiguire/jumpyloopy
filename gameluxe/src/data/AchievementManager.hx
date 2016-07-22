@@ -1,6 +1,6 @@
 package data;
+import data.GameInfo.Unlockables;
 import haxe.ds.Vector;
-import luxe.importers.bitmapfont.BitmapFontData.Character;
 
 /**
  * ...
@@ -8,41 +8,40 @@ import luxe.importers.bitmapfont.BitmapFontData.Character;
  */
 class AchievementManager
 {
-	public var total_coins : Int;
-	public var current_coins : Int;
-	
-	public var collected_fragments : Vector<Bool>;
-	public var completed_story_mode = false;
+	public var unlockables : Unlockables;
 	
 	public var character_groups : Array<CharacterGroup>;
 	public var background_groups : Array<BackgroundGroup>;
 	
-	public var selected_character : String;
-	public var selected_background : String;
-	
-	public var unlocked_backgrounds = new Array<String>();
-	public var unlocked_characters = new Array<String>();
-	
 	public function new() 
 	{
-		collected_fragments = new Vector<Bool>(10);
+		//Default unlockables.
+		unlockables = {
+			total_coins : 0,
+			current_coins : 0,
+			completed_story_mode : false,
+			collected_fragments : new Array<Bool>(),
+			unlocked_characters : ["Aviator"],
+			selected_character : "Aviator",
+			unlocked_backgrounds : ["paper"],
+			selected_background : "paper",
+		};
+		
+		for (i in 0...10)
+		{
+			unlockables.collected_fragments.push(false);
+		}
 		
 		//for (i in 1...collected_fragments.length) collected_fragments[i] = true;
-		
-#if debug
-		//Debugging stuff;
-		current_coins = 2000;
-#end	
-		//Default unlockables.
-		unlocked_characters.push("Aviator");
-		selected_character = "Aviator";
-		
-		unlocked_backgrounds.push("paper");
-		selected_background = "paper";
 	}
 	
 	public function OnParcelLoaded()
-	{
+	{		
+//#if debug
+		//Debugging stuff;
+		unlockables.current_coins += 2000;
+//#end	
+		
 		//Load unlockables data
 		load_background_groups();
 		load_character_data();
@@ -50,46 +49,41 @@ class AchievementManager
 	
 	public function update_completed_story_mode( story_mode_end : Bool )
 	{
-		if (completed_story_mode == true) return;
+		if (unlockables.completed_story_mode == true) return;
 		
-		trace(story_mode_end);
-		completed_story_mode = story_mode_end;
-		for (i in 0...collected_fragments.length)
+		unlockables.completed_story_mode = story_mode_end;
+		for (i in 0...unlockables.collected_fragments.length)
 		{
-			if (collected_fragments[i] == false)
+			if (unlockables.collected_fragments[i] == false)
 			{
-				completed_story_mode = false;
+				unlockables.completed_story_mode = false;
 			}
 		}
-		
-		trace(completed_story_mode);
 	}
 	
 	public function update_collected_fragments( fragment_states : Array<Bool> )
 	{
-		for ( i in 0...collected_fragments.length )
+		for ( i in 0...unlockables.collected_fragments.length )
 		{
-			collected_fragments[i] = (collected_fragments[i] == false) ? fragment_states[i] : collected_fragments[i];
+			unlockables.collected_fragments[i] = (unlockables.collected_fragments[i] == false) ? fragment_states[i] : unlockables.collected_fragments[i];
 		}
-		
-		trace(collected_fragments);
 	}
 	
 	public function is_character_unlocked( s :String ) : Bool
 	{
-		return Lambda.exists(unlocked_characters, function(obj) { return obj == s; });
+		return Lambda.exists(unlockables.unlocked_characters, function(obj) { return obj == s; });
 	}
 	
 	public function is_background_unlocked( s :String ) : Bool
 	{
-		return Lambda.exists(unlocked_backgrounds, function(obj) { return obj == s; });
+		return Lambda.exists(unlockables.unlocked_backgrounds, function(obj) { return obj == s; });
 	}
 	
 	public function unlock_background( s: String )
 	{
 		if (is_background_unlocked(s) == false)
 		{
-			unlocked_backgrounds.push(s);
+			unlockables.unlocked_backgrounds.push(s);
 			trace("unlocked bg " + s);
 		}
 	}
@@ -98,7 +92,7 @@ class AchievementManager
 	{
 		if (is_character_unlocked(s) == false)
 		{
-			unlocked_characters.push(s);
+			unlockables.unlocked_characters.push(s);
 		}
 	}
 	
@@ -106,7 +100,7 @@ class AchievementManager
 	{
 		if (is_character_unlocked(s) == true)
 		{
-			selected_character = s;
+			unlockables.selected_character = s;
 		}
 	}
 	
@@ -114,7 +108,7 @@ class AchievementManager
 	{
 		if (is_background_unlocked(s) == true)
 		{
-			selected_background = s;
+			unlockables.selected_background = s;
 		}
 	}
 	

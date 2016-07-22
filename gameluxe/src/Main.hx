@@ -159,8 +159,12 @@ class Main extends luxe.Game
 	override function ready() 
 	{
 		//app.debug.visible = true;
+		// achievement
+		achievement_manager = new AchievementManager();
 		
 		load_user_data();
+		
+		achievement_manager.unlockables = Main.user_data.unlockables;
 		
 		// camera
 		// create views for all layers
@@ -194,10 +198,7 @@ class Main extends luxe.Game
 		canvas = auto_canvas;
 		focus = new Focus(canvas);
 		///////////////////////////////////
-		
-		// achievement
-		achievement_manager = new AchievementManager();
-		
+
 		// audio/ beat manager
 		beat_manager = new BeatManager({batcher : batcher_ui});
 		
@@ -285,7 +286,7 @@ class Main extends luxe.Game
 			var userdata_header : UserDataHeader = { version: 1.0 };
 			
 			// Example data
-			user_data = {};
+			user_data = {unlockables: Main.achievement_manager.unlockables };
 			user_data.user_name = "";
 			user_data.score_list = new ScoreList();
 			

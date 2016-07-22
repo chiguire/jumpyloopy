@@ -102,6 +102,10 @@ class ShopState extends State
 		title_text = null;
 		
 		parcel = null;
+		
+		// save userdata
+		Main.user_data.unlockables = Main.achievement_manager.unlockables;
+		Main.save_user_data();
 	}
 	
 	function on_loaded( p: Parcel )
@@ -226,7 +230,7 @@ class ShopState extends State
 				});
 			}
 			
-			if (Main.achievement_manager.selected_character == Main.achievement_manager.character_groups[i].name)
+			if (Main.achievement_manager.unlockables.selected_character == Main.achievement_manager.character_groups[i].name)
 			{
 				item.is_equipped = true;
 				equipped_character_button = item;
@@ -284,7 +288,7 @@ class ShopState extends State
 				});
 			}
 			
-			if (Main.achievement_manager.selected_background == Main.achievement_manager.background_groups[i].name)
+			if (Main.achievement_manager.unlockables.selected_background == Main.achievement_manager.background_groups[i].name)
 			{
 				item.is_equipped = true;
 				equipped_background_button = item;
@@ -302,7 +306,7 @@ class ShopState extends State
 	{
 		if (Main.achievement_manager.is_character_unlocked(character.name))
 		{
-			if (Main.achievement_manager.selected_character != character.name)
+			if (Main.achievement_manager.unlockables.selected_character != character.name)
 			{
 				if (equipped_background_button != null)
 				{
@@ -319,11 +323,11 @@ class ShopState extends State
 		}
 		else
 		{
-			if (Main.achievement_manager.current_coins >= character.cost)
+			if (Main.achievement_manager.unlockables.current_coins >= character.cost)
 			{
 				button.is_unlocked = true;
 				Main.achievement_manager.unlock_character(character.name);
-				Main.achievement_manager.current_coins -= character.cost;
+				Main.achievement_manager.unlockables.current_coins -= character.cost;
 				button.destroy_children();
 				button.update_button();
 			}
@@ -336,7 +340,7 @@ class ShopState extends State
 	{
 		if (Main.achievement_manager.is_background_unlocked(background.name))
 		{
-			if (Main.achievement_manager.selected_background != background.name)
+			if (Main.achievement_manager.unlockables.selected_background != background.name)
 			{
 				if (equipped_background_button != null)
 				{
@@ -354,11 +358,11 @@ class ShopState extends State
 		}
 		else
 		{
-			if (Main.achievement_manager.current_coins >= background.cost)
+			if (Main.achievement_manager.unlockables.current_coins >= background.cost)
 			{
 				button.is_unlocked = true;
 				Main.achievement_manager.unlock_background(background.name);
-				Main.achievement_manager.current_coins -= background.cost;
+				Main.achievement_manager.unlockables.current_coins -= background.cost;
 				button.destroy_children();
 				button.update_button();
 			}
@@ -369,6 +373,6 @@ class ShopState extends State
 	
 	function update_coins_text()
 	{
-		coins_text.text = "Coins: " + Main.achievement_manager.current_coins + "\n Earn Coins by playing songs";
+		coins_text.text = "Coins: " + Main.achievement_manager.unlockables.current_coins + "\n Earn Coins by playing songs";
 	}
 }
