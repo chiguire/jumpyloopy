@@ -64,3 +64,8 @@ typedef GameInfo =
 	effects_volume : VolumeUnit,
 	?current_score : ScoreRun,
 };
+
+typedef CheatCode =
+{
+	var showmethemoney : Bool;
+}

@@ -50,6 +50,8 @@ class Main extends luxe.Game
 	public static var user_data : UserDataV1;
 	private var game_info : GameInfo;
 	private var machine : States;
+	
+	public static var cheat_code : CheatCode;
 		
 	public static var WARCHILD_URL = "https://www.warchild.org.uk/";
 	
@@ -300,6 +302,11 @@ class Main extends luxe.Game
 		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/shop_parcel.json"});
+		
+		// cheat codes
+		cheat_code = {  
+			showmethemoney : Lambda.exists(Sys.args(), function(obj) { return obj == "showmethemoney"; }),
+		};
 		
         return config;
 

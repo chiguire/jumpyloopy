@@ -39,8 +39,10 @@ class AchievementManager
 	{		
 #if debug
 		//Debugging stuff;
-		unlockables.current_coins += 2000;
-#end	
+		unlockables.current_coins += 2500;
+#end
+
+		if(Main.cheat_code.showmethemoney) unlockables.current_coins += 2000;
 		
 		//Load unlockables data
 		load_background_groups();
