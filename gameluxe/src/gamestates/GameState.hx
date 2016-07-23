@@ -349,7 +349,7 @@ class GameState extends State
 		}
 		else
 		{
-			collectable_manager.LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
+			collectable_manager.LoadCollectableData('assets/collectable_groups/arcade_mode_collectables.json', 1);
 		}
 		
 		score_component = new Score();
