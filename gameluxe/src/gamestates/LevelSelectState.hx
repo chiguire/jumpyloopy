@@ -105,23 +105,7 @@ class LevelSelectState extends State
 		
 		//MenuState.create_image(layout_data.background);
 		
-		var item : MintImageButton = new MintImageButton(Main.canvas, "Tutorial", new Vector(470+150, 250), new Vector(203, 50), "assets/image/ui/UI_track_selection_training.png");
-		item.onmouseup.listen(function(e,c) {
-			Main.beat_manager.load_song("assets/music/Warchild_SimpleDrums.ogg");
-			game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
-			next_state = "GameState";
-		});
-		item.onmouseenter.listen(function(e, c) {
-			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_training_text.png");
-			desc_sprite.size.set_xy(196, 95);
-			desc_sprite.origin.set_xy(0, 0);
-			desc_sprite.pos.set_xy(470+153, 547);
-			desc_sprite.visible = true;
-		});
-		item.onmouseleave.listen(function(e, c) {
-		});
-		
-		item = new MintImageButton(Main.canvas, "Story", new Vector(470+150, 335), new Vector(205, 52), "assets/image/ui/UI_track_selection_story.png");
+		var item = new MintImageButton(Main.canvas, "Story", new Vector(470+150, 250), new Vector(205, 52), "assets/image/ui/UI_track_selection_story.png");
 		item.onmouseup.listen(function(e,c) {
 			Main.beat_manager.load_song("assets/music/Warchild_Music_Prototype.ogg");
 			next_state = "StoryIntroState";
@@ -136,7 +120,8 @@ class LevelSelectState extends State
 		item.onmouseleave.listen(function(e, c) {
 		});
 		
-		item = new MintImageButton(Main.canvas, "Arcade", new Vector(470+150, 420), new Vector(204, 44), "assets/image/ui/UI_track_selection_arcade.png");
+		
+		item = new MintImageButton(Main.canvas, "Arcade", new Vector(470+150, 335), new Vector(204, 44), "assets/image/ui/UI_track_selection_arcade.png");
 		item.onmouseup.listen(function(e,c) {
 			//change_to = "GameState";
 			#if cpp
@@ -180,6 +165,24 @@ class LevelSelectState extends State
 		});
 		item.onmouseleave.listen(function(e, c) {
 		});
+			
+						
+		item = new MintImageButton(Main.canvas, "Tutorial", new Vector(470+150, 420), new Vector(203, 50), "assets/image/ui/UI_track_selection_infinite.png");
+		item.onmouseup.listen(function(e,c) {
+			Main.beat_manager.load_song("assets/music/Warchild_SimpleDrums.ogg");
+			game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
+			next_state = "GameState";
+		});
+		item.onmouseenter.listen(function(e, c) {
+			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_infinite_text.png");
+			desc_sprite.size.set_xy(196, 95);
+			desc_sprite.origin.set_xy(0, 0);
+			desc_sprite.pos.set_xy(470+153, 547);
+			desc_sprite.visible = true;
+		});
+		item.onmouseleave.listen(function(e, c) {
+		});
+		
 		
 		item = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
 		item.onmouseup.listen(function(e, c) {
@@ -191,6 +194,7 @@ class LevelSelectState extends State
 		});
 		item.onmouseleave.listen(function(e, c) {
 		});
+		
 		
 		desc_sprite = new Sprite({
 			scene: scene,
