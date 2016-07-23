@@ -1,0 +1,12 @@
+{
+	"textures" : 
+	[ 
+		{ "id" : "launcher_assets/image/rise_logo.png" },
+		{ "id" : "launcher_assets/image/UI_Game_Pause_paper.png"}
+	],
+	
+	"fonts" : 
+	[
+		{ "id" : "launcher_assets/font/later_on.fnt" }
+	]
+}

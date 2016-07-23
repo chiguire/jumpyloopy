@@ -281,7 +281,7 @@ class Background extends Visual
 		// readjusting geom related to the player start position
 		for (i in 0...geoms.length)
 		{
-			geoms[i].transform.pos.y += - bg_size_y + e.beat_height;
+			geoms[i].transform.pos.y += - bg_size_y + e.beat_height * 2.5;
 		}
 	}
 

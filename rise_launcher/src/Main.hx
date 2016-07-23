@@ -5,6 +5,8 @@ import luxe.Color;
 import luxe.Game;
 import luxe.GameConfig;
 import luxe.Input;
+import luxe.Parcel;
+import luxe.ParcelProgress;
 import ui.MintButton;
 
 import mint.Canvas;
@@ -16,11 +18,33 @@ import ui.AutoCanvas;
 
 class Main extends luxe.Game 
 {
+	public static var font_id = "launcher_assets/font/later_on.fnt";
+	
 	/// UI by mint
 	public static var canvas : AutoCanvas;
 	public static var mint_rendering : LuxeMintRender;
 	public static var layout : Margins;
 	public static var focus : Focus;
+	
+	// simple parcel
+	var parcel : Parcel;
+	
+	// load parcel with progress bar
+	public static function load_parcel( parcel: Parcel, parcel_id: String, on_complete: Parcel->Void)
+	{
+		// load parcels
+		parcel = new Parcel();
+		parcel.from_json(Luxe.resources.json(parcel_id).asset.json);
+		
+		var progress = new ParcelProgress({
+            parcel      : parcel,
+            background  : new Color(0,0,0,0.85),
+            oncomplete  : on_complete,
+			no_visuals 	: true
+        });
+		
+		parcel.load();
+	}
 	
 	override function onkeyup(e:KeyEvent) 
 	{
@@ -53,12 +77,17 @@ class Main extends luxe.Game
 		///////////////////////////////////
 		
 		// create scene
+		load_parcel(parcel, "launcher_assets/data/common_parcel.json", on_loaded);
+	}
+	
+	public function on_loaded(p:Parcel)
+	{
 		create_scene();
 	}
 	
 	override function config(config:luxe.GameConfig) 
-	{		
-		config.window.title = 'Rise';
+	{	
+		config.window.title = 'Launcher';
 
 		config.window.width = 320;
 		config.window.height = 320;
@@ -67,7 +96,7 @@ class Main extends luxe.Game
 		config.window.resizable = false;
 	
 		// preload all parcel description
-		config.preload.jsons.push({id:"assets/data/common_parcel.json"});
+		config.preload.jsons.push({id:"launcher_assets/data/common_parcel.json"});
 		
         return config;
 
@@ -80,17 +109,29 @@ class Main extends luxe.Game
 		var botton_size_y = 32;
 		var x = Luxe.screen.mid.x - botton_size_x * 0.5;
 		
-		var text_arry = ["Small 1024x640", "Normal 1440x900", "Large 1920x1200"];
+		var text_arry = ["Tiny 768x480", "Small 1024x640", "Normal 1440x900", "Large 1920x1200"];
+		var cmd_args = ["win_tiny", "win_small", "win_normal", "win_large"];
 		
-		for (i in 0...3)
+		var os = Sys.systemName();
+		var app = "rise.exe";
+		var workingdir = Sys.getCwd();
+		
+		for (i in 0...4)
 		{
 			new MintButton({
 				parent: canvas,
-				x: x, y: 128 + (botton_size_y + 16) * i, w: botton_size_x, h: botton_size_y,
+				x: x, y: 128 + (botton_size_y + 8) * i, w: botton_size_x, h: botton_size_y,
 				text: text_arry[i],
-				options: { },//color_hover: new Color().rgb(0xf6007b) },
-				text_size: 16,
-				onclick: function(e,c) {trace('mint button! ${Luxe.time}' );}
+				options: {},//color_hover: new Color().rgb(0xf6007b) },
+				text_size: 24,
+				onclick: function(e, c) { 
+					var result = systools.win.Tools.createProcess( 
+						app			// app. path
+						, cmd_args[i]	// app. args
+						, workingdir	// app. working directory
+						, false		// do not hide the window
+						, false		// do not wait for the application to terminate
+					); Luxe.shutdown(); },
 			});
 		}
 		

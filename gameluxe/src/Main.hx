@@ -269,6 +269,12 @@ class Main extends luxe.Game
 
 	override function config(config:luxe.GameConfig) 
 	{
+		// parsing commandline arguments		
+		// cheat codes
+		cheat_code = {  
+			showmethemoney : Lambda.exists(Sys.args(), function(obj) { return obj == "showmethemoney"; }),
+		};
+		
 		global_info = 
 		{
 			ref_window_size_x : config.user.ref_window_size[0] ? config.user.ref_window_size[0] : 1440,
@@ -276,12 +282,30 @@ class Main extends luxe.Game
 			window_size_x : config.user.window_size[0] ? config.user.window_size[0] : 1440,
 			window_size_y : config.user.window_size[1] ? config.user.window_size[1] : 900,
 			fullscreen : false, // current broken in fullscreen mode
-			borderless : false,
+			borderless : true,
 			platform_lifetime : config.user.platform_lifetime ? config.user.platform_lifetime : 15.0,
 			text_color: new Color(0x3f / 255.0, 0x24 / 255.0, 0x14 / 255.0, 1.0), 
 			user_storage_filename: "storage.bin",
 			audio_volume: config.user.audio_volume ? config.user.audio_volume : 1.0,
 		};
+		
+		// overwrite global info if there is any commandline arguments
+		if (Lambda.has(Sys.args(), "win_tiny"))
+		{
+			global_info.window_size_x = 768; global_info.window_size_y = 480;
+		}
+		else if (Lambda.has(Sys.args(), "win_small"))
+		{
+			global_info.window_size_x = 1024; global_info.window_size_y = 640;
+		}
+		else if (Lambda.has(Sys.args(), "win_medium"))
+		{
+			global_info.window_size_x = 1440; global_info.window_size_y = 900;
+		}
+		else if (Lambda.has(Sys.args(), "win_large"))
+		{
+			global_info.window_size_x = 1920; global_info.window_size_y = 1200;
+		}
 		
 		config.window.title = 'Rise';
 #if (web && sample)
@@ -302,11 +326,6 @@ class Main extends luxe.Game
 		config.preload.jsons.push({id:"assets/data/story_intro_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/game_state_parcel.json"});
 		config.preload.jsons.push({id:"assets/data/shop_parcel.json"});
-		
-		// cheat codes
-		cheat_code = {  
-			showmethemoney : Lambda.exists(Sys.args(), function(obj) { return obj == "showmethemoney"; }),
-		};
 		
         return config;
 

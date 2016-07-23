@@ -19,8 +19,8 @@
     },
 
     files : {
-      config : 'config.json',
-      assets : 'assets/'
+      config : 'launcher_config.json',
+      assets : 'launcher_assets/'
     }
   }
 }
