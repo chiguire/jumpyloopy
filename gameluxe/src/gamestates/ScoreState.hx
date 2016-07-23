@@ -12,6 +12,7 @@ import ui.MintImageButton;
 import ui.MintLabel;
 import ui.MintLabelPanel;
 import luxe.Sprite;
+import ui.MintTextEdit;
 
 /**
  * ...
@@ -113,11 +114,12 @@ class ScoreState extends State
 			color: Main.global_info.text_color,
 		});
 		
-		text_edit = new TextEdit({
+		text_edit = new MintTextEdit({
 			text: game_info.current_score.name,
 			x: 690, y:200, text_size: 48,
 			w: 230, h: 72,
 			parent: Main.canvas,
+			align: TextAlign.center, 
 		});
 		
 		var button = new MintImageButton(Main.canvas, "MainMenu", new Vector(620, 200 + (name.length + 2) * 72), new Vector(202, 42), "assets/image/ui/UI_score_Mainmenu.png");
