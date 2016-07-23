@@ -298,7 +298,7 @@ class Main extends luxe.Game
 		{
 			global_info.window_size_x = 1024; global_info.window_size_y = 640;
 		}
-		else if (Lambda.has(Sys.args(), "win_medium"))
+		else if (Lambda.has(Sys.args(), "win_normal"))
 		{
 			global_info.window_size_x = 1440; global_info.window_size_y = 900;
 		}
