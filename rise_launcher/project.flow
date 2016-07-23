@@ -2,11 +2,12 @@
   project : {
     name : 'rise_launcher',
     version : '1.0.0',
-    author : 'team rise',
+    author : 'Creative Assembly',
 
     app : {
+	  icon : 'launcher_assets/icons/',
       name : 'rise_launcher',
-      package : 'com.luxeengine.empty',
+      package : 'com.creativeassembly.rise',
       main : 'Main'
     },
 

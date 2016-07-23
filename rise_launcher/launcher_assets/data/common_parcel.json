@@ -2,7 +2,8 @@
 	"textures" : 
 	[ 
 		{ "id" : "launcher_assets/image/rise_logo.png" },
-		{ "id" : "launcher_assets/image/UI_Game_Pause_paper.png"}
+		{ "id" : "launcher_assets/image/UI_Game_Pause_paper.png"},
+		{ "id" : "launcher_assets/image/button_01.png"}
 	],
 	
 	"fonts" : 

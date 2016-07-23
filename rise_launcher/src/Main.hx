@@ -7,6 +7,7 @@ import luxe.GameConfig;
 import luxe.Input;
 import luxe.Parcel;
 import luxe.ParcelProgress;
+import luxe.Sprite;
 import ui.MintButton;
 
 import mint.Canvas;
@@ -87,7 +88,7 @@ class Main extends luxe.Game
 	
 	override function config(config:luxe.GameConfig) 
 	{	
-		config.window.title = 'Launcher';
+		config.window.title = 'Rise - Launcher';
 
 		config.window.width = 320;
 		config.window.height = 320;
@@ -105,8 +106,22 @@ class Main extends luxe.Game
 	
 	public function create_scene()
 	{
-		var botton_size_x = 200;
-		var botton_size_y = 32;
+		var bg = new Sprite({
+			pos: Luxe.screen.mid,
+			size: Luxe.screen.size,
+			texture: Luxe.resources.texture("launcher_assets/image/UI_Game_Pause_paper.png"),
+		});
+		bg.transform.scale.set_xy(1.2, 1.2);
+		
+		var logo = new Sprite({
+			pos: Luxe.screen.mid,
+			texture: Luxe.resources.texture("launcher_assets/image/rise_logo.png"),
+		});
+		logo.pos.y = 80;
+		logo.transform.scale.set_xy(0.15, 0.15);
+		
+		var botton_size_x = 150;
+		var botton_size_y = 42;
 		var x = Luxe.screen.mid.x - botton_size_x * 0.5;
 		
 		var text_arry = ["Tiny 768x480", "Small 1024x640", "Normal 1440x900", "Large 1920x1200"];
@@ -120,7 +135,7 @@ class Main extends luxe.Game
 		{
 			new MintButton({
 				parent: canvas,
-				x: x, y: 128 + (botton_size_y + 8) * i, w: botton_size_x, h: botton_size_y,
+				x: x, y: 128 + (botton_size_y + 0) * i, w: botton_size_x, h: botton_size_y,
 				text: text_arry[i],
 				options: {},//color_hover: new Color().rgb(0xf6007b) },
 				text_size: 24,
