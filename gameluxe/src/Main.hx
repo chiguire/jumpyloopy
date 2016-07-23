@@ -306,6 +306,7 @@ class Main extends luxe.Game
 		{
 			global_info.window_size_x = 1920; global_info.window_size_y = 1200;
 		}
+		//trace(global_info.window_size_x);
 		
 		config.window.title = 'Rise';
 #if (web && sample)

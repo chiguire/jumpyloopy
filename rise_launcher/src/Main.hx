@@ -140,13 +140,17 @@ class Main extends luxe.Game
 				options: {},//color_hover: new Color().rgb(0xf6007b) },
 				text_size: 24,
 				onclick: function(e, c) { 
+					
 					var result = systools.win.Tools.createProcess( 
 						app			// app. path
 						, cmd_args[i]	// app. args
 						, workingdir	// app. working directory
-						, false		// do not hide the window
-						, false		// do not wait for the application to terminate
-					); Luxe.shutdown(); },
+						, true		// do not hide the window
+						, true		// do not wait for the application to terminate
+					); 
+					
+					//Sys.command(app, [cmd_args[i]]);
+					Luxe.shutdown(); },
 			});
 		}
 		
