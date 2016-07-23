@@ -70,7 +70,7 @@ class CreditsState extends State
 		});
 		
 		//Back Button	
-		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 823), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
+		var back_button : MintImageButton = new MintImageButton(Main.canvas, "Back", new Vector(470+220, 853), new Vector(62, 38), "assets/image/ui/UI_track_selection_back.png");
 	}
 	
 	override function update(dt:Float) 
