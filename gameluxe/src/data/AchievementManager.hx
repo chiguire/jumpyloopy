@@ -71,6 +71,11 @@ class AchievementManager
 		}
 	}
 	
+	public function is_fragment_unlocked( idx : Int ) : Bool
+	{
+		return (unlockables.collected_fragments[idx] == true); 
+	}
+	
 	public function is_character_unlocked( s :String ) : Bool
 	{
 		return Lambda.exists(unlockables.unlocked_characters, function(obj) { return obj == s; });

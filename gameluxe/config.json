@@ -1,6 +1,6 @@
 {
 	"ref_window_size" : [ 1440, 900 ],
-	"window_size" : [ 768, 480 ],
+	"window_size" : [ 1440, 900 ],
 	"platform_lifetime" : 15.0,
 	"audio_volume" : 1.0
 }

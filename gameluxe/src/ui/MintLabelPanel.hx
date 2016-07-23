@@ -1,5 +1,6 @@
 package ui;
 
+import luxe.Color;
 import mint.Panel;
 import mint.Label;
 import mint.render.luxe.Panel;
@@ -17,6 +18,8 @@ typedef MintLabelPanelOption =
 	var h : Float;
 	var text : String;
 	@:optional var text_size : Int;
+	@:optional var text_color : Color;
+	@:optional var panel_visible : Bool;
 }
  
 class MintLabelPanel
@@ -33,7 +36,9 @@ class MintLabelPanel
 			mouse_input: false,
 			x: options.x, y: options.y, w: options.w, h: options.h,
 		});
-		cast(panel.renderer, mint.render.luxe.Panel).color.a = 0.5;
+		var panel_renderer = cast(panel.renderer, mint.render.luxe.Panel);
+		panel_renderer.color.a = 0.5;
+		if (options.panel_visible != null) panel_renderer.visual.visible = options.panel_visible;
 		
 		label = new Label({
 			parent: panel, name: 'label',
@@ -44,7 +49,9 @@ class MintLabelPanel
 		
 		var renderer = cast(label.renderer, mint.render.luxe.Label);
 		var font = Luxe.resources.font(Main.rise_font_id);
+		
 		renderer.text.font = font;
+		if (options.text_color != null) renderer.text.color = options.text_color;  
 	}
 	
 	public function set_text( text: String )

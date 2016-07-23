@@ -178,7 +178,7 @@ class GameState extends State
 	
 	override function onkeyup(e:KeyEvent) 
 	{			
-		if ( e.keycode == Key.escape && is_pause == false)
+		if ( level.can_put_platforms && e.keycode == Key.escape && is_pause == false)
 		{
 			pause();
 		}
@@ -387,20 +387,28 @@ class GameState extends State
 		
 		ui_bg = Main.create_background(scene, "assets/image/ui/UI_03_alpha.png" );
 		
+		var text_color = new Color(0.1, 0.1, 0.1, 1);
+		var panel_visible = false;
 		ui_distance_panel = new MintLabelPanel({
 			x: 305, y: 55, w: 125, h: 65, 
-			text: "Distance Traveled"
+			text: "Distance Traveled",
+			text_color: text_color,
+			panel_visible: panel_visible,
 		});
 		
 		ui_score = new MintLabelPanel({
 			x: 305, y: 180, w: 125, h: 65, 
-			text: "Score"
+			text: "Score",
+			text_color: text_color,
+			panel_visible: panel_visible,
 		});
 		
 		ui_hp_remaining = new MintLabelPanel({
 			x: 305, y: 300, w: 125, h: 85, 
 			text: "Lives",
-			text_size: 32
+			text_size: 32,
+			text_color: text_color,
+			panel_visible: panel_visible,
 		});
 		
 		next_platforms = new Array<Platform>();
