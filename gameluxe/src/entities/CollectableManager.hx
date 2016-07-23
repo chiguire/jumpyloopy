@@ -36,9 +36,7 @@ class CollectableManager extends Entity
 	private var trace_string : String;	
 	
 	public function new(gs : GameState, laneArray : Array<Float>, r_height : Float)
-	{	
-		//LoadCollectableData('assets/collectable_groups/collectable_groups.json', 1);
-
+	{
 		lanes = laneArray;
 		row_height = r_height;
 		group_i = 0;
@@ -294,18 +292,22 @@ class CollectableGroup
 		//Pick the collectable from the passed in data.
 		switch (type) 
 		{
-			case "c":
-				newColl = new Collectable_Coin(c_manager, name, pos);
+			case "g":
+				newColl = new Collectable_Coin(c_manager, name, pos, CollectableType.GOLD);
+			case "s":
+				newColl = new Collectable_Coin(c_manager, name, pos, CollectableType.SILVER);
+			case "b":
+				newColl = new Collectable_Coin(c_manager, name, pos, CollectableType.BRONZE);
 			case "l":
 				newColl = new Collectable_Letter(c_manager, name, pos);
-			case "s":
-				newColl = new Collectable_Spike(c_manager, name, pos);
+			//case "s":
+				//newColl = new Collectable_Spike(c_manager, name, pos);
 			case "f":
 				newColl = new Collectable_Fragment(c_manager, name, pos, c_manager.story_coll_index);
-			case "h" :
-				newColl = new Collectable_Heart(c_manager, name, pos);
+			//case "h" :
+				//newColl = new Collectable_Heart(c_manager, name, pos);
 			default:
-				newColl = new Collectable_Coin(c_manager, name, pos);
+				newColl = new Collectable_Coin(c_manager, name, pos, CollectableType.BRONZE);
 		}
 		
 		return newColl;

@@ -52,9 +52,9 @@
 		{ "id" : "assets/data/letter.json" },
 		{ "id" : "assets/animation/animation_jumper.json" },
 		{ "id" : "assets/animation/animation_spiky_ball.json" },
-		{ "id" : "assets/collectable_groups/collectable_groups.json" },
 		{ "id" : "assets/animation/animation_coin.json"},
 		{ "id" : "assets/collectable_groups/story_mode_collectables.json" },
+		{ "id" : "assets/collectable_groups/arcade_mode_collectables.json" },
 		{ "id" : "assets/animation/animation_platform.json" },
 		{ "id" : "assets/data/background_groups.json" },
 		{ "id" : "assets/data/character_groups.json" }
