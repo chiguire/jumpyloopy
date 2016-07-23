@@ -1,0 +1,26 @@
+{
+  project : {
+    name : 'rise_launcher',
+    version : '1.0.0',
+    author : 'team rise',
+
+    app : {
+      name : 'rise_launcher',
+      package : 'com.luxeengine.empty',
+      main : 'Main'
+    },
+
+    build : {
+      dependencies : {
+        luxe : '*',
+		mint : '*',
+		systools : '*',
+      }
+    },
+
+    files : {
+      config : 'config.json',
+      assets : 'assets/'
+    }
+  }
+}
