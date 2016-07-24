@@ -126,7 +126,7 @@ class CollectableManager extends Entity
 			var level_percent = game_state.get_percent_through_level();
 			if (level_percent > story_fragment_spawn_pct[story_coll_index])
 			{
-				trace("Story Mode Reached : " + level_percent);
+				//trace("Story Mode Reached : " + level_percent);
 				story_coll_index++;
 				selected_data = SelectNamedGroup("story_" + story_coll_index);
 			}

@@ -29,7 +29,7 @@ class Score extends Entity
 		//High Score - SM
 	public function add_score(e : ScoreEvent)
 	{
-		trace("Player Scored " + e.val + "*" + current_multiplier +"= " + (e.val * current_multiplier) +" points");
+		//trace("Player Scored " + e.val + "*" + current_multiplier +"= " + (e.val * current_multiplier) +" points");
 		
 		var mul = e.val > 0 ? current_multiplier : 1;
 		current_score += e.val * mul;

@@ -246,7 +246,7 @@ class ShopState extends State
 			item.onmouseup.listen(
 			function(e,c) 
 			{
-				trace("clicked!" + Main.achievement_manager.character_groups[i].name);
+				//trace("clicked!" + Main.achievement_manager.character_groups[i].name);
 				clicked_character(item, Main.achievement_manager.character_groups[i]);
 			});
 			
@@ -304,7 +304,7 @@ class ShopState extends State
 			item.onmouseup.listen(
 			function(e,c) 
 			{
-				trace("clicked!" + Main.achievement_manager.background_groups[i].name);
+				//trace("clicked!" + Main.achievement_manager.background_groups[i].name);
 				clicked_background(item, Main.achievement_manager.background_groups[i]);
 			});
 				

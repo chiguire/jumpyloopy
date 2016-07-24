@@ -666,7 +666,7 @@ class GameState extends State
 		
 		if (player_out_of_bound() && !player_sprite.respawning)
 		{
-			trace("need player respawn here " + player_sprite.pos.y);
+			//trace("need player respawn here " + player_sprite.pos.y);
 
 			// remove health, reset and damage feedback
 			Luxe.events.fire("player_damage");
@@ -896,12 +896,12 @@ class GameState extends State
 		
 		if (pl_src == null)
 		{
-			trace('player is standing outside lanes. Game over');
+			//trace('player is standing outside lanes. Game over');
 			
 			// TODO: GAME OVER Set a timer here and wait 2 seconds before restart
-			trace("ply:" + player_sprite.pos.y);
-			trace("bound " + -(beat_bottom_y - 2) * level.beat_height);
-			trace(beat_bottom_y + " n " + beat_n);
+			//trace("ply:" + player_sprite.pos.y);
+			//trace("bound " + -(beat_bottom_y - 2) * level.beat_height);
+			//trace(beat_bottom_y + " n " + beat_n);
 		}
 		else
 		{
@@ -943,7 +943,7 @@ class GameState extends State
 							fall_below = true;
 							pl_dst = null;
 							platform_destination_y -= 2;
-							trace('fell below!'); // TODO: GAME OVER Set a timer here and wait 2 seconds before restart
+							//trace('fell below!'); // TODO: GAME OVER Set a timer here and wait 2 seconds before restart
 						}
 					}
 				} while ((pl_dst == null || pl_dst.type == NONE) && !fall_below);
@@ -971,7 +971,7 @@ class GameState extends State
 			}
 			else
 			{
-				trace('fell out!');
+				//trace('fell out!');
 				
 				platform_destination_y = beat_bottom_y-2;
 			}
@@ -1280,7 +1280,7 @@ class GameState extends State
 	
 	function trigger_game_over(e : GameOverReasonEvent)
 	{
-		trace("Game Over! Caused by: " + e.msg);
+		//trace("Game Over! Caused by: " + e.msg);
 		pause();
 		
 		game_over_death_label.text =  "You died by " + e.msg;

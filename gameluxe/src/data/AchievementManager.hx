@@ -91,7 +91,7 @@ class AchievementManager
 		if (is_background_unlocked(s) == false)
 		{
 			unlockables.unlocked_backgrounds.push(s);
-			trace("unlocked bg " + s);
+			//trace("unlocked bg " + s);
 		}
 	}
 	
@@ -127,7 +127,7 @@ class AchievementManager
 		var groups : Array<Dynamic> = json.groups;
 		for (i in 0...groups.length)
 		{
-			trace(groups[i]);
+			//trace(groups[i]);
 			var group = new BackgroundGroup();
 			group.load_group(groups[i]);
 			background_groups.push(group);

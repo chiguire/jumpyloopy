@@ -67,7 +67,7 @@ class SpectrumProvider
 		{
 			if (data_state.num_loops > 0)
 			{
-				trace("finish reading");
+				//trace("finish reading");
 				return null;
 			}
 			

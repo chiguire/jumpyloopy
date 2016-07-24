@@ -177,7 +177,7 @@ class Main extends luxe.Game
 			var tween = Actuate.tween(Main, 3.0, {fe_audio_volume: global_info.audio_volume});
 			tween.onUpdate( function(){ Luxe.audio.volume(fe_audio_handle, fe_audio_volume); });
 			
-			trace("fe_audio");
+			//trace("fe_audio");
 		}
 	}
 	
@@ -334,7 +334,7 @@ class Main extends luxe.Game
 	
 	override function onwindowresized( e:WindowEvent ) 
 	{
-        trace('window resized : ${e.x} / ${e.y}');
+        //trace('window resized : ${e.x} / ${e.y}');
 		//canvas.set_size(e.x, e.y);
     }
 	
