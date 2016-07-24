@@ -257,7 +257,8 @@ class Background extends Visual
 		for ( i in 0...geoms.length - 3)
 		{
 			var geom_id = (transition_geom_id + i + 3) % geoms.length;
-			var tile_id = tile_map[curr_state];
+			var tile_map_id = background_group.loop ? (curr_state % tile_map.length) : Std.int(Math.min(curr_state, tile_map.length));
+			var tile_id = tile_map[tile_map_id];
 			trace(curr_state + ", geo " + geom_id + ", t_id " + tile_id);
 			geoms[geom_id].texture = textures[tile_id];
 			curr_state++; 

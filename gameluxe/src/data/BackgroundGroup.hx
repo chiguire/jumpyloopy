@@ -12,6 +12,7 @@ class BackgroundGroup
 	public var textures : Array<String>;
 	public var distances : Array<Float>;
 	public var unlockables : Array<String>;
+	public var loop : Bool;
 
 	public function new() 
 	{
@@ -40,7 +41,8 @@ class BackgroundGroup
 				unlockables.push(data.unlockables[i]);
 			}
 		}
+		//trace(unlockables);
 		
-		trace(unlockables);
+		if (data.loop != null) loop = data.loop;
 	}
 }

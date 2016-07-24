@@ -4,6 +4,7 @@
 		"name" : "paper",
 		"cost": 0,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"loop": true,
 		"textures": ["assets/image/bg/cave_01_paper.png"
 		],
 		"distances": [1
@@ -14,6 +15,7 @@
 		"name": "story",
 		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"loop": true,
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
 			, "assets/image/bg/cave_02_tiling.png"
@@ -83,6 +85,7 @@
 		"name" : "cave",
 		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"loop": true,
 		"textures": ["assets/image/bg/cave_02_tiling.png"
 		],
 		"distances": [1
@@ -93,6 +96,7 @@
 		"name" : "sky",
 		"cost": 50,
 		"tex_path":"assets/image/unlockables/backgrounds/sky",
+		"loop": true,
 		"textures": ["assets/image/bg/sky_03_clouds01.png"
 			, "assets/image/bg/sky_03_clouds02.png"
 			, "assets/image/bg/sky_04_airballon01.png"
@@ -113,6 +117,7 @@
 		"name" : "space",
 		"cost": 150,
 		"tex_path":"assets/image/unlockables/backgrounds/space",
+		"loop": true,
 		"textures": ["assets/image/bg/space_02_tiling.png"
 			, "assets/image/bg/space_03_planet01.png"
 			, "assets/image/bg/space_03_planet02.png"
@@ -131,6 +136,7 @@
 		"name" : "water",
 		"cost": 300,
 		"tex_path":"assets/image/unlockables/backgrounds/water",
+		"loop": false,
 		"textures": ["assets/image/bg/water/water_01_sand.png"
 			, "assets/image/bg/water/water_02_tilling01.png"
 			, "assets/image/bg/water/water_03_shark.png"
@@ -151,6 +157,7 @@
 		"name" : "greece",
 		"cost": 500,
 		"tex_path":"assets/image/unlockables/backgrounds/greece",
+		"loop": false,
 		"textures": ["assets/image/bg/greece/Greece_01_ground.png"
 			, "assets/image/bg/greece/Greece_02_tilling01.png"
 			, "assets/image/bg/greece/Greece_03_cloudtemples.png"
@@ -164,6 +171,31 @@
 			, 10
 			, 5
 			, 99
+		]
+	},
+	
+	{
+		"name" : "longcat",
+		"cost": 550,
+		"tex_path":"assets/image/unlockables/backgrounds/longcat",
+		"loop": true,
+		"textures": ["assets/image/bg/longcat/long_longcat_ground.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_01.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_02.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_03.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_04.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_05.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_06.png"
+			, "assets/image/bg/longcat/long_longcat_tilling_07.png"
+		],
+		"distances": [1
+			, 1
+			, 1
+			, 1
+			, 1
+			, 1
+			, 1
+			, 1
 		]
 	}
 	
