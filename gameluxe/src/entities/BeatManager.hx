@@ -24,6 +24,7 @@ import phoenix.Batcher;
 import snow.api.Promise;
 import snow.api.buffers.Int16Array;
 import snow.api.buffers.Uint8Array;
+import systools.Dialogs;
 
 /**
  * ...
@@ -425,8 +426,21 @@ class BeatManager extends Entity
 			trace("Rate: " + music.source.data.rate);
 			trace("Length: " + music.source.data.length);
 			trace("Duration: " + music.source.duration());
-			
 			trace(music.source.data);
+			
+			audio_time = 0.0;
+			audio_duration = 0.0;
+			
+			// audio format test
+			var test_fmt = (music.source.data.channels == 2) && (music.source.data.rate == 44100);
+			if (!test_fmt)
+			{
+				Dialogs.message("Error", "Unsupported Audio Format, the game only supported OGG with 2 Channels and 44100Hz SampleRate", true);
+				Luxe.events.fire("BeatManager.AudioLoadingFailed", {}, false );
+				return;
+			}
+			
+			Luxe.events.fire("BeatManager.AudioAnalysisStart", {}, false );
 			
 			audio_time = 0.0;
 			audio_duration = music.source.duration();
@@ -439,7 +453,7 @@ class BeatManager extends Entity
 			song_id = md5str;
 			var md5bytes = Bytes.ofString(md5str);
 			audio_seed = Crc32.make(md5bytes);
-			trace("audio_seed " + md5str);
+			//trace("audio_seed " + md5str);
 			
 			Luxe.events.fire("BeatManager.AudioLoaded", {}, false );
 		});
