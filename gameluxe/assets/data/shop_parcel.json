@@ -35,6 +35,18 @@
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked_equipped.png" },
 		{ "id" : "assets/image/unlockables/characters/miner_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/paper_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/story_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked_selected.png" },
 
 		{ "id" : "assets/image/unlockables/backgrounds/cave_locked.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/cave_locked_selected.png" },
