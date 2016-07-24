@@ -48,6 +48,18 @@
 		{ "id" : "assets/image/unlockables/backgrounds/greece_unlocked_equipped.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/greece_unlocked_selected.png" },
 		
+		{ "id" : "assets/image/unlockables/backgrounds/paper_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/paper_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/story_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/story_unlocked_selected.png" },
+		
 		{ "id" : "assets/image/unlockables/backgrounds/sky_locked.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/sky_locked_selected.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/sky_unlocked.png" },
