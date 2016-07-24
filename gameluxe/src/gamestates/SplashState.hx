@@ -69,6 +69,12 @@ class SplashState extends State
 		
 		Main.create_background(scene);
 		
+		var paper = new Sprite({
+			texture: Luxe.resources.texture("assets/image/bg/cave_01_paper.png"),
+			pos: Main.mid_screen_pos(),
+			scene: scene,
+		});
+		
 		var data : Dynamic = { pos_x: 720, pos_y: 450 };
 		
 		warchild = new Sprite({

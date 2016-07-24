@@ -98,12 +98,12 @@ class Main extends luxe.Game
 		return global_info.ref_window_size_x / global_info.ref_window_size_y;
 	}
 	
-	// load parcel with progress bar
-	public static function load_parcel( parcel: Parcel, parcel_id: String, on_complete: Parcel->Void)
+	// load parcel with progress bar	
+	public static function load_parcel( parcel: Parcel, parcel_id: String, on_complete: Parcel->Void )
 	{
 		// load parcels
 		parcel = new Parcel();
-		parcel.from_json(Luxe.resources.json(parcel_id).asset.json);
+		parcel.from_json(Luxe.resources.json(parcel_id).asset.json);		
 		
 		var progress = new ParcelProgress({
             parcel      : parcel,

@@ -84,6 +84,16 @@ class ShopState extends State
 		// Background Layer
 		Main.create_background(scene);
 		
+		var spr = new Sprite({
+			texture: Luxe.resources.texture("assets/image/tutorial_screen.png"),
+			pos: new Vector(720, 450),
+			size: new Vector(500, 900),
+			scene: scene,
+			//visible: false,
+			//batcher: Main.batcher_ui,
+			//depth: 10
+		});
+		
 		//Luxe.camera.size_mode = luxe.SizeMode.contain;
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 		

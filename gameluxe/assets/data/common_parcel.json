@@ -44,7 +44,8 @@
 		{ "id" : "assets/image/ui/UI_titlescreen_play.png" },
 		{ "id" : "assets/image/ui/UI_titlescreen_score.png" },
 		{ "id" : "assets/image/ui/UI_titlescreen_unlockables.png" },
-		{ "id" : "assets/image/Ending_screen.png" } 
+		{ "id" : "assets/image/Ending_screen.png" },
+		{ "id" : "assets/image/tutorial_screen.png" }
 	],
 	
 	"json" : 

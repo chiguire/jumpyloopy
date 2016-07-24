@@ -50,6 +50,22 @@ class LevelSelectState extends State
 	
 	/// panel text
 	var desc_sprite : Sprite;
+	
+	var tut_sprite : Sprite;
+	public static function create_tut_sprite( scene : Scene ) : Sprite
+	{
+		var spr = new Sprite({
+			texture: Luxe.resources.texture("assets/image/tutorial_screen.png"),
+			pos: new Vector(720, 450),
+			size: new Vector(500, 900),
+			scene: scene,
+			visible: false,
+			batcher: Main.batcher_ui,
+			depth: 10
+		});
+		
+		return spr;
+	}
 
 	public function new(_name:String, game_info : GameInfo) 
 	{
@@ -95,6 +111,8 @@ class LevelSelectState extends State
 			scene: scene,
 		});
 		
+		tut_sprite = create_tut_sprite(scene);
+		
 		Luxe.camera.size = new Vector(Main.global_info.ref_window_size_x, Main.global_info.ref_window_size_y);
 	}
 	
@@ -106,9 +124,14 @@ class LevelSelectState extends State
 		//MenuState.create_image(layout_data.background);
 		
 		var item = new MintImageButton(Main.canvas, "Story", new Vector(470+150, 250), new Vector(205, 52), "assets/image/ui/UI_track_selection_story.png");
-		item.onmouseup.listen(function(e,c) {
-			Main.beat_manager.load_song("assets/music/Warchild_Music_Prototype.ogg");
-			next_state = "StoryIntroState";
+		item.onmouseup.listen(function(e, c) {
+			
+			Luxe.timer.schedule(2.0, function(){
+				Main.beat_manager.load_song("assets/music/Warchild_Music_Prototype.ogg");
+				next_state = "StoryIntroState";
+			});
+			
+			tut_sprite.visible = true;
 		});
 		item.onmouseenter.listen(function(e, c) {
 			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_story_text.png");
@@ -139,20 +162,24 @@ class LevelSelectState extends State
 			trace(result);
 			if (result != null)
 			{
-				// if we have the audio tweak file
-				audio_fn = result[0];
-				audio_fft_params_id = StringTools.replace(audio_fn, "ogg", "json");
+				tut_sprite.visible = true;
 				
-				// reload resource
-				var json_data = Luxe.resources.json(audio_fft_params_id);
-				if (json_data != null)
-				{
-					Luxe.resources.destroy(audio_fft_params_id, true);
-				}
-				
-				next_state = "GameState";
-				game_state_on_enter_data = { is_story_mode: false, play_audio_loop: false };
-				var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
+				Luxe.timer.schedule(2.0, function(){
+					// if we have the audio tweak file
+					audio_fn = result[0];
+					audio_fft_params_id = StringTools.replace(audio_fn, "ogg", "json");
+					
+					// reload resource
+					var json_data = Luxe.resources.json(audio_fft_params_id);
+					if (json_data != null)
+					{
+						Luxe.resources.destroy(audio_fft_params_id, true);
+					}
+					
+					next_state = "GameState";
+					game_state_on_enter_data = { is_story_mode: false, play_audio_loop: false };
+					var loaded_cfg = Luxe.resources.load_json(audio_fft_params_id).then( on_audio_cfg_loaded, on_audio_cfg_notfound );
+				});
 			}
 			#end
 		});
@@ -168,10 +195,14 @@ class LevelSelectState extends State
 			
 						
 		item = new MintImageButton(Main.canvas, "Tutorial", new Vector(470+150, 420), new Vector(203, 50), "assets/image/ui/UI_track_selection_infinite.png");
-		item.onmouseup.listen(function(e,c) {
-			Main.beat_manager.load_song("assets/music/Warchild_SimpleDrums.ogg");
-			game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
-			next_state = "GameState";
+		item.onmouseup.listen(function(e, c) {
+			
+			Luxe.timer.schedule(2.0, function(){
+				Main.beat_manager.load_song("assets/music/Warchild_SimpleDrums.ogg");
+				game_state_on_enter_data = { is_story_mode: false, play_audio_loop: true };
+				next_state = "GameState";
+			});
+			tut_sprite.visible = true;
 		});
 		item.onmouseenter.listen(function(e, c) {
 			desc_sprite.texture = Luxe.resources.texture("assets/image/ui/UI_track_selection_infinite_text.png");
