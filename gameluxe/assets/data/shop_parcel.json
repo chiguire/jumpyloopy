@@ -76,7 +76,13 @@
 		{ "id" : "assets/image/unlockables/backgrounds/water_locked_selected.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked.png" },
 		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked_equipped.png" },
-		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked_selected.png" }
+		{ "id" : "assets/image/unlockables/backgrounds/water_unlocked_selected.png" },
+		
+		{ "id" : "assets/image/unlockables/backgrounds/longcat_locked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/longcat_locked_selected.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/longcat_unlocked.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/longcat_unlocked_equipped.png" },
+		{ "id" : "assets/image/unlockables/backgrounds/longcat_unlocked_selected.png" }
 
 	]
 }

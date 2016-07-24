@@ -31,6 +31,15 @@
 		{ "id" : "assets/image/bg/water/water_03_shark.png" },
 		{ "id" : "assets/image/bg/water/water_04_submarin.png" },
 		
+		{ "id" : "assets/image/bg/longcat/long_longcat_ground.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_01.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_02.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_03.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_04.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_05.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_06.png" },
+		{ "id" : "assets/image/bg/longcat/long_longcat_tilling_07.png" },
+		
 		{ "id" : "assets/image/platforms/platform_left01.png" },
 		{ "id" : "assets/image/platforms/platform_right01.png" },
 		{ "id" : "assets/image/platforms/platform_straight01.png" },
