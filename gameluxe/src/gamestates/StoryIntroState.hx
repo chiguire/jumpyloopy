@@ -78,6 +78,29 @@ class StoryIntroState extends State
 			frag.text = txt;
 			Actuate.tween(frag.color, fade_in_duration, { a: 1.0 }).delay(first_delay + first_delay * i);
 		}
+		
+		var click_to_cont = new Text({
+				font: Luxe.resources.font(Main.rise_font_id),
+				text: "Click to Continue...",
+				align: TextAlign.center,
+				align_vertical: TextAlign.center,
+				point_size: 36,
+				pos: new Vector(Main.mid_screen_pos().x, 75),
+				scene: scene,
+				color: new Color().rgb(0x3f2414),
+				outline: 0,
+				glow_amount: 0,
+				visible: true,
+				batcher: Main.batcher_ui,
+			});	
+			click_to_cont.color.a = 0;
+			
+			Actuate.tween(click_to_cont.color, fade_in_duration, { a: 1.0 }).delay(first_delay + first_delay * 11).onComplete(
+				function()
+				{
+					Actuate.tween(click_to_cont.color, 2.6, { a: 0.1 }).repeat( -1).reflect();
+				});
+			
 	}
 	
 	override function onenter<T>(_value:T)
