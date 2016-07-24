@@ -3,7 +3,7 @@
 	{
 		"name" : "paper",
 		"cost": 0,
-		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"tex_path":"assets/image/unlockables/backgrounds/paper",
 		"loop": true,
 		"textures": ["assets/image/bg/cave_01_paper.png"
 		],
@@ -14,7 +14,7 @@
 	{
 		"name": "story",
 		"cost": 50,
-		"tex_path":"assets/image/unlockables/backgrounds/cave",
+		"tex_path":"assets/image/unlockables/backgrounds/story",
 		"loop": true,
 		"textures": ["assets/image/bg/cave_01_paper.png"
 			, "assets/image/bg/cave_01_paper_transition.png"
