@@ -129,6 +129,7 @@ class GameState extends State
 	var ui_distance_panel : MintLabelPanel;
 	var ui_hp_remaining : MintLabelPanel;
 	var ui_score : MintLabelPanel;
+	var ui_time_remain : MintLabelPanel;
 	
 	// Score
 	var score_component : entities.Score;
@@ -407,6 +408,13 @@ class GameState extends State
 			x: 305, y: 300, w: 125, h: 85, 
 			text: "Lives",
 			text_size: 32,
+			text_color: text_color,
+			panel_visible: panel_visible,
+		});
+				
+		ui_time_remain = new MintLabelPanel({
+			x: 1000, y: 55, w: 125, h: 65, 
+			text: "Time Remaining\n--:--:--",
 			text_color: text_color,
 			panel_visible: panel_visible,
 		});
@@ -741,6 +749,14 @@ class GameState extends State
 		ui_score.set_text('Score\n${score}');
 		
 		ui_hp_remaining.set_text('Lives\n${player_sprite.num_lives}');
+		
+		if (game_state_onenter_data.play_audio_loop == false)
+		{
+			var time_remain_val = DateTools.seconds(Main.beat_manager.audio_duration - Main.beat_manager.audio_time);
+			var time_remain_date_val = Date.fromTime(time_remain_val);
+			var time_remain_str = DateTools.format(time_remain_date_val, "%T");
+			ui_time_remain.set_text('Time Remaining\n${time_remain_str}');
+		}
 	}
 	
 	private function connect_input()

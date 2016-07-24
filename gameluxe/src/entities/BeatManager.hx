@@ -72,7 +72,8 @@ class BeatManager extends Entity
 	var audio_data : Uint8Array;
 	var audio_data_for_analysis : Vector<Float>;
 	
-	public var audio_pos = 0.0;
+	public var audio_time  (default, null) = 0.0;
+	public var audio_duration (default, null) = 0.0;
 	
 	/// constants
 	static public var instant_interval = 1024;
@@ -157,6 +158,9 @@ class BeatManager extends Entity
 		curr_beat_idx = -1;
 		curr_update_state = BMUpdateState.Idle;
 		
+		audio_time = 0.0;
+		audio_duration = music.source.duration();
+		
 		attach_visual();
 		
 		// events
@@ -203,8 +207,8 @@ class BeatManager extends Entity
 	{		
 		if (music != null && Luxe.audio.state_of(music_handle) == AudioState.as_playing)
 		{
-			var audio_time = Luxe.audio.position_of(music_handle);
-			var audio_duration = music.source.duration();
+			audio_time = Luxe.audio.position_of(music_handle);
+			audio_duration = music.source.duration();
 			
 			// update display
 			//beat_manager_debug_visual.update_display(audio_time);
@@ -423,6 +427,9 @@ class BeatManager extends Entity
 			trace("Duration: " + music.source.duration());
 			
 			trace(music.source.data);
+			
+			audio_time = 0.0;
+			audio_duration = music.source.duration();
 			
 			process_audio();
 			process_audio_fft();

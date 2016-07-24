@@ -133,8 +133,8 @@ class BeatManagerVisualizer extends Component
 		audiopos_disp = Luxe.draw.line({
 			batcher : viewport_ui,
 			depth : 3,
-            p0 : new Vector( offsetx + parent.audio_pos * size.x, offsety ),
-            p1 : new Vector( offsetx + parent.audio_pos * size.x, offsety + size.y ),
+            p0 : new Vector( offsetx + parent.audio_time * size.x, offsety ),
+            p1 : new Vector( offsetx + parent.audio_time * size.x, offsety + size.y ),
             color : new Color(0.5,0.2,0.2,1)
         });
 		
