@@ -245,7 +245,7 @@ class CollectableGroup
 		y_index = y_ind;
 		SpawnCollectables(scene);
 		
-		trace("Created new collectabale group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index + ". Player_pos:" + GameState.player_sprite.pos);
+		//trace("Created new collectabale group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index + ". Player_pos:" + GameState.player_sprite.pos);
 	}
 	
 	public function SpawnCollectables(scene : Scene)
@@ -283,7 +283,7 @@ class CollectableGroup
 		{
 			c.destroy();
 		}
-		trace("Destroyed collectable group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index);
+		//trace("Destroyed collectable group. Data:" + data.name + " Rows:" + GetNumRows() + " index: " + y_index);
 	}
 	
 	private function SelectAndCreateCollectable(type : String, scene : Scene, name : String, pos : Vector) : Collectable

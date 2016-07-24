@@ -201,19 +201,19 @@ class Background extends Visual
 	{
 		super.onkeyup(e);
 		
-		if (e.keycode == Key.key_d)
-		{
-			speed_mul = 0.0;
-		}
+		//if (e.keycode == Key.key_d)
+		//{
+			//speed_mul = 0.0;
+		//}
 	}
 	
 	override public function update(dt:Float) 
 	{
 		super.update(dt);
 		
-		if(Luxe.input.keydown(Key.key_d)) {
-            speed_mul = 250;
-        }
+		//if(Luxe.input.keydown(Key.key_d)) {
+           // speed_mul = 250;
+        //}
 		
 		if ( prev_camera_pos_y != Math.NEGATIVE_INFINITY )
 		{
