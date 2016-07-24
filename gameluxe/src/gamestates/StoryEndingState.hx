@@ -43,6 +43,8 @@ class StoryEndingState extends State
 	
 	override function onleave<T>(_value:T)
 	{
+		Actuate.reset();
+		
 		scene.empty();
 		scene.destroy();
 		scene = null;

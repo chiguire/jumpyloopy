@@ -31,7 +31,6 @@ class StoryIntroState extends State
 	{
 		Actuate.reset();
 		
-		
 		scene.empty();
 		scene.destroy();
 		scene = null;
