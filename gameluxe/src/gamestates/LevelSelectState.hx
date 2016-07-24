@@ -51,6 +51,9 @@ class LevelSelectState extends State
 	/// panel text
 	var desc_sprite : Sprite;
 	
+	/// events
+	var event_id : Array<String>;
+	
 	var tut_sprite : Sprite;
 	public static function create_tut_sprite( scene : Scene ) : Sprite
 	{
@@ -71,10 +74,6 @@ class LevelSelectState extends State
 	{
 		super({name: _name});
 		this.game_info = game_info;
-		
-		Luxe.events.listen("BeatManager.AudioLoaded", on_audio_analysis_completed );
-		Luxe.events.listen("BeatManager.AudioAnalysisStart", on_audio_analysis_started );
-		Luxe.events.listen("BeatManager.AudioLoadingFailed", on_audio_analysis_failed );
 	}
 	
 	override function onleave<T>(_value:T)
@@ -94,11 +93,23 @@ class LevelSelectState extends State
 		
 		// Audio 
 		Main.simple_fe_audio_end();
+		
+		// unlisten
+		for (i in 0...event_id.length)
+		{
+			var res = Luxe.events.unlisten(event_id[i]);
+		}
+		event_id = null;
 	}
 	
 	override function onenter<T>(_value:T)
 	{
 		trace("Entering level select");
+		
+		event_id = new Array<String>();
+		event_id.push(Luxe.events.listen("BeatManager.AudioLoaded", on_audio_analysis_completed ));
+		event_id.push(Luxe.events.listen("BeatManager.AudioAnalysisStart", on_audio_analysis_started ));
+		event_id.push(Luxe.events.listen("BeatManager.AudioLoadingFailed", on_audio_analysis_failed ));
 		
 		// load parcels
 		Main.load_parcel(parcel, "assets/data/level_select_parcel.json", on_loaded);
