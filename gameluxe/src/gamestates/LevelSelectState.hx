@@ -3,6 +3,7 @@ package gamestates;
 import data.GameInfo;
 import entities.BeatManager;
 import gamestates.GameState.GameStateOnEnterData;
+import haxe.io.Path;
 import luxe.Audio.AudioState;
 import luxe.Color;
 import luxe.Parcel;
@@ -160,10 +161,15 @@ class LevelSelectState extends State
 			, descriptions: ["OGG files"]
 			, extensions: ["*.ogg"]	
 			
-			};	
+			};
+			
+			var exe_path = Sys.executablePath();
+			var exe_dir = Path.directory(exe_path);
+			var arcade_dir = exe_dir + "\\assets\\music_arcade";
 			var result:Array<String> = Dialogs.openFile(
 			"Select a file please!"
 			, "Please select one or more files, so we can see if this method works"
+			, arcade_dir
 			, filters
 			);
 			
