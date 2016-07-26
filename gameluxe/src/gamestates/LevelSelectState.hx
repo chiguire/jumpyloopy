@@ -167,7 +167,7 @@ class LevelSelectState extends State
 			var exe_dir = Path.directory(exe_path);
 			var arcade_dir = exe_dir + "\\assets\\music_arcade";
 			var result:Array<String> = Dialogs.openFile(
-			"Rise - Arcade Mode"
+			"Rise - Arcade Mode Track Selection"
 			, "Please select your favorite track, enjoy the beats while rising to teh top"
 			, arcade_dir
 			, filters
