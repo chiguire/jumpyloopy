@@ -92,13 +92,13 @@ class StoryIntroState extends State
 				visible: true,
 				batcher: Main.batcher_ui,
 			});	
-			click_to_cont.color.a = 0;
-			
-			Actuate.tween(click_to_cont.color, fade_in_duration, { a: 1.0 }).delay(first_delay + first_delay * 11).onComplete(
-				function()
-				{
-					Actuate.tween(click_to_cont.color, 2.6, { a: 0.1 }).repeat( -1).reflect();
-				});
+		click_to_cont.color.a = 0;
+		
+		Actuate.tween(click_to_cont.color, fade_in_duration, { a: 1.0 }).delay(first_delay + first_delay * 11).onComplete(
+			function()
+			{
+				Actuate.tween(click_to_cont.color, 2.6, { a: 0.1 }).repeat( -1).reflect();
+			});
 			
 	}
 	

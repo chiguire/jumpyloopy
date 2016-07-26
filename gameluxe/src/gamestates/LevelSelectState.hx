@@ -6,10 +6,13 @@ import gamestates.GameState.GameStateOnEnterData;
 import haxe.io.Path;
 import luxe.Audio.AudioState;
 import luxe.Color;
+import luxe.Input.Key;
+import luxe.Input.MouseButton;
 import luxe.Parcel;
 import luxe.ParcelProgress;
 import luxe.Scene;
 import luxe.Sprite;
+import luxe.Text;
 import luxe.Vector;
 import luxe.options.StateOptions;
 import luxe.States.State;
@@ -18,6 +21,7 @@ import mint.Button;
 import mint.Label;
 import mint.render.luxe.Panel;
 import mint.types.Types.TextAlign;
+import phoenix.BitmapFont;
 import snow.types.Types.AudioHandle;
 import ui.MintImageButton;
 
@@ -279,6 +283,32 @@ class LevelSelectState extends State
 	public function on_audio_analysis_completed(e)
 	{
 		Luxe.timer.schedule(2.0, function(){
+			
+			var click_to_cont = new Text({
+				font: Luxe.resources.font(Main.rise_font_id),
+				text: "Click to Continue...",
+				align: phoenix.BitmapFont.TextAlign.center,
+				align_vertical: phoenix.BitmapFont.TextAlign.center,
+				point_size: 36,
+				pos: new Vector(Main.mid_screen_pos().x, 275),
+				scene: scene,
+				color: new Color().rgb(0x3f2414),
+				outline: 0,
+				glow_amount: 0,
+				visible: true,
+				batcher: Main.batcher_ui,
+				depth: 11
+			});	
+			click_to_cont.color.a = 0;
+			
+			var fade_in_duration = 2.5;
+			var first_delay = 1.0;
+			Actuate.tween(click_to_cont.color, fade_in_duration, { a: 1.0 }).delay(first_delay).onComplete(
+				function()
+				{
+					Actuate.tween(click_to_cont.color, 2.6, { a: 0.1 }).repeat( -1).reflect();
+				});
+			
 			change_state_signal = true;
 		});
 	}
@@ -287,7 +317,13 @@ class LevelSelectState extends State
 	{
 		super.update(dt);
 		
-		if (change_state_signal)
+		var change_state_user = Luxe.input.mousepressed(MouseButton.left) ||
+			Luxe.input.mousepressed(MouseButton.right) ||
+			Luxe.input.keypressed(Key.space) ||
+			Luxe.input.keypressed(Key.escape) ||
+			Luxe.input.keypressed(Key.backspace);
+		
+		if (change_state_signal && change_state_user)
 		{
 			machine.set(next_state, game_state_on_enter_data);
 		}
